@@ -1,0 +1,55 @@
+.navbar {
+  background-color: var(--color-background);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__logo {
+    img {
+      height: 40px;
+    }
+  }
+
+  &__links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &__link {
+    color: var(--color-text);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--color-secondary);
+    }
+  }
+
+  &__auth-button {
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-text);
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--color-primary);
+      color: var(--color-text-oposite);
+    }
+  }
+}

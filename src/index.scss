@@ -1,11 +1,17 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* Fonts */
+  --font-heading: 'Days One', sans-serif;
+  --font-body: 'Rubik', sans-serif;
+  
+  /* Colors */
+  --color-background: #161616;
+  --color-text: #FFFFFF;
+  --color-text-oposite: #000000;
+  --color-primary: #FFFFFF;
+  --color-secondary: #10CCFF;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--color-text);
+  background-color: var(--color-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,10 +30,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  // display: flex;
+  // place-items: center;
+  //min-width: 320px;
+  // min-height: 100vh;
 }
 
 h1 {

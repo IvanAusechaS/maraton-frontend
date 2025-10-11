@@ -170,6 +170,76 @@ const AboutPage: FC = () => {
           </div>
         </div>
       </section>
+
+      {/** Content Classification Section */}
+      <section className="classification-section">
+        <div className="classification-section__container">
+          <h2 className="classification-section__title">
+            Clasificación de Contenido
+          </h2>
+          <p className="classification-section__subtitle">
+            Nos tomamos muy en serio la clasificación de nuestro contenido para
+            garantizar una experiencia apropiada para cada edad.
+          </p>
+
+          <div className="classification-section__grid">
+            <div className="classification-card classification-card--green">
+              <div className="classification-card__badge">ATP</div>
+              <p className="classification-card__description">
+                Apto para todo público
+              </p>
+            </div>
+
+            <div className="classification-card classification-card--green">
+              <div className="classification-card__badge">+13</div>
+              <p className="classification-card__description">
+                Mayores de 13 años
+              </p>
+            </div>
+
+            <div className="classification-card classification-card--red">
+              <div className="classification-card__badge">18+</div>
+              <p className="classification-card__description">Solo adultos</p>
+            </div>
+
+            <div className="classification-card classification-card--green">
+              <div className="classification-card__badge">STEM</div>
+              <p className="classification-card__description">
+                Contenido científico
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/** Policy and Regulation Section */}
+      <section className="policy-section">
+        <div className="policy-section__container">
+          <h2 className="policy-section__title">Restricciones y Políticas</h2>
+
+          <div className="policy-section__grid">
+            <div className="policy-card policy-card--prohibited">
+              <h3 className="policy-card__title">Contenido Prohibido</h3>
+              <ul className="policy-card__list">
+                <li>Violencia extrema o gratuita</li>
+                <li>Contenido que promueva el odio</li>
+                <li>Material ilegal o que viole derechos de autor</li>
+                <li>Contenido de explotación o riesgo de menores</li>
+              </ul>
+            </div>
+
+            <div className="policy-card policy-card--quality">
+              <h3 className="policy-card__title">Compromisos de calidad</h3>
+              <ul className="policy-card__list">
+                <li>Todo el contenido es verificado antes de publicarse</li>
+                <li>Calidad mínima garantizada de 1080p HD</li>
+                <li>Subtítulos y audio en múltiples idiomas</li>
+                <li>Actualizaciones semanales del catálogo</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

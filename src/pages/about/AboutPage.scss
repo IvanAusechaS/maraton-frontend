@@ -185,3 +185,220 @@
     }
   }
 }
+
+// Classification Section
+.classification-section {
+  background: linear-gradient(180deg, #d0d0d0 0%, #e8e8e8 100%);
+  padding: 4rem 2rem;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: #1a1a1a;
+    text-align: center;
+    margin: 0 0 1rem 0;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  &__subtitle {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    color: #1a1a1a;
+    text-align: center;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+}
+
+.classification-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  &__badge {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+      padding: 0.6rem 1.2rem;
+    }
+  }
+
+  &--green &__badge {
+    background: #00c853;
+  }
+
+  &--red &__badge {
+    background: #ff1744;
+  }
+
+  &__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #1a1a1a;
+    margin: 0;
+    font-weight: 500;
+
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Policy Section
+.policy-section {
+  background: linear-gradient(180deg, #0d3b4d 0%, #061f2b 100%);
+  padding: 4rem 2rem;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: #ffffff;
+    text-align: center;
+    margin: 0 0 3rem 0;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+      margin-bottom: 2.5rem;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+}
+
+.policy-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  &__title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 700;
+    padding-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 1.3rem;
+    }
+  }
+
+  &--prohibited &__title {
+    color: #d32f2f;
+    border-bottom: 3px solid #d32f2f;
+  }
+
+  &--quality &__title {
+    color: #00c853;
+    border-bottom: 3px solid #00c853;
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style: none;
+
+    li {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: #1a1a1a;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      position: relative;
+      padding-left: 0.5rem;
+
+      &:before {
+        content: "•";
+        position: absolute;
+        left: -1rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  &--prohibited &__list li:before {
+    color: #d32f2f;
+  }
+
+  &--quality &__list li:before {
+    color: #00c853;
+  }
+}

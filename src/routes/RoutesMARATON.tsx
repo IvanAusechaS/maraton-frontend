@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "../pages/home/HomePage";
 import AboutPage from "../pages/about/AboutPage";
 import MoviePage from "../pages/movie/MoviePage";
+import Carousel from "../pages/home/components/carousel/Carousel";
 import LayoutMARATON from "../layout/LayoutMARATON";
+import SignUp from "../pages/auth/signup/SignupPage";
 
 /**
  * Top-level route configuration for the MARATON app.
@@ -21,6 +23,8 @@ const RoutesMARATON = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/peliculas" element={<MoviePage />} />
           <Route path="/sobre-nosotros" element={<AboutPage />} />
+          <Route path="/registro" element={<SignUp />} />
+          <Route path="/carousel" element={<Carousel />} />
         </Routes>
       </LayoutMARATON>
     </BrowserRouter>

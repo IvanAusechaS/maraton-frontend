@@ -10,6 +10,10 @@ const Navbar: FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar__container">
@@ -36,33 +40,30 @@ const Navbar: FC = () => {
           </Link>
 
           {/* Hamburger Button */}
-          <button
+          <div
             className={`navbar__menu-button ${isMenuOpen ? "active" : ""}`}
             onClick={toggleMenu}
-            aria-label="Toggle menu"
           >
             <span></span>
             <span></span>
             <span></span>
-          </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
-        <div className={`navbar__mobile-menu ${isMenuOpen ? "active" : ""}`}>
-          <Link to="/" className="navbar__link" onClick={toggleMenu}>
-            Inicio
-          </Link>
-          <Link to="/peliculas" className="navbar__link" onClick={toggleMenu}>
-            Catálogo
-          </Link>
-          <Link
-            to="/sobre-nosotros"
-            className="navbar__link"
-            onClick={toggleMenu}
-          >
-            Sobre nosotros
-          </Link>
-        </div>
+        {isMenuOpen && (
+          <div className="navbar__mobile-menu">
+            <Link to="/" className="navbar__link" onClick={handleLinkClick}>
+              Inicio
+            </Link>
+            <Link to="/peliculas" className="navbar__link" onClick={handleLinkClick}>
+              Catálogo
+            </Link>
+            <Link to="/sobre-nosotros" className="navbar__link" onClick={handleLinkClick}>
+              Sobre nosotros
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );

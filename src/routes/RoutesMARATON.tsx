@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "../pages/home/HomePage";
-// import AboutPage from "../pages/about/AboutPage";
-// import MoviePage from "../pages/movie/MoviePage";
+import AboutPage from "../pages/about/AboutPage";
+import MoviePage from "../pages/movie/MoviePage";
 import LayoutMARATON from "../layout/LayoutMARATON";
 
 /**
@@ -19,8 +19,8 @@ const RoutesMARATON = () => {
       <LayoutMARATON>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          {/* <Route path="/peliculas" element={<MoviePage />} /> */}
-          {/* <Route path="/sobre-nosotros" element={<AboutPage />} /> */}
+          <Route path="/peliculas" element={<MoviePage />} />
+          <Route path="/sobre-nosotros" element={<AboutPage />} />
         </Routes>
       </LayoutMARATON>
     </BrowserRouter>

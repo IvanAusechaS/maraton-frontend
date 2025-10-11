@@ -1,7 +1,7 @@
 import React from "react";
 import "./HomePage.scss";
 import { useNavigate } from "react-router";
-
+import mainLogo from "../../../public/main-logo.svg";
 /**
  * Home (landing) page of the application.
  *
@@ -16,9 +16,18 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <h1>Nueva película</h1>
-      <h2>Descripción de la nueva película</h2>
-      <button onClick={() => navigate("peliculas")}>Ver ahora</button>
+      <div className="hero-section">
+        <div className="hero-section__logo">
+          <img src={mainLogo} alt="Maraton Logo" />
+        </div>
+        <h2 className="hero-section__subtitle">Explora el mejor contenido</h2>
+        <button
+          className="hero-section__cta"
+          onClick={() => navigate("peliculas")}
+        >
+          COMIENZA YA
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,73 @@
+.hero-section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0rem;
+  text-align: center;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 123, 255, 0.45) 0%,
+        rgba(0, 0, 0, 0) 25%,
+        rgba(0, 0, 0, 0) 75%,
+        rgba(0, 123, 255, 0.45) 100%
+      ),
+      url("https://images.pexels.com/photos/8885138/pexels-photo-8885138.jpeg")
+        center/cover no-repeat;
+    z-index: -1;
+  }
+
+  &__logo {
+    img {
+      margin-top: 20px;
+      height: 250px;
+    }
+  }
+
+  &__subtitle {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    margin: 0 0 10px 0;
+  }
+
+  &__cta {
+    background-color: var(--color-text);
+    color: var(--color-text-oposite);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  @media (max-width: 768px) {
+    // Cambiar tamaño de imagen cover
+    &::before {
+      background-size: auto 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    position: relative;
+    min-height: 50vh;
+  }
+
+}

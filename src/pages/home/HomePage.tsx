@@ -1,8 +1,8 @@
 import React from "react";
 import "./HomePage.scss";
-import { useNavigate } from "react-router";
-import mainLogo from "../../../public/main-logo.svg";
+
 import Carousel from "./components/carousel/Carousel";
+import HeroSection from "./components/hero-section/HeroSection";
 /**
  * Home (landing) page of the application.
  *
@@ -13,7 +13,6 @@ import Carousel from "./components/carousel/Carousel";
  * <HomePage />
  */
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
   const [expandedFaq, setExpandedFaq] = React.useState<number | null>(null);
 
   const handleFaqClick = (index: number) => {
@@ -46,17 +45,8 @@ const HomePage: React.FC = () => {
   return (
     <div>
       {/** Hero Section */}
-      <div className="hero-section">
-        <div className="hero-section__logo">
-          <img src={mainLogo} alt="Maraton Logo" />
-        </div>
-        <h2 className="hero-section__subtitle">Explora el mejor contenido</h2>
-        <button
-          className="hero-section__cta"
-          onClick={() => navigate("registro")}
-        >
-          COMIENZA YA
-        </button>
+      <div>
+        <HeroSection />
       </div>
 
       {/** Carousel Section */}

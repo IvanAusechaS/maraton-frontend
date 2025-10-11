@@ -2,6 +2,7 @@ import React from "react";
 import "./HomePage.scss";
 import { useNavigate } from "react-router";
 import mainLogo from "../../../public/main-logo.svg";
+import Carousel from "./components/carousel/Carousel";
 /**
  * Home (landing) page of the application.
  *
@@ -27,6 +28,10 @@ const HomePage: React.FC = () => {
         >
           COMIENZA YA
         </button>
+      </div>
+
+      <div className="carousel-section">
+        <Carousel />
       </div>
     </div>
   );

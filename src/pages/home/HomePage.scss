@@ -71,6 +71,112 @@
   }
 }
 
+.faq-section {
+  padding: 4rem 2rem;
+  background-color: var(--color-background);
+  scroll-margin-top: 100px; // Compensar altura del navbar
+
+  &__title {
+    text-align: center;
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  &__container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+.faq-item {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 123, 255, 0.1) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 123, 255, 0.15) 0%,
+      rgba(0, 0, 0, 0.25) 100%
+    );
+  }
+
+  &__header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      font-family: var(--font-heading);
+      color: var(--color-text);
+      font-size: 1.2rem;
+      margin: 0;
+    }
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 1.5rem;
+
+    &.expanded {
+      max-height: 300px;
+      padding-bottom: 1.5rem;
+    }
+
+    p {
+      font-family: var(--font-body);
+      color: var(--color-text);
+      font-size: 1rem;
+      line-height: 1.5;
+      opacity: 0.9;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__header h3 {
+      font-size: 1.1rem;
+    }
+
+    &__icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    &__content p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
 .info-section-reasons {
   padding: 0 2rem;
   background-color: var(--color-background);

@@ -1,5 +1,4 @@
 import { type FC, useState } from "react";
-import { Link } from "react-router-dom";
 import "./Footer.scss";
 import mainLogo from "../../../public/logo.svg";
 import Modal from "../modal/Modal";
@@ -187,9 +186,14 @@ const Footer: FC = () => {
           >
             Preferencias de cookies
           </button>
-          <Link to="/faq" className="footer__link">
+          <button
+            className="footer__link"
+            onClick={() => {
+              window.location.href = "/#faq";
+            }}
+          >
             FAQ
-          </Link>
+          </button>
           <button
             className="footer__link"
             onClick={() => setActiveModal("privacy")}

@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
-import linealLogo from "../../assets/lineal-logo.svg";
+import linealLogo from "../../../public/lineal-logo.svg";
+
 
 const Navbar: FC = () => {
   return (

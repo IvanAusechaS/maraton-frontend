@@ -1,4 +1,3 @@
-import React from "react";
 import "./AboutPage.scss";
 import { type FC } from "react";
 import HeroSection from "../home/components/hero-section/HeroSection";

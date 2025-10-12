@@ -6,6 +6,8 @@ import Carousel from "../pages/home/components/carousel/Carousel";
 import LayoutMARATON from "../layout/LayoutMARATON";
 import SignUp from "../pages/auth/signup/SignupPage";
 import LoginPage from "../pages/auth/login/LoginPage";
+import RecoveryPage from "../pages/auth/recovery/RecoveryPage";
+import SuccessEmailPage from "../pages/auth/success-email/SucessEmailPage";
 
 /**
  * Top-level route configuration for the MARATON app.
@@ -27,6 +29,8 @@ const RoutesMARATON = () => {
           <Route path="/registro" element={<SignUp />} />
           <Route path="/carousel" element={<Carousel />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/recuperar" element={<RecoveryPage />} />
+          <Route path="/exito" element={<SuccessEmailPage />} />
         </Routes>
       </LayoutMARATON>
     </BrowserRouter>

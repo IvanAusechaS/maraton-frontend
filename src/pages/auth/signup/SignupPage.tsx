@@ -59,77 +59,101 @@ const SignupPage: React.FC = () => {
             <div className="signup-page__form-group">
               <input
                 type="text"
+                id="nombre"
                 name="nombre"
-                placeholder="Nombre"
                 value={formData.nombre}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
               />
+              <label htmlFor="nombre" className="signup-page__label">
+                Nombre
+              </label>
             </div>
 
             <div className="signup-page__form-group">
               <input
                 type="text"
+                id="apellido"
                 name="apellido"
-                placeholder="Apellido"
                 value={formData.apellido}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
               />
+              <label htmlFor="apellido" className="signup-page__label">
+                Apellido
+              </label>
             </div>
 
             <div className="signup-page__form-group">
               <input
                 type="email"
+                id="email"
                 name="email"
-                placeholder="Correo electrónico"
                 value={formData.email}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
               />
+              <label htmlFor="email" className="signup-page__label">
+                Correo electrónico
+              </label>
             </div>
 
             <div className="signup-page__form-group">
               <input
                 type="number"
+                id="edad"
                 name="edad"
-                placeholder="Edad"
                 value={formData.edad}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
                 min="1"
                 max="120"
               />
+              <label htmlFor="edad" className="signup-page__label">
+                Edad
+              </label>
             </div>
 
             <div className="signup-page__form-group">
               <input
                 type="password"
+                id="password"
                 name="password"
-                placeholder="Contraseña"
                 value={formData.password}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
                 minLength={6}
               />
+              <label htmlFor="password" className="signup-page__label">
+                Contraseña
+              </label>
             </div>
 
             <div className="signup-page__form-group">
               <input
                 type="password"
+                id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Confirmar contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="signup-page__input"
+                placeholder=" "
                 required
                 minLength={6}
               />
+              <label htmlFor="confirmPassword" className="signup-page__label">
+                Confirmar contraseña
+              </label>
             </div>
 
             <button type="submit" className="signup-page__submit">

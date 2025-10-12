@@ -40,23 +40,31 @@ const LoginPage: React.FC = () => {
             <div className="login-page__form-group">
               <input
                 type="email"
-                placeholder="Email"
+                id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="login-page__input"
+                placeholder=" "
                 required
               />
+              <label htmlFor="email" className="login-page__label">
+                Email
+              </label>
             </div>
 
             <div className="login-page__form-group">
               <input
                 type="password"
-                placeholder="Contraseña"
+                id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="login-page__input"
+                placeholder=" "
                 required
               />
+              <label htmlFor="password" className="login-page__label">
+                Contraseña
+              </label>
             </div>
 
             <div className="login-page__options">

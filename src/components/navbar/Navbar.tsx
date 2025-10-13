@@ -3,12 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.scss";
 import authService from "../../services/authService";
 
+type FilterOption = {
+  key: string;
+  label: string;
+};
+
 const Navbar: FC = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState<string>("");
+  const [selectedFilter, setSelectedFilter] = useState<string>("Todas");
+
+  const FILTERS: FilterOption[] = [
+    { key: 'todas', label: 'Todas' },
+    { key: 'familiar', label: 'Familiar' },
+    { key: 'terror', label: 'Terror' },
+    { key: 'accion', label: 'Acción' },
+    { key: 'romance', label: 'Romance' },
+  ];
 
   useEffect(() => {
     // Check authentication status on component mount
@@ -43,6 +58,21 @@ const Navbar: FC = () => {
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
+  const handleSelectFilter = (filterLabel: string) => {
+    setSelectedFilter(filterLabel);
+    setIsFilterOpen(false);
+    // Notify interested components about filter change
+    try {
+      window.dispatchEvent(new CustomEvent('filterChanged', { detail: { filter: filterLabel } }));
+    } catch {
+      // ignore
+    }
   };
 
   const handleLinkClick = () => {

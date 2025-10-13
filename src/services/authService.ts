@@ -121,7 +121,9 @@ class AuthService {
         // Notify other parts of the app that auth state changed (same-tab listeners)
         try {
           window.dispatchEvent(new CustomEvent('authChanged'));
-        } catch {}
+        } catch (err) {
+          console.warn('Failed to dispatch authChanged event', err);
+        }
       }
       
       return response;
@@ -176,7 +178,9 @@ class AuthService {
       // Notify listeners that auth state changed
       try {
         window.dispatchEvent(new CustomEvent('authChanged'));
-      } catch {}
+      } catch (err) {
+        console.warn('Failed to dispatch authChanged event', err);
+      }
       
       return response;
     } catch (error) {
@@ -186,7 +190,9 @@ class AuthService {
       localStorage.removeItem('user');
       try {
         window.dispatchEvent(new CustomEvent('authChanged'));
-      } catch {}
+      } catch (err) {
+        console.warn('Failed to dispatch authChanged event', err);
+      }
       throw error;
     }
   }

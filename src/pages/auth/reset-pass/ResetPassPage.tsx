@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./ResetPassPage.scss";
-import mainLogo from "../../../../public/main-logo.svg";
 import authService from "../../../services/authService";
 import { ApiError } from "../../../services/api";
 
@@ -135,7 +134,7 @@ const ResetPassPage: React.FC = () => {
           </button>
 
           <div className="reset-pass-page__logo">
-            <img src={mainLogo} alt="Maraton Logo" />
+            <img src="/main-logo.svg" alt="Maraton Logo" />
           </div>
 
           <h1 className="reset-pass-page__title">Restablecer contraseña</h1>

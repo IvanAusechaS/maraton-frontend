@@ -1,7 +1,6 @@
 import { useState, type FC } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
-import linealLogo from "../../../public/lineal-logo.svg";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +17,7 @@ const Navbar: FC = () => {
     <nav className="navbar">
       <div className="navbar__container">
         <Link to="/" className="navbar__logo">
-          <img src={linealLogo} alt="Maraton Logo" />
+          <img src="/lineal-logo.svg" alt="Maraton Logo" />
         </Link>
 
         {/* Desktop Menu */}

@@ -118,6 +118,10 @@ class AuthService {
         setAuthToken(response.token);
         // Optionally store user data
         localStorage.setItem('user', JSON.stringify(response.usuario));
+        // Notify other parts of the app that auth state changed (same-tab listeners)
+        try {
+          window.dispatchEvent(new CustomEvent('authChanged'));
+        } catch {}
       }
       
       return response;
@@ -169,6 +173,10 @@ class AuthService {
       // Clear token and user data
       removeAuthToken();
       localStorage.removeItem('user');
+      // Notify listeners that auth state changed
+      try {
+        window.dispatchEvent(new CustomEvent('authChanged'));
+      } catch {}
       
       return response;
     } catch (error) {
@@ -176,6 +184,9 @@ class AuthService {
       // Clear local data even if request fails
       removeAuthToken();
       localStorage.removeItem('user');
+      try {
+        window.dispatchEvent(new CustomEvent('authChanged'));
+      } catch {}
       throw error;
     }
   }

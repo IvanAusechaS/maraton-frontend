@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.scss";
-import mainLogo from "../../../../public/main-logo.svg";
+import authService from "../../../services/authService";
+import { ApiError } from "../../../services/api";
 
 /**
  * Login page component
@@ -13,11 +14,38 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement login logic
-    console.log("Login attempt:", { email, password, rememberMe });
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const response = await authService.login({
+        email,
+        password,
+      });
+      
+      console.log("Login exitoso:", response);
+      
+      // TODO: Implement remember me functionality
+      // if (rememberMe) {
+      //   localStorage.setItem("rememberMe", "true");
+      // }
+      
+      // Redirect to home or dashboard
+      navigate("/");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const errorData = err.data as { message?: string } | undefined;
+        setError(errorData?.message || "Credenciales inválidas");
+      } else {
+        setError("Error de conexión. Por favor, intenta de nuevo.");
+      }
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -28,13 +56,19 @@ const LoginPage: React.FC = () => {
             ← Regresar al inicio
           </button>
           <div className="login-page__logo">
-            <img src={mainLogo} alt="Maraton Logo" />
+            <img src="/main-logo.svg" alt="Maraton Logo" />
           </div>
 
           <h1 className="login-page__title">Ingresa a tu cuenta</h1>
           <p className="login-page__subtitle">
             Descubre qué está pasando en tu negocio
           </p>
+
+          {error && (
+            <div className="login-page__error">
+              {error}
+            </div>
+          )}
 
           <form className="login-page__form" onSubmit={handleSubmit}>
             <div className="login-page__form-group">
@@ -86,8 +120,12 @@ const LoginPage: React.FC = () => {
               </button>
             </div>
 
-            <button type="submit" className="login-page__submit">
-              INGRESAR
+            <button 
+              type="submit" 
+              className="login-page__submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "INGRESANDO..." : "INGRESAR"}
             </button>
 
             <div className="login-page__register">

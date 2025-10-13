@@ -7,6 +7,7 @@ import LayoutMARATON from "../layout/LayoutMARATON";
 import SignUp from "../pages/auth/signup/SignupPage";
 import LoginPage from "../pages/auth/login/LoginPage";
 import RecoveryPage from "../pages/auth/recovery/RecoveryPage";
+import ResetPassPage from "../pages/auth/reset-pass/ResetPassPage";
 import SuccessEmailPage from "../pages/auth/success-email/SucessEmailPage";
 
 /**
@@ -30,6 +31,7 @@ const RoutesMARATON = () => {
           <Route path="/carousel" element={<Carousel />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/recuperar" element={<RecoveryPage />} />
+          <Route path="/restablecer" element={<ResetPassPage />} />
           <Route path="/exito" element={<SuccessEmailPage />} />
         </Routes>
       </LayoutMARATON>

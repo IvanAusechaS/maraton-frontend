@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import "./HeroSection.scss";
-import mainLogo from "../../../../../public/main-logo.svg";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -8,7 +7,7 @@ const HeroSection = () => {
   return (
     <div className="hero-section">
         <div className="hero-section__logo">
-          <img src={mainLogo} alt="Maraton Logo" />
+          <img src="/main-logo.svg" alt="Maraton Logo" />
         </div>
         <h2 className="hero-section__subtitle">Explora el mejor contenido</h2>
         <button

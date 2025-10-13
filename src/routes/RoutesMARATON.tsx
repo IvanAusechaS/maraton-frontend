@@ -9,6 +9,7 @@ import LoginPage from "../pages/auth/login/LoginPage";
 import RecoveryPage from "../pages/auth/recovery/RecoveryPage";
 import ResetPassPage from "../pages/auth/reset-pass/ResetPassPage";
 import SuccessEmailPage from "../pages/auth/success-email/SucessEmailPage";
+import ProfilePage from "../pages/profile/ProfilePage";
 
 /**
  * Top-level route configuration for the MARATON app.
@@ -33,6 +34,7 @@ const RoutesMARATON = () => {
           <Route path="/recuperar" element={<RecoveryPage />} />
           <Route path="/restablecer" element={<ResetPassPage />} />
           <Route path="/exito" element={<SuccessEmailPage />} />
+          <Route path="/perfil" element={<ProfilePage />} />
         </Routes>
       </LayoutMARATON>
     </BrowserRouter>

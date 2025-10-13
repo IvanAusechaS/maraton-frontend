@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./ResetPassPage.scss";
-import mainLogo from "../../../../public/main-logo.svg";
+import authService from "../../../services/authService";
+import { ApiError } from "../../../services/api";
 
 /**
  * Reset password page component
@@ -83,31 +84,39 @@ const ResetPassPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validatePassword()) {
+    if (!validatePassword() || !token) {
       return;
     }
 
     setIsSubmitting(true);
+    setPasswordError(""); // Clear previous errors
 
     try {
-      // TODO: Implement password reset logic with API
-      console.log("Reset password attempt:", {
-        token,
+      const response = await authService.resetPassword(token, {
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
       });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Password reset successful:", response.message);
 
       // Redirigir a login con mensaje de éxito
       navigate("/login", {
-        state: { message: "Contraseña restablecida exitosamente" },
+        state: { message: response.message || "Contraseña restablecida exitosamente" },
       });
     } catch (error) {
       console.error("Error resetting password:", error);
-      setPasswordError(
-        "Hubo un error al restablecer la contraseña. Por favor, intenta nuevamente."
-      );
+      
+      if (error instanceof ApiError) {
+        const errorData = error.data as { message?: string } | undefined;
+        setPasswordError(
+          errorData?.message || 
+          "El enlace de recuperación ha expirado o es inválido. Por favor, solicita uno nuevo."
+        );
+      } else {
+        setPasswordError(
+          "Hubo un error al restablecer la contraseña. Por favor, intenta nuevamente."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -125,7 +134,7 @@ const ResetPassPage: React.FC = () => {
           </button>
 
           <div className="reset-pass-page__logo">
-            <img src={mainLogo} alt="Maraton Logo" />
+            <img src="/main-logo.svg" alt="Maraton Logo" />
           </div>
 
           <h1 className="reset-pass-page__title">Restablecer contraseña</h1>

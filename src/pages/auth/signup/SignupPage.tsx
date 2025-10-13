@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignupPage.scss";
-import mainLogo from "../../../../public/main-logo.svg";
+import authService from "../../../services/authService";
+import { ApiError } from "../../../services/api";
 
 /**
  * Signup page component
@@ -14,10 +15,12 @@ const SignupPage: React.FC = () => {
     nombre: "",
     apellido: "",
     email: "",
-    edad: "",
+    fechaNacimiento: "",
     password: "",
     confirmPassword: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -26,17 +29,65 @@ const SignupPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validatePassword = (password: string): string | null => {
+    if (password.length < 8) {
+      return "La contraseña debe tener al menos 8 caracteres";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "La contraseña debe contener al menos una letra mayúscula";
+    }
+    if (!/[0-9]/.test(password)) {
+      return "La contraseña debe contener al menos un número";
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return "La contraseña debe contener al menos un carácter especial";
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     // Validar que las contraseñas coincidan
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      setError("Las contraseñas no coinciden");
       return;
     }
 
-    // TODO: Implement signup logic
-    console.log("Signup attempt:", formData);
+    // Validar contraseña
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Combinar nombre y apellido en username
+      const username = `${formData.nombre} ${formData.apellido}`.trim();
+
+      const response = await authService.register({
+        email: formData.email,
+        password: formData.password,
+        username,
+        birth_date: formData.fechaNacimiento,
+      });
+
+      console.log("Registro exitoso:", response);
+      
+      // Redirect to login after successful registration
+      navigate("/login");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const errorData = err.data as { message?: string } | undefined;
+        setError(errorData?.message || "Error al crear la cuenta");
+      } else {
+        setError("Error de conexión. Por favor, intenta de nuevo.");
+      }
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -47,13 +98,19 @@ const SignupPage: React.FC = () => {
             ← Regresar al inicio
           </button>
           <div className="signup-page__logo">
-            <img src={mainLogo} alt="Maraton Logo" />
+            <img src="/main-logo.svg" alt="Maraton Logo" />
           </div>
 
           <h1 className="signup-page__title">Crea tu cuenta</h1>
           <p className="signup-page__subtitle">
             Únete a nuestra plataforma de contenido audiovisual
           </p>
+
+          {error && (
+            <div className="signup-page__error">
+              {error}
+            </div>
+          )}
 
           <form className="signup-page__form" onSubmit={handleSubmit}>
             <div className="signup-page__form-group">
@@ -106,19 +163,17 @@ const SignupPage: React.FC = () => {
 
             <div className="signup-page__form-group">
               <input
-                type="number"
-                id="edad"
-                name="edad"
-                value={formData.edad}
+                type="date"
+                id="fechaNacimiento"
+                name="fechaNacimiento"
+                value={formData.fechaNacimiento}
                 onChange={handleChange}
                 className="signup-page__input"
                 placeholder=" "
                 required
-                min="1"
-                max="120"
               />
-              <label htmlFor="edad" className="signup-page__label">
-                Edad
+              <label htmlFor="fechaNacimiento" className="signup-page__label">
+                Fecha de Nacimiento
               </label>
             </div>
 
@@ -156,8 +211,12 @@ const SignupPage: React.FC = () => {
               </label>
             </div>
 
-            <button type="submit" className="signup-page__submit">
-              CREAR CUENTA
+            <button 
+              type="submit" 
+              className="signup-page__submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "CREANDO CUENTA..." : "CREAR CUENTA"}
             </button>
 
             <div className="signup-page__login">

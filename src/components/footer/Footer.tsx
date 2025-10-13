@@ -1,6 +1,5 @@
 import { type FC, useState } from "react";
 import "./Footer.scss";
-import mainLogo from "../../../public/logo.svg";
 import Modal from "../modal/Modal";
 
 const testSpeed = "https://fast.com/es";
@@ -176,7 +175,7 @@ const Footer: FC = () => {
     <footer className="footer">
       <div className="footer__container">
         <div className="footer__logo">
-          <img src={mainLogo} alt="Maraton Logo" />
+          <img src="/logo.svg" alt="Maraton Logo" />
         </div>
 
         <nav className="footer__links">

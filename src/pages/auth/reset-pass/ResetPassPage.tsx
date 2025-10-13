@@ -45,14 +45,34 @@ const ResetPassPage: React.FC = () => {
   };
 
   const validatePassword = (): boolean => {
+    const { password, confirmPassword } = formData;
+
     // Validar longitud mínima
-    if (formData.password.length < 6) {
-      setPasswordError("La contraseña debe tener al menos 6 caracteres");
+    if (password.length < 8) {
+      setPasswordError("La contraseña debe tener al menos 8 caracteres");
+      return false;
+    }
+
+    // Validar que contenga al menos un número
+    if (!/\d/.test(password)) {
+      setPasswordError("La contraseña debe contener al menos un número");
+      return false;
+    }
+
+    // Validar que contenga al menos una letra mayúscula
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError("La contraseña debe contener al menos una letra mayúscula");
+      return false;
+    }
+
+    // Validar que contenga al menos un carácter especial
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+      setPasswordError("La contraseña debe contener al menos un carácter especial");
       return false;
     }
 
     // Validar que las contraseñas coincidan
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setPasswordError("Las contraseñas no coinciden");
       return false;
     }
@@ -124,7 +144,7 @@ const ResetPassPage: React.FC = () => {
                 className="reset-pass-page__input"
                 placeholder=" "
                 required
-                minLength={6}
+                minLength={8}
               />
               <label htmlFor="password" className="reset-pass-page__label">
                 Nueva contraseña
@@ -135,7 +155,19 @@ const ResetPassPage: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                {showPassword ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3L21 21" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M10.5 10.5C10.0353 10.9532 9.75 11.5735 9.75 12.25C9.75 13.6307 10.8693 14.75 12.25 14.75C12.9265 14.75 13.5468 14.4647 14 14" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6.5 6.5C4.5 8 2 12 2 12C2 12 5.63636 19 12 19C13.5 19 14.8 18.5 16 17.5" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M17.5 17.5C19.5 16 22 12 22 12C22 12 18.3636 5 12 5C10.5 5 9.2 5.5 8 6.5" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
               </button>
             </div>
 
@@ -149,7 +181,7 @@ const ResetPassPage: React.FC = () => {
                 className="reset-pass-page__input"
                 placeholder=" "
                 required
-                minLength={6}
+                minLength={8}
               />
               <label
                 htmlFor="confirmPassword"
@@ -165,7 +197,19 @@ const ResetPassPage: React.FC = () => {
                   showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                 }
               >
-                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                {showConfirmPassword ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3L21 21" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M10.5 10.5C10.0353 10.9532 9.75 11.5735 9.75 12.25C9.75 13.6307 10.8693 14.75 12.25 14.75C12.9265 14.75 13.5468 14.4647 14 14" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6.5 6.5C4.5 8 2 12 2 12C2 12 5.63636 19 12 19C13.5 19 14.8 18.5 16 17.5" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M17.5 17.5C19.5 16 22 12 22 12C22 12 18.3636 5 12 5C10.5 5 9.2 5.5 8 6.5" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
               </button>
             </div>
 
@@ -178,10 +222,31 @@ const ResetPassPage: React.FC = () => {
               <ul>
                 <li
                   className={
-                    formData.password.length >= 6 ? "valid" : ""
+                    formData.password.length >= 8 ? "valid" : ""
                   }
                 >
-                  Al menos 6 caracteres
+                  Al menos 8 caracteres
+                </li>
+                <li
+                  className={
+                    /[A-Z]/.test(formData.password) ? "valid" : ""
+                  }
+                >
+                  Al menos una letra mayúscula
+                </li>
+                <li
+                  className={
+                    /\d/.test(formData.password) ? "valid" : ""
+                  }
+                >
+                  Al menos un número
+                </li>
+                <li
+                  className={
+                    /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(formData.password) ? "valid" : ""
+                  }
+                >
+                  Al menos un carácter especial (!@#$%^&*)
                 </li>
                 <li
                   className={

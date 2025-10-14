@@ -191,36 +191,21 @@ const Footer: FC = () => {
   };
 
   return (
-    <footer className="footer" role="contentinfo">
+    <footer className="footer">
       <div className="footer__container">
         {/* Sitemap Section */}
-        <nav
-          className="footer__sitemap"
-          aria-label="Navegación del pie de página"
-        >
+        <nav className="footer__sitemap" aria-label="Mapa del sitio">
           <div className="footer__sitemap-section">
             <h3 className="footer__sitemap-title">Navegación</h3>
             <ul className="footer__sitemap-list">
               <li>
-                <Link to="/" aria-label="Ir a la página de inicio">
-                  Inicio
-                </Link>
+                <Link to="/">Inicio</Link>
               </li>
               <li>
-                <Link
-                  to="/peliculas"
-                  aria-label="Explorar catálogo de películas"
-                >
-                  Películas
-                </Link>
+                <Link to="/peliculas">Películas</Link>
               </li>
               <li>
-                <Link
-                  to="/sobre-nosotros"
-                  aria-label="Conocer más sobre Maraton"
-                >
-                  Sobre Nosotros
-                </Link>
+                <Link to="/sobre-nosotros">Sobre Nosotros</Link>
               </li>
             </ul>
           </div>
@@ -230,22 +215,13 @@ const Footer: FC = () => {
               <h3 className="footer__sitemap-title">Cuenta</h3>
               <ul className="footer__sitemap-list">
                 <li>
-                  <Link to="/login" aria-label="Acceder a tu cuenta">
-                    Iniciar Sesión
-                  </Link>
+                  <Link to="/login">Iniciar Sesión</Link>
                 </li>
                 <li>
-                  <Link to="/registro" aria-label="Crear una cuenta nueva">
-                    Registrarse
-                  </Link>
+                  <Link to="/registro">Registrarse</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/recuperar"
-                    aria-label="Restablecer contraseña olvidada"
-                  >
-                    Recuperar Contraseña
-                  </Link>
+                  <Link to="/recuperar">Recuperar Contraseña</Link>
                 </li>
               </ul>
             </div>
@@ -254,17 +230,10 @@ const Footer: FC = () => {
               <h3 className="footer__sitemap-title">Mi Cuenta</h3>
               <ul className="footer__sitemap-list">
                 <li>
-                  <Link to="/perfil" aria-label="Ver información de mi perfil">
-                    Ver Perfil
-                  </Link>
+                  <Link to="/perfil">Ver Perfil</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/profile/edit"
-                    aria-label="Modificar información de mi perfil"
-                  >
-                    Editar Perfil
-                  </Link>
+                  <Link to="/profile/edit">Editar Perfil</Link>
                 </li>
               </ul>
             </div>
@@ -277,7 +246,6 @@ const Footer: FC = () => {
                 <button
                   onClick={() => setActiveModal("contact")}
                   className="footer__sitemap-link"
-                  aria-label="Abrir formulario de contacto"
                 >
                   Contáctanos
                 </button>
@@ -288,18 +256,12 @@ const Footer: FC = () => {
                     window.location.href = "/#faq";
                   }}
                   className="footer__sitemap-link"
-                  aria-label="Ver preguntas frecuentes"
                 >
                   Preguntas Frecuentes
                 </button>
               </li>
               <li>
-                <a
-                  href={testSpeed}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Probar velocidad de conexión (abre en nueva ventana)"
-                >
+                <a href={testSpeed} target="_blank" rel="noopener noreferrer">
                   Test de Velocidad
                 </a>
               </li>
@@ -313,7 +275,6 @@ const Footer: FC = () => {
                 <button
                   onClick={() => setActiveModal("privacy")}
                   className="footer__sitemap-link"
-                  aria-label="Ver política de privacidad"
                 >
                   Privacidad
                 </button>
@@ -322,7 +283,6 @@ const Footer: FC = () => {
                 <button
                   onClick={() => setActiveModal("terms")}
                   className="footer__sitemap-link"
-                  aria-label="Ver términos y condiciones de uso"
                 >
                   Términos de Uso
                 </button>
@@ -331,7 +291,6 @@ const Footer: FC = () => {
                 <button
                   onClick={() => setActiveModal("cookies")}
                   className="footer__sitemap-link"
-                  aria-label="Gestionar preferencias de cookies"
                 >
                   Cookies
                 </button>
@@ -340,7 +299,6 @@ const Footer: FC = () => {
                 <button
                   onClick={() => setActiveModal("accessibility")}
                   className="footer__sitemap-link"
-                  aria-label="Información sobre accesibilidad"
                 >
                   Accesibilidad
                 </button>
@@ -350,10 +308,7 @@ const Footer: FC = () => {
         </nav>
 
         <div className="footer__logo">
-          <img
-            src="/logo.svg"
-            alt="Logotipo de Maraton - Plataforma de streaming"
-          />
+          <img src="/logo.svg" alt="Maraton" />
         </div>
 
         <div className="footer__copyright">
@@ -363,44 +318,40 @@ const Footer: FC = () => {
           </p>
         </div>
 
-        <nav className="footer__social" aria-label="Redes sociales">
+        <div className="footer__social">
           <a
             href={youtubeLink}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Visitar canal de YouTube de Maraton (abre en nueva ventana)"
+            aria-label="YouTube"
           >
-            <img src="/youtube-icon.svg" alt="" role="presentation" />
-            <span className="sr-only">YouTube</span>
+            <img src="/youtube-icon.svg" alt="YouTube" />
           </a>
           <a
             href={tiktokLink}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Visitar perfil de TikTok de Maraton (abre en nueva ventana)"
+            aria-label="TikTok"
           >
-            <img src="/tiktok-icon.svg" alt="" role="presentation" />
-            <span className="sr-only">TikTok</span>
+            <img src="/tiktok-icon.svg" alt="TikTok" />
           </a>
           <a
             href={facebookLink}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Visitar página de Facebook de Maraton (abre en nueva ventana)"
+            aria-label="Facebook"
           >
-            <img src="/facebook-icon.svg" alt="" role="presentation" />
-            <span className="sr-only">Facebook</span>
+            <img src="/facebook-icon.svg" alt="Facebook" />
           </a>
           <a
             href={instagramLink}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Visitar perfil de Instagram de Maraton (abre en nueva ventana)"
+            aria-label="Instagram"
           >
-            <img src="/instagram-icon.svg" alt="" role="presentation" />
-            <span className="sr-only">Instagram</span>
+            <img src="/instagram-icon.svg" alt="Instagram" />
           </a>
-        </nav>
+        </div>
       </div>
 
       {activeModal && (

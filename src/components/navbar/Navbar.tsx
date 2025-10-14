@@ -91,38 +91,22 @@ const Navbar: FC = () => {
   };
 
   return (
-    <nav className="navbar" role="navigation" aria-label="Navegación principal">
+    <nav className="navbar">
       <div className="navbar__container">
         {/* Block 1: Logo */}
-        <Link
-          to="/"
-          className="navbar__logo"
-          aria-label="Ir al inicio de Maraton"
-        >
-          <img src="/lineal-logo.svg" alt="Logotipo de Maraton" />
+        <Link to="/" className="navbar__logo">
+          <img src="/lineal-logo.svg" alt="Maraton" />
         </Link>
 
         {/* Block 2: Main navigation links */}
         <div className="navbar__main-links desktop-menu">
-          <Link
-            to="/"
-            className="navbar__link"
-            aria-label="Ir a la página de inicio"
-          >
+          <Link to="/" className="navbar__link">
             Inicio
           </Link>
-          <Link
-            to="/peliculas"
-            className="navbar__link"
-            aria-label="Ver catálogo de películas"
-          >
+          <Link to="/peliculas" className="navbar__link">
             Catálogo
           </Link>
-          <Link
-            to="/sobre-nosotros"
-            className="navbar__link"
-            aria-label="Conocer más sobre nosotros"
-          >
+          <Link to="/sobre-nosotros" className="navbar__link">
             Sobre nosotros
           </Link>
         </div>
@@ -137,13 +121,11 @@ const Navbar: FC = () => {
               onClick={toggleFilter}
               aria-haspopup="true"
               aria-expanded={isFilterOpen}
-              aria-label={`Filtrar por categoría. Filtro actual: ${selectedFilter}`}
             >
               {selectedFilter}
               <img
                 src="/arrow-color.svg"
-                alt=""
-                role="presentation"
+                alt="toggle"
                 className={`navbar__filter-arrow ${
                   isFilterOpen ? "active" : ""
                 }`}
@@ -151,18 +133,12 @@ const Navbar: FC = () => {
             </button>
 
             {isFilterOpen && (
-              <div
-                className="navbar__filter-dropdown"
-                role="menu"
-                aria-label="Opciones de filtrado"
-              >
+              <div className="navbar__filter-dropdown">
                 {FILTERS.map((f) => (
                   <button
                     key={f.key}
                     className="navbar__filter-item"
                     onClick={() => handleSelectFilter(f.label)}
-                    role="menuitem"
-                    aria-label={`Filtrar por ${f.label}`}
                   >
                     {f.label}
                   </button>
@@ -171,17 +147,13 @@ const Navbar: FC = () => {
             )}
           </div>
 
-          <button
-            className="navbar__search-button"
-            aria-label="Abrir búsqueda de películas"
-          >
+          <button className="navbar__search-button" aria-label="Buscar">
             <svg
               width="18"
               height="18"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
             >
               <path
                 d="M21 21L16.65 16.65"
@@ -204,11 +176,7 @@ const Navbar: FC = () => {
         {/* Block 4: Actions (authentication and menu toggle) */}
         <div className="navbar__actions">
           {!isAuthenticated ? (
-            <Link
-              to="/login"
-              className="navbar__auth-button"
-              aria-label="Iniciar sesión en tu cuenta"
-            >
+            <Link to="/login" className="navbar__auth-button">
               INICIAR SESIÓN
             </Link>
           ) : (
@@ -216,11 +184,9 @@ const Navbar: FC = () => {
               <button
                 className="navbar__user-button"
                 onClick={toggleUserMenu}
-                aria-label={`Menú de usuario. Usuario actual: ${userName}`}
-                aria-haspopup="true"
-                aria-expanded={isUserMenuOpen}
+                aria-label="User menu"
               >
-                <div className="navbar__user-avatar" aria-hidden="true">
+                <div className="navbar__user-avatar">
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <span className="navbar__user-name">{userName}</span>
@@ -233,7 +199,6 @@ const Navbar: FC = () => {
                   viewBox="0 0 12 8"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
                 >
                   <path
                     d="M1 1L6 6L11 1"
@@ -247,17 +212,11 @@ const Navbar: FC = () => {
 
               {/* User Dropdown Menu */}
               {isUserMenuOpen && (
-                <div
-                  className="navbar__user-dropdown"
-                  role="menu"
-                  aria-label="Opciones de cuenta"
-                >
+                <div className="navbar__user-dropdown">
                   <Link
                     to="/perfil"
                     className="navbar__dropdown-item"
                     onClick={() => setIsUserMenuOpen(false)}
-                    role="menuitem"
-                    aria-label="Ver mi perfil"
                   >
                     <svg
                       width="16"
@@ -265,7 +224,6 @@ const Navbar: FC = () => {
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
                     >
                       <path
                         d="M8 8C10.21 8 12 6.21 12 4C12 1.79 10.21 0 8 0C5.79 0 4 1.79 4 4C4 6.21 5.79 8 8 8ZM8 10C5.33 10 0 11.34 0 14V16H16V14C16 11.34 10.67 10 8 10Z"
@@ -274,15 +232,10 @@ const Navbar: FC = () => {
                     </svg>
                     Mi Perfil
                   </Link>
-                  <div
-                    className="navbar__dropdown-divider"
-                    role="separator"
-                  ></div>
+                  <div className="navbar__dropdown-divider"></div>
                   <button
                     className="navbar__dropdown-item navbar__dropdown-item--logout"
                     onClick={handleLogout}
-                    role="menuitem"
-                    aria-label="Cerrar sesión y salir de la cuenta"
                   >
                     <svg
                       width="16"
@@ -290,7 +243,6 @@ const Navbar: FC = () => {
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
                     >
                       <path
                         d="M6 14H3C2.73478 14 2.48043 13.8946 2.29289 13.7071C2.10536 13.5196 2 13.2652 2 13V3C2 2.73478 2.10536 2.48043 2.29289 2.29289C2.48043 2.10536 2.73478 2 3 2H6M10.5 11.5L14 8L10.5 4.5M14 8H6"
@@ -308,46 +260,26 @@ const Navbar: FC = () => {
           )}
 
           {/* Hamburger Button */}
-          <button
+          <div
             className={`navbar__menu-button ${isMenuOpen ? "active" : ""}`}
             onClick={toggleMenu}
-            aria-label={
-              isMenuOpen
-                ? "Cerrar menú de navegación"
-                : "Abrir menú de navegación"
-            }
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-menu"
           >
             <span></span>
             <span></span>
             <span></span>
-          </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div
-            className="navbar__mobile-menu"
-            id="mobile-menu"
-            role="menu"
-            aria-label="Menú de navegación móvil"
-          >
-            <Link
-              to="/"
-              className="navbar__link"
-              onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="Ir a inicio"
-            >
+          <div className="navbar__mobile-menu">
+            <Link to="/" className="navbar__link" onClick={handleLinkClick}>
               Inicio
             </Link>
             <Link
               to="/peliculas"
               className="navbar__link"
               onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="Ver catálogo"
             >
               Catálogo
             </Link>
@@ -355,8 +287,6 @@ const Navbar: FC = () => {
               to="/sobre-nosotros"
               className="navbar__link"
               onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="Sobre nosotros"
             >
               Sobre nosotros
             </Link>
@@ -364,10 +294,10 @@ const Navbar: FC = () => {
             {/* Mobile User Section */}
             {isAuthenticated ? (
               <>
-                <div className="navbar__mobile-divider" role="separator"></div>
+                <div className="navbar__mobile-divider"></div>
                 <div className="navbar__mobile-user">
                   <div className="navbar__mobile-user-info">
-                    <div className="navbar__user-avatar" aria-hidden="true">
+                    <div className="navbar__user-avatar">
                       {userName.charAt(0).toUpperCase()}
                     </div>
                     <span className="navbar__mobile-user-name">{userName}</span>
@@ -377,29 +307,23 @@ const Navbar: FC = () => {
                   to="/perfil"
                   className="navbar__link"
                   onClick={handleLinkClick}
-                  role="menuitem"
-                  aria-label="Ver mi perfil"
                 >
                   Mi Perfil
                 </Link>
                 <button
                   className="navbar__mobile-logout"
                   onClick={handleLogout}
-                  role="menuitem"
-                  aria-label="Cerrar sesión"
                 >
                   Cerrar Sesión
                 </button>
               </>
             ) : (
               <>
-                <div className="navbar__mobile-divider" role="separator"></div>
+                <div className="navbar__mobile-divider"></div>
                 <Link
                   to="/login"
                   className="navbar__link"
                   onClick={handleLinkClick}
-                  role="menuitem"
-                  aria-label="Iniciar sesión"
                 >
                   Iniciar Sesión
                 </Link>
@@ -407,8 +331,6 @@ const Navbar: FC = () => {
                   to="/registro"
                   className="navbar__link"
                   onClick={handleLinkClick}
-                  role="menuitem"
-                  aria-label="Crear cuenta"
                 >
                   Registrarse
                 </Link>

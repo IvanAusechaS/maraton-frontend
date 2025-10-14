@@ -15,7 +15,7 @@
   &__back {
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     font-family: var(--font-body);
     font-size: 0.95rem;
     cursor: pointer;
@@ -23,10 +23,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 
     &:hover {
       color: #ffffff;
+    }
+
+    &:focus {
+      outline: 3px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
     }
   }
 
@@ -173,6 +178,13 @@
       opacity: 1;
     }
 
+    &:focus {
+      outline: 3px solid rgba(0, 123, 255, 0.5);
+      outline-offset: 2px;
+      border-radius: 4px;
+      opacity: 1;
+    }
+
     @media (max-width: 768px) {
       right: 0.75rem;
 
@@ -192,7 +204,19 @@
     font-family: var(--font-body);
     font-size: 0.9rem;
     color: #dc3545;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     animation: slideDown 0.3s ease;
+
+    &:focus {
+      outline: 3px solid rgba(220, 53, 69, 0.3);
+      outline-offset: 2px;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
 
     @keyframes slideDown {
       from {
@@ -286,6 +310,19 @@
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
 
     &:hover:not(:disabled) {
       background: linear-gradient(135deg, #4a5c6d 0%, #2d3f4f 100%);
@@ -297,9 +334,20 @@
       transform: translateY(0);
     }
 
+    &:focus {
+      outline: 3px solid rgba(0, 123, 255, 0.5);
+      outline-offset: 2px;
+    }
+
     &:disabled {
-      opacity: 0.6;
+      opacity: 0.7;
       cursor: not-allowed;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
   }
 
@@ -324,6 +372,12 @@
     &:hover {
       color: #0056b3;
       text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 3px solid rgba(0, 123, 255, 0.5);
+      outline-offset: 2px;
+      border-radius: 2px;
     }
   }
 }

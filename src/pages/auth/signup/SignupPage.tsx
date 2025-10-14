@@ -76,7 +76,7 @@ const SignupPage: React.FC = () => {
       });
 
       console.log("Registro exitoso:", response);
-      
+
       // Redirect to login after successful registration
       navigate("/login");
     } catch (err) {
@@ -91,14 +91,21 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="signup-page">
+    <div className="signup-page" role="main">
       <div className="signup-page__container">
         <div className="signup-page__card">
-          <button className="signup-page__back" onClick={() => navigate("/")}>
+          <button
+            className="signup-page__back"
+            onClick={() => navigate("/")}
+            aria-label="Regresar al inicio"
+          >
             ← Regresar al inicio
           </button>
           <div className="signup-page__logo">
-            <img src="/main-logo.svg" alt="Maraton Logo" />
+            <img
+              src="/main-logo.svg"
+              alt="Logotipo de Maraton - Plataforma de streaming"
+            />
           </div>
 
           <h1 className="signup-page__title">Crea tu cuenta</h1>
@@ -107,12 +114,40 @@ const SignupPage: React.FC = () => {
           </p>
 
           {error && (
-            <div className="signup-page__error">
+            <div
+              className="signup-page__error"
+              role="alert"
+              aria-live="assertive"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  marginRight: "8px",
+                  display: "inline-block",
+                }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
               {error}
             </div>
           )}
 
-          <form className="signup-page__form" onSubmit={handleSubmit}>
+          <form
+            className="signup-page__form"
+            onSubmit={handleSubmit}
+            aria-label="Formulario de registro"
+            noValidate
+          >
             <div className="signup-page__form-group">
               <input
                 type="text"
@@ -123,6 +158,8 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
+                aria-required="true"
+                autoComplete="given-name"
               />
               <label htmlFor="nombre" className="signup-page__label">
                 Nombre
@@ -139,6 +176,8 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
+                aria-required="true"
+                autoComplete="family-name"
               />
               <label htmlFor="apellido" className="signup-page__label">
                 Apellido
@@ -155,6 +194,9 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
+                aria-required="true"
+                aria-invalid={error ? "true" : "false"}
+                autoComplete="email"
               />
               <label htmlFor="email" className="signup-page__label">
                 Correo electrónico
@@ -171,6 +213,9 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
+                aria-required="true"
+                autoComplete="bday"
+                aria-label="Fecha de nacimiento en formato día, mes, año"
               />
               <label htmlFor="fechaNacimiento" className="signup-page__label">
                 Fecha de Nacimiento
@@ -187,11 +232,18 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
-                minLength={6}
+                minLength={8}
+                aria-required="true"
+                aria-describedby="password-requirements"
+                autoComplete="new-password"
               />
               <label htmlFor="password" className="signup-page__label">
                 Contraseña
               </label>
+              <div id="password-requirements" className="signup-page__hint">
+                Mínimo 8 caracteres, incluye mayúscula, número y carácter
+                especial
+              </div>
             </div>
 
             <div className="signup-page__form-group">
@@ -204,19 +256,29 @@ const SignupPage: React.FC = () => {
                 className="signup-page__input"
                 placeholder=" "
                 required
-                minLength={6}
+                minLength={8}
+                aria-required="true"
+                autoComplete="new-password"
               />
               <label htmlFor="confirmPassword" className="signup-page__label">
                 Confirmar contraseña
               </label>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="signup-page__submit"
               disabled={isSubmitting}
+              aria-busy={isSubmitting}
             >
-              {isSubmitting ? "CREANDO CUENTA..." : "CREAR CUENTA"}
+              {isSubmitting ? (
+                <>
+                  <span className="spinner" aria-hidden="true"></span>
+                  CREANDO CUENTA...
+                </>
+              ) : (
+                "CREAR CUENTA"
+              )}
             </button>
 
             <div className="signup-page__login">
@@ -225,6 +287,7 @@ const SignupPage: React.FC = () => {
                 type="button"
                 className="signup-page__login-link"
                 onClick={() => navigate("/login")}
+                aria-label="Ir a página de inicio de sesión"
               >
                 Inicia sesión
               </button>

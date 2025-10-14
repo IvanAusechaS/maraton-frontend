@@ -4,7 +4,7 @@
 
 // Mission Section
 .mission-section {
-  background: linear-gradient(180deg, #e8e8e8 0%, #ffffff 50%, #b8d4e8 100%);
+  background: #1a1a1a;
   padding: 4rem 2rem;
 
   &__container {
@@ -15,7 +15,7 @@
   &__title {
     font-family: var(--font-heading);
     font-size: 3rem;
-    color: #1a1a1a;
+    color: #ffffff;
     text-align: center;
     margin: 0 0 2rem 0;
     font-weight: 700;
@@ -28,7 +28,7 @@
   &__description {
     font-family: var(--font-body);
     font-size: 1.1rem;
-    color: #1a1a1a;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
     line-height: 1.8;
     max-width: 900px;
@@ -76,7 +76,7 @@
   &__label {
     font-family: var(--font-body);
     font-size: 1rem;
-    color: #1a1a1a;
+    color: #ffffff;
     margin: 0;
 
     @media (max-width: 768px) {
@@ -188,7 +188,7 @@
 
 // Classification Section
 .classification-section {
-  background: linear-gradient(180deg, #d0d0d0 0%, #e8e8e8 100%);
+  background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
   padding: 4rem 2rem;
 
   &__container {
@@ -199,7 +199,7 @@
   &__title {
     font-family: var(--font-heading);
     font-size: 3rem;
-    color: #1a1a1a;
+    color: #ffffff;
     text-align: center;
     margin: 0 0 1rem 0;
     font-weight: 700;
@@ -212,7 +212,7 @@
   &__subtitle {
     font-family: var(--font-body);
     font-size: 1.05rem;
-    color: #1a1a1a;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
     line-height: 1.6;
     max-width: 800px;
@@ -265,6 +265,7 @@
     border-radius: 12px;
     margin-bottom: 1.5rem;
     color: #ffffff;
+    background: var(--color-secondary);
 
     @media (max-width: 768px) {
       font-size: 1.75rem;
@@ -273,11 +274,11 @@
   }
 
   &--green &__badge {
-    background: #00c853;
+    background: var(--color-secondary);
   }
 
   &--red &__badge {
-    background: #ff1744;
+    background: var(--color-secondary);
   }
 
   &__description {
@@ -346,6 +347,7 @@
     margin: 0 0 1.5rem 0;
     font-weight: 700;
     padding-bottom: 1rem;
+    color: var(--color-secondary);
 
     @media (max-width: 768px) {
       font-size: 1.3rem;
@@ -353,13 +355,13 @@
   }
 
   &--prohibited &__title {
-    color: #d32f2f;
-    border-bottom: 3px solid #d32f2f;
+    color: var(--color-secondary);
+    border-bottom: 3px solid var(--color-secondary);
   }
 
   &--quality &__title {
-    color: #00c853;
-    border-bottom: 3px solid #00c853;
+    color: var(--color-secondary);
+    border-bottom: 3px solid var(--color-secondary);
   }
 
   &__list {

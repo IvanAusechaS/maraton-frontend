@@ -116,7 +116,7 @@ VITE_API_URL=http://localhost:3000/api
 
 ### Production (.env.production)
 ```bash
-VITE_API_URL=https://maraton-backend-cv2e.onrender.com/api
+VITE_API_URL=https://maraton-backend.onrender.com/api
 ```
 
 ## Testing
@@ -132,17 +132,17 @@ VITE_API_URL=https://maraton-backend-cv2e.onrender.com/api
 ### Test Authentication Flow
 ```bash
 # 1. Login
-curl -X POST https://maraton-backend-cv2e.onrender.com/api/auth/login \
+curl -X POST https://maraton-backend.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password"}' \
   -c cookies.txt
 
 # 2. Access protected endpoint
-curl https://maraton-backend-cv2e.onrender.com/api/movies \
+curl https://maraton-backend.onrender.com/api/movies \
   -b cookies.txt
 
 # 3. Logout
-curl -X POST https://maraton-backend-cv2e.onrender.com/api/auth/logout \
+curl -X POST https://maraton-backend.onrender.com/api/auth/logout \
   -b cookies.txt
 ```
 

@@ -3,7 +3,7 @@
 ## 🚨 El Problema
 
 ```
-Access to fetch at 'https://maraton-backend-cv2e.onrender.com/api/auth/login' 
+Access to fetch at 'https://maraton-backend.onrender.com/api/auth/login' 
 from origin 'https://maraton-frontend.vercel.app' has been blocked by CORS policy: 
 The value of the 'Access-Control-Allow-Origin' header in the response must not be 
 the wildcard '*' when the request's credentials mode is 'include'.
@@ -278,7 +278,7 @@ app.get('/api/profile', authMiddleware, async (req, res) => {
 ### Prueba 1: Verificar CORS
 
 ```bash
-curl -X OPTIONS https://maraton-backend-cv2e.onrender.com/api/auth/login \
+curl -X OPTIONS https://maraton-backend.onrender.com/api/auth/login \
   -H "Origin: https://maraton-frontend.vercel.app" \
   -H "Access-Control-Request-Method: POST" \
   -v
@@ -293,7 +293,7 @@ curl -X OPTIONS https://maraton-backend-cv2e.onrender.com/api/auth/login \
 
 ```bash
 # 1. Login (guardar cookie en archivo)
-curl -X POST https://maraton-backend-cv2e.onrender.com/api/auth/login \
+curl -X POST https://maraton-backend.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -H "Origin: https://maraton-frontend.vercel.app" \
   -d '{"email":"tu@email.com","password":"tupassword"}' \
@@ -304,7 +304,7 @@ curl -X POST https://maraton-backend-cv2e.onrender.com/api/auth/login \
 # Set-Cookie: authToken=eyJhbGc...; Path=/; HttpOnly; Secure; SameSite=None
 
 # 2. Usar cookie para request autenticado
-curl https://maraton-backend-cv2e.onrender.com/api/movies \
+curl https://maraton-backend.onrender.com/api/movies \
   -b cookies.txt \
   -H "Origin: https://maraton-frontend.vercel.app" \
   -v
@@ -422,5 +422,5 @@ NODE_ENV=production
 **Fecha**: 14 de octubre de 2025  
 **Autor**: Ivan Ausecha  
 **Frontend**: https://maraton-frontend.vercel.app  
-**Backend**: https://maraton-backend-cv2e.onrender.com
+**Backend**: https://maraton-backend.onrender.com
 

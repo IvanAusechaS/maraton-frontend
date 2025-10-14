@@ -1,9 +1,10 @@
 /**
  * Authentication Service
  * Handles all authentication-related API calls
+ * Uses HTTP-only cookies for secure token management
  */
 
-import api, { setAuthToken, removeAuthToken } from './api';
+import api from './api';
 
 /**
  * User interface based on backend response
@@ -108,17 +109,17 @@ class AuthService {
   /**
    * Login user
    * POST /auth/login
+   * Note: Authentication token is now handled by HTTP-only cookies set by the server
    */
   async login(data: LoginData): Promise<LoginResponse> {
     try {
       const response = await api.post<LoginResponse>('/auth/login', data);
       
-      // Store token in localStorage
-      if (response.token) {
-        setAuthToken(response.token);
-        // Optionally store user data
+      // Store only user data in localStorage (not the token)
+      // Token is automatically stored in HTTP-only cookie by the server
+      if (response.usuario) {
         localStorage.setItem('user', JSON.stringify(response.usuario));
-        // Notify other parts of the app that auth state changed (same-tab listeners)
+        // Notify other parts of the app that auth state changed
         try {
           window.dispatchEvent(new CustomEvent('authChanged'));
         } catch (err) {
@@ -167,13 +168,14 @@ class AuthService {
   /**
    * Logout user
    * POST /auth/logout
+   * Note: Server clears the HTTP-only cookie
    */
   async logout(): Promise<LogoutResponse> {
     try {
       const response = await api.post<LogoutResponse>('/auth/logout', {});
       
-      // Clear token and user data
-      removeAuthToken();
+      // Clear user data from localStorage
+      // Cookie is cleared by the server
       localStorage.removeItem('user');
       // Notify listeners that auth state changed
       try {
@@ -186,7 +188,6 @@ class AuthService {
     } catch (error) {
       console.error('Logout error:', error);
       // Clear local data even if request fails
-      removeAuthToken();
       localStorage.removeItem('user');
       try {
         window.dispatchEvent(new CustomEvent('authChanged'));
@@ -214,10 +215,12 @@ class AuthService {
 
   /**
    * Check if user is authenticated
+   * Checks if user data exists in localStorage
+   * Note: Actual authentication is verified by the server via HTTP-only cookie
    */
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('authToken');
-    return !!token;
+    const user = localStorage.getItem('user');
+    return !!user;
   }
 }
 

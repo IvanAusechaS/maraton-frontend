@@ -9,7 +9,8 @@ import LoginPage from "../pages/auth/login/LoginPage";
 import RecoveryPage from "../pages/auth/recovery/RecoveryPage";
 import ResetPassPage from "../pages/auth/reset-pass/ResetPassPage";
 import SuccessEmailPage from "../pages/auth/success-email/SucessEmailPage";
-import ProfilePage from "../pages/profile/ProfilePage";
+import ProfilePage from "../pages/profile/profile/ProfilePage";
+import EditProfilePage from "../pages/profile/edit-profile/EditProfilePage";
 
 /**
  * Top-level route configuration for the MARATON app.
@@ -35,6 +36,9 @@ const RoutesMARATON = () => {
           <Route path="/restablecer" element={<ResetPassPage />} />
           <Route path="/exito" element={<SuccessEmailPage />} />
           <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/edit" element={<EditProfilePage />} />
+          <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
       </LayoutMARATON>
     </BrowserRouter>

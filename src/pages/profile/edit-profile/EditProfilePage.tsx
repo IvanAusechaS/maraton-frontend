@@ -21,9 +21,7 @@ const EditProfilePage = () => {
   // Profile form state
   const [formData, setFormData] = useState({
     username: "",
-    nombre_completo: "",
     email: "",
-    ubicacion: "",
   });
 
   // Password form state
@@ -45,17 +43,6 @@ const EditProfilePage = () => {
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(3);
 
-  const getDefaultProfile = (): UserProfile => ({
-    id: 0,
-    email: "correo@dominio.com",
-    username: "Usuario",
-    nombre_completo: "Nombre Apellido",
-    ubicacion: "Calim Colombia",
-    fecha_registro: new Date().toISOString(),
-    peliculas_vistas: 127,
-    series_seguidas: 23,
-  });
-
   useEffect(() => {
     loadProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,62 +57,32 @@ const EditProfilePage = () => {
       setProfile(data);
       setFormData({
         username: data.username || "",
-        nombre_completo: data.nombre_completo || "",
         email: data.email || "",
-        ubicacion: data.ubicacion || "",
       });
     } catch (err) {
       console.error("Error loading profile:", err);
 
-      if (err instanceof ApiError && err.status === 401) {
-        authService.logout();
-        navigate("/login");
-        return;
-      }
-
-      if (err instanceof ApiError && err.status === 0) {
-        const localUser = authService.getCurrentUser();
-        if (localUser) {
-          const localProfile = {
-            id: localUser.id,
-            email: localUser.email,
-            username: localUser.username,
-            nombre_completo: localUser.username,
-            ubicacion: "Calim Colombia",
-            fecha_registro: new Date().toISOString(),
-            peliculas_vistas: 127,
-            series_seguidas: 23,
-          };
-          setProfile(localProfile);
-          setFormData({
-            username: localProfile.username,
-            nombre_completo: localProfile.nombre_completo || "",
-            email: localProfile.email,
-            ubicacion: localProfile.ubicacion || "",
-          });
+      if (err instanceof ApiError) {
+        if (err.status === 401) {
+          setError("Sesión expirada. Por favor, inicia sesión nuevamente.");
+          setTimeout(() => {
+            authService.logout();
+            navigate("/login");
+          }, 2000);
+          return;
+        } else if (err.status === 404) {
+          setError("No se encontró el perfil del usuario.");
+        } else if (err.status === 0) {
+          setError(
+            "❌ No se pudo conectar con el servidor. Por favor, verifica que el backend esté ejecutándose."
+          );
         } else {
-          const defaultProfile = getDefaultProfile();
-          setProfile(defaultProfile);
-          setFormData({
-            username: "Usuario",
-            nombre_completo: "Nombre Apellido",
-            email: "correo@dominio.com",
-            ubicacion: "Calim Colombia",
-          });
+          setError(
+            `Error al cargar el perfil: ${err.message || "Error desconocido"}`
+          );
         }
-        setError("Modo offline: Mostrando datos locales");
       } else {
-        const defaultProfile = getDefaultProfile();
-        setProfile(defaultProfile);
-        setFormData({
-          username: "Usuario",
-          nombre_completo: "Nombre Apellido",
-          email: "correo@dominio.com",
-          ubicacion: "Calim Colombia",
-        });
-        setError(
-          "No se pudo cargar el perfil. Mostrando información predeterminada."
-        );
+        setError("Error inesperado al cargar el perfil.");
       }
     } finally {
       setLoading(false);
@@ -156,11 +113,6 @@ const EditProfilePage = () => {
       errors.email = "El correo electrónico es requerido";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = "El correo electrónico no es válido";
-    }
-
-    if (formData.nombre_completo && formData.nombre_completo.length < 2) {
-      errors.nombre_completo =
-        "El nombre completo debe tener al menos 2 caracteres";
     }
 
     setFormErrors(errors);
@@ -204,9 +156,7 @@ const EditProfilePage = () => {
 
       const updateData: UpdateProfileData = {
         username: formData.username,
-        nombre_completo: formData.nombre_completo,
         email: formData.email,
-        ubicacion: formData.ubicacion,
       };
 
       const updatedProfile = await userService.updateProfile(updateData);
@@ -259,21 +209,26 @@ const EditProfilePage = () => {
         confirmPassword: "",
       });
       setPasswordErrors({});
-      setSuccess("Contraseña cambiada correctamente");
+      setSuccess("✅ Contraseña cambiada correctamente");
 
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       console.error("Error changing password:", err);
       if (err instanceof ApiError) {
-        if (err.status === 0) {
-          setSuccess("Cambio de contraseña registrado (modo offline)");
-          setTimeout(() => setSuccess(null), 5000);
+        if (err.status === 401) {
+          setError("❌ La contraseña actual es incorrecta");
+        } else if (err.status === 400) {
+          setError(err.message || "❌ Error de validación en la contraseña");
+        } else if (err.status === 0) {
+          setError(
+            "❌ No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose."
+          );
         } else {
-          setError(err.message || "Error al cambiar la contraseña");
+          setError(err.message || "❌ Error al cambiar la contraseña");
         }
       } else {
         setError(
-          "Error al cambiar la contraseña. Por favor, inténtalo de nuevo."
+          "❌ Error al cambiar la contraseña. Por favor, inténtalo de nuevo."
         );
       }
     } finally {
@@ -343,7 +298,62 @@ const EditProfilePage = () => {
     );
   }
 
-  const displayProfile = profile || getDefaultProfile();
+  // Si hay error y no hay perfil, mostrar pantalla de error
+  if (error && !profile) {
+    return (
+      <div className="edit-profile-page">
+        <div className="edit-profile-container">
+          <div className="header-section">
+            <button
+              className="back-button"
+              onClick={() => navigate("/profile")}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Volver
+            </button>
+          </div>
+          <div className="message-banner error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <button
+              className="save-button"
+              onClick={loadProfile}
+              style={{ marginRight: "1rem" }}
+            >
+              Reintentar
+            </button>
+            <button
+              className="cancel-button"
+              onClick={() => navigate("/profile")}
+            >
+              Volver al perfil
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay perfil después de cargar, no renderizar nada
+  if (!profile) {
+    return null;
+  }
 
   return (
     <div className="edit-profile-page">
@@ -396,15 +406,10 @@ const EditProfilePage = () => {
           <div className="profile-info-section">
             <div className="avatar-section">
               <div className="avatar-circle">
-                {getInitials(
-                  displayProfile.nombre_completo || "",
-                  displayProfile.username
-                )}
+                {getInitials("", profile.username)}
               </div>
-              <h2 className="user-name">
-                {displayProfile.nombre_completo || displayProfile.username}
-              </h2>
-              <p className="user-email">{displayProfile.email}</p>
+              <h2 className="user-name">{profile.username}</h2>
+              <p className="user-email">{profile.email}</p>
             </div>
 
             <form onSubmit={handleProfileSubmit} className="profile-form">
@@ -442,39 +447,6 @@ const EditProfilePage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="nombre_completo">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  Nombre completo
-                </label>
-                <input
-                  type="text"
-                  id="nombre_completo"
-                  value={formData.nombre_completo}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      nombre_completo: e.target.value,
-                    });
-                    setFormErrors({ ...formErrors, nombre_completo: "" });
-                  }}
-                  placeholder="Tu nombre completo"
-                  className={formErrors.nombre_completo ? "error" : ""}
-                />
-                {formErrors.nombre_completo && (
-                  <span className="error-text">
-                    {formErrors.nombre_completo}
-                  </span>
-                )}
-              </div>
-
-              <div className="form-group">
                 <label htmlFor="email">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path
@@ -500,35 +472,6 @@ const EditProfilePage = () => {
                 {formErrors.email && (
                   <span className="error-text">{formErrors.email}</span>
                 )}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="ubicacion">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  Ubicación
-                </label>
-                <input
-                  type="text"
-                  id="ubicacion"
-                  value={formData.ubicacion}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ubicacion: e.target.value })
-                  }
-                  placeholder="Ciudad, País"
-                />
               </div>
 
               <div className="form-actions">

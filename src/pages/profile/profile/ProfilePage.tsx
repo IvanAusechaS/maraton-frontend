@@ -15,18 +15,6 @@ const ProfilePage = () => {
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(3);
 
-  // Default profile data (sin datos reales)
-  const getDefaultProfile = (): UserProfile => ({
-    id: 0,
-    email: "correo@dominio.com",
-    username: "Usuario",
-    nombre_completo: "Nombre Apellido",
-    ubicacion: "Calim Colombia",
-    fecha_registro: new Date().toISOString(),
-    peliculas_vistas: 127,
-    series_seguidas: 23,
-  });
-
   useEffect(() => {
     loadProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,44 +25,34 @@ const ProfilePage = () => {
       setLoading(true);
       setError(null);
 
-      // Intentar cargar desde el backend
+      // Cargar perfil desde el backend
       const data = await userService.getProfile();
       setProfile(data);
     } catch (err) {
       console.error("Error loading profile:", err);
 
-      if (err instanceof ApiError && err.status === 401) {
-        // Token expirado o inválido - redirigir al login
-        authService.logout();
-        navigate("/login");
-        return;
-      }
-
-      // Si hay error de red o backend no disponible, usar datos predeterminados
-      if (err instanceof ApiError && err.status === 0) {
-        // Backend no disponible - cargar datos predeterminados
-        const localUser = authService.getCurrentUser();
-        if (localUser) {
-          setProfile({
-            id: localUser.id,
-            email: localUser.email,
-            username: localUser.username,
-            nombre_completo: localUser.username,
-            ubicacion: "Calim Colombia",
-            fecha_registro: new Date().toISOString(),
-            peliculas_vistas: 127,
-            series_seguidas: 23,
-          });
+      if (err instanceof ApiError) {
+        if (err.status === 401) {
+          // Token expirado o inválido - redirigir al login
+          setError("Sesión expirada. Por favor, inicia sesión nuevamente.");
+          setTimeout(() => {
+            authService.logout();
+            navigate("/login");
+          }, 2000);
+          return;
+        } else if (err.status === 404) {
+          setError("No se encontró el perfil del usuario.");
+        } else if (err.status === 0) {
+          setError(
+            "❌ No se pudo conectar con el servidor. Por favor, verifica que el backend esté ejecutándose."
+          );
         } else {
-          setProfile(getDefaultProfile());
+          setError(
+            `Error al cargar el perfil: ${err.message || "Error desconocido"}`
+          );
         }
-        setError("Modo offline: Mostrando datos locales");
       } else {
-        // Otro tipo de error
-        setProfile(getDefaultProfile());
-        setError(
-          "No se pudo cargar el perfil. Mostrando información predeterminada."
-        );
+        setError("Error inesperado al cargar el perfil.");
       }
     } finally {
       setLoading(false);
@@ -90,6 +68,26 @@ const ProfilePage = () => {
       return name.substring(0, 2).toUpperCase();
     }
     return username.substring(0, 2).toUpperCase();
+  };
+
+  const calculateAge = (birthDateString: string): number => {
+    try {
+      const birthDate = new Date(birthDateString);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      return age;
+    } catch {
+      return 0;
+    }
   };
 
   const formatDate = (dateString: string): string => {
@@ -162,8 +160,6 @@ const ProfilePage = () => {
     }
   };
 
-  const displayProfile = profile || getDefaultProfile();
-
   if (loading) {
     return (
       <div className="profile-page">
@@ -175,6 +171,48 @@ const ProfilePage = () => {
         </div>
       </div>
     );
+  }
+
+  // Si hay error y no hay perfil, mostrar pantalla de error
+  if (error && !profile) {
+    return (
+      <div className="profile-page">
+        <div className="profile-container">
+          <div className="error-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <button
+              className="edit-button"
+              onClick={loadProfile}
+              style={{ margin: "1rem auto" }}
+            >
+              Reintentar
+            </button>
+            <button
+              className="delete-button"
+              onClick={() => navigate("/")}
+              style={{ margin: "1rem auto" }}
+            >
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay perfil después de cargar, no renderizar nada
+  if (!profile) {
+    return null;
   }
 
   return (
@@ -198,27 +236,22 @@ const ProfilePage = () => {
           {/* Left Section - User Info */}
           <div className="user-info-section">
             <div className="avatar-circle">
-              {getInitials(
-                displayProfile.nombre_completo || "",
-                displayProfile.username
-              )}
+              {getInitials("", profile.username)}
             </div>
-            <h2 className="user-name">
-              {displayProfile.nombre_completo || displayProfile.username}
-            </h2>
-            <p className="user-email">{displayProfile.email}</p>
+            <h2 className="user-name">{profile.username}</h2>
+            <p className="user-email">{profile.email}</p>
 
             <div className="stats-container">
               <div className="stat-item">
                 <span className="stat-value">
-                  {displayProfile.peliculas_vistas || 0}
+                  {profile.peliculas_vistas || 0}
                 </span>
                 <span className="stat-label">Películas vistas</span>
               </div>
               <div className="stat-divider"></div>
               <div className="stat-item">
                 <span className="stat-value">
-                  {displayProfile.series_seguidas || 0}
+                  {profile.series_seguidas || 0}
                 </span>
                 <span className="stat-label">Series seguidas</span>
               </div>
@@ -243,10 +276,8 @@ const ProfilePage = () => {
                   </svg>
                 </div>
                 <div className="info-content">
-                  <p className="info-label">
-                    {displayProfile.nombre_completo || "Nombre Completo"}
-                  </p>
-                  <p className="info-value">Nombre Completo</p>
+                  <p className="info-label">{profile.username}</p>
+                  <p className="info-value">Nombre de Usuario</p>
                 </div>
               </div>
 
@@ -262,35 +293,31 @@ const ProfilePage = () => {
                   </svg>
                 </div>
                 <div className="info-content">
-                  <p className="info-label">{displayProfile.email}</p>
+                  <p className="info-label">{profile.email}</p>
                   <p className="info-value">Dirección de email</p>
                 </div>
               </div>
 
-              <div className="info-item">
-                <div className="info-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+              {profile.fecha_nacimiento && (
+                <div className="info-item">
+                  <div className="info-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="info-content">
+                    <p className="info-label">
+                      {calculateAge(profile.fecha_nacimiento)} años
+                    </p>
+                    <p className="info-value">Edad</p>
+                  </div>
                 </div>
-                <div className="info-content">
-                  <p className="info-label">
-                    {displayProfile.ubicacion || "No especificada"}
-                  </p>
-                  <p className="info-value">Ubicación</p>
-                </div>
-              </div>
+              )}
 
               <div className="info-item">
                 <div className="info-icon">
@@ -305,7 +332,9 @@ const ProfilePage = () => {
                 </div>
                 <div className="info-content">
                   <p className="info-label">
-                    {formatDate(displayProfile.fecha_registro)}
+                    {formatDate(
+                      profile.fecha_registro || new Date().toISOString()
+                    )}
                   </p>
                   <p className="info-value">Fecha de registro</p>
                 </div>

@@ -1,9 +1,10 @@
 /**
  * User Service
- * Handles user profile-related API calls with fallback support
+ * Handles user profile-related API calls
  */
 
 import api, { ApiError } from "./api";
+import { authService } from "./authService";
 
 /**
  * User profile interface
@@ -12,9 +13,8 @@ export interface UserProfile {
   id: number;
   email: string;
   username: string;
-  nombre_completo?: string;
-  ubicacion?: string;
-  fecha_registro: string;
+  fecha_nacimiento?: string;
+  fecha_registro?: string;
   peliculas_vistas?: number;
   series_seguidas?: number;
 }
@@ -24,9 +24,8 @@ export interface UserProfile {
  */
 export interface UpdateProfileData {
   username?: string;
-  nombre_completo?: string;
   email?: string;
-  ubicacion?: string;
+  fecha_nacimiento?: string;
 }
 
 /**
@@ -39,115 +38,134 @@ export interface ChangePasswordData {
 }
 
 /**
- * User service class with fallback support
+ * User service class
  */
 class UserService {
   /**
-   * Get user profile
-   * GET /user/profile
-   * Falls back to default data if backend is not available
+   * Get user profile from backend
+   * GET /api/usuarios/:id
    */
   async getProfile(): Promise<UserProfile> {
     try {
-      const response = await api.get<UserProfile>("/user/profile");
-      return response;
-    } catch (error) {
-      console.warn(
-        "Backend not available for profile, using default data:",
-        error
+      // Obtener el usuario actual del authService
+      const currentUser = authService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        throw new ApiError("Usuario no autenticado", 401);
+      }
+
+      // Llamar al endpoint del backend GET /api/usuarios/:id
+      const response = await api.get<UserProfile>(
+        `/usuarios/${currentUser.id}`
       );
-      // Return default profile data
+
+      return {
+        ...response,
+        fecha_registro: response.fecha_registro || new Date().toISOString(),
+        peliculas_vistas: response.peliculas_vistas || 0,
+        series_seguidas: response.series_seguidas || 0,
+      };
+    } catch (error) {
+      console.error("Error loading profile:", error);
       throw error;
     }
   }
 
   /**
-   * Update user profile
-   * PUT /user/profile
-   * Simulates update if backend is not available
+   * Update user profile in backend
+   * PUT /api/usuarios/:id
    */
   async updateProfile(data: UpdateProfileData): Promise<UserProfile> {
     try {
-      const response = await api.put<UserProfile>("/user/profile", data);
-      // Update localStorage user data
-      const currentUser = localStorage.getItem("user");
-      if (currentUser) {
-        const userData = JSON.parse(currentUser);
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ ...userData, ...response })
-        );
+      const currentUser = authService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        throw new ApiError("Usuario no autenticado", 401);
       }
+
+      // Preparar datos para enviar (solo los campos que vienen en data)
+      const updateData: Record<string, string> = {};
+
+      if (data.username !== undefined) updateData.username = data.username;
+      if (data.email !== undefined) updateData.email = data.email;
+      if (data.fecha_nacimiento !== undefined)
+        updateData.fecha_nacimiento = data.fecha_nacimiento;
+
+      // Llamar al endpoint PUT /api/usuarios/:id
+      const response = await api.put<UserProfile>(
+        `/usuarios/${currentUser.id}`,
+        updateData
+      );
+
+      // Actualizar el usuario en localStorage si es necesario
+      if (response.email || response.username) {
+        const updatedUser = {
+          ...currentUser,
+          email: response.email || currentUser.email,
+          username: response.username || currentUser.username,
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
       return response;
     } catch (error) {
-      console.warn("Backend not available for profile update:", error);
-      // Simulate successful update by returning updated data
-      if (error instanceof ApiError && error.status === 0) {
-        // Network error - backend not available
-        const currentUser = localStorage.getItem("user");
-        if (currentUser) {
-          const userData = JSON.parse(currentUser);
-          const updatedData = { ...userData, ...data };
-          localStorage.setItem("user", JSON.stringify(updatedData));
-          return {
-            id: updatedData.id || 0,
-            email: updatedData.email || "correo@dominio.com",
-            username: updatedData.username || "Usuario",
-            nombre_completo: updatedData.nombre_completo,
-            ubicacion: updatedData.ubicacion,
-            fecha_registro:
-              updatedData.fecha_registro || new Date().toISOString(),
-            peliculas_vistas: 0,
-            series_seguidas: 0,
-          };
-        }
-      }
+      console.error("Error updating profile:", error);
       throw error;
     }
   }
 
   /**
    * Change password
-   * POST /user/change-password
-   * Simulates change if backend is not available
+   * PUT /api/usuarios/:id/change-password
    */
   async changePassword(data: ChangePasswordData): Promise<{ message: string }> {
     try {
-      const response = await api.post<{ message: string }>(
-        "/user/change-password",
-        data
+      const currentUser = authService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        throw new ApiError("Usuario no autenticado", 401);
+      }
+
+      // Validar que las contraseñas nuevas coincidan
+      if (data.newPassword !== data.confirmPassword) {
+        throw new ApiError("Las contraseñas no coinciden", 400);
+      }
+
+      // Llamar al endpoint PUT /api/usuarios/:id/change-password
+      const response = await api.put<{ message: string }>(
+        `/usuarios/${currentUser.id}/change-password`,
+        {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        }
       );
+
       return response;
     } catch (error) {
-      console.warn("Backend not available for password change:", error);
-      // Simulate successful password change if backend is unavailable
-      if (error instanceof ApiError && error.status === 0) {
-        return { message: "Contraseña actualizada (modo offline)" };
-      }
+      console.error("Error changing password:", error);
       throw error;
     }
   }
 
   /**
-   * Delete user account
-   * DELETE /user/account
-   * Simulates deletion if backend is not available
+   * Delete user account from backend
+   * DELETE /api/usuarios/:id
    */
-  async deleteAccount(): Promise<{ message: string }> {
+  async deleteAccount(): Promise<void> {
     try {
-      const response = await api.delete<{ message: string }>("/user/account");
-      // Clear all local data
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
-      return response;
-    } catch (error) {
-      console.warn("Backend not available for account deletion:", error);
-      // Clear local data anyway
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
-      if (error instanceof ApiError && error.status === 0) {
-        return { message: "Cuenta eliminada (modo offline)" };
+      const currentUser = authService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        throw new ApiError("Usuario no autenticado", 401);
       }
+
+      // Llamar al endpoint DELETE /api/usuarios/:id
+      await api.delete(`/usuarios/${currentUser.id}`);
+
+      // Limpiar datos locales después de eliminar la cuenta
+      authService.logout();
+    } catch (error) {
+      console.error("Error deleting account:", error);
       throw error;
     }
   }

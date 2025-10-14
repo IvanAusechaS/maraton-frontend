@@ -1,15 +1,15 @@
 .edit-profile-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
 
   .edit-profile-container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 
   .header-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 
     .back-button {
       display: inline-flex;
@@ -18,17 +18,18 @@
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(148, 163, 184, 0.2);
       color: #cbd5e1;
-      padding: 0.75rem 1.25rem;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      padding: 0.625rem 1rem;
+      border-radius: 10px;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-bottom: 1rem;
+      margin-bottom: 0.875rem;
 
       svg {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         stroke-width: 2;
       }
 
@@ -40,31 +41,33 @@
     }
 
     .page-title {
-      font-size: 2rem;
-      font-weight: 700;
+      font-family: "Days One", sans-serif;
+      font-size: 1.75rem;
+      font-weight: 400;
       color: #f1f5f9;
       margin: 0;
     }
   }
 
   .message-banner {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.875rem;
+    margin-bottom: 1.25rem;
     border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.625rem;
     animation: slideDown 0.3s ease;
 
     svg {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       flex-shrink: 0;
       stroke-width: 2;
     }
 
     span {
-      font-size: 0.95rem;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.875rem;
       line-height: 1.4;
     }
 
@@ -98,11 +101,11 @@
     align-items: center;
     justify-content: center;
     min-height: 60vh;
-    gap: 1.5rem;
+    gap: 1.25rem;
 
     .spinner {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border: 4px solid rgba(59, 130, 246, 0.2);
       border-top-color: #3b82f6;
       border-radius: 50%;
@@ -110,8 +113,9 @@
     }
 
     p {
+      font-family: "Rubik", sans-serif;
       color: #cbd5e1;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
   }
 
@@ -124,7 +128,7 @@
   .edit-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
 
     @media (max-width: 1024px) {
       grid-template-columns: 1fr;
@@ -136,86 +140,92 @@
     background: rgba(30, 41, 59, 0.85);
     backdrop-filter: blur(20px);
     border-radius: 20px;
-    padding: 2.5rem;
+    padding: 1.75rem;
     border: 1px solid rgba(148, 163, 184, 0.15);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 
     .avatar-section {
       text-align: center;
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
       border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 
       .avatar-circle {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
         color: white;
-        margin: 0 auto 1rem;
+        margin: 0 auto 0.875rem;
         box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
       }
 
       .user-name {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-family: "Days One", sans-serif;
+        font-size: 1.375rem;
+        font-weight: 400;
         color: #f1f5f9;
         margin-bottom: 0.5rem;
       }
 
       .user-email {
-        font-size: 0.95rem;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.875rem;
         color: #94a3b8;
       }
     }
 
     .profile-form {
       .form-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-family: "Days One", sans-serif;
+        font-size: 1.125rem;
+        font-weight: 400;
         color: #f1f5f9;
         margin-bottom: 0.5rem;
       }
 
       .form-subtitle {
-        font-size: 0.9rem;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.8125rem;
         color: #94a3b8;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
       }
 
       .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
 
         label {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 0.9rem;
+          font-family: "Rubik", sans-serif;
+          font-size: 0.8125rem;
           color: #cbd5e1;
           margin-bottom: 0.5rem;
           font-weight: 500;
 
           svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             color: #3b82f6;
             stroke-width: 2;
           }
         }
 
         input {
-          width: 100%;
-          padding: 0.875rem 1rem;
+          width: 92%;
+          padding: 0.75rem 0.875rem;
           background: rgba(15, 23, 42, 0.5);
           border: 1px solid rgba(148, 163, 184, 0.2);
           border-radius: 10px;
           color: #f1f5f9;
-          font-size: 0.95rem;
+          font-family: "Rubik", sans-serif;
+          font-size: 0.875rem;
           transition: all 0.3s ease;
 
           &:focus {
@@ -242,15 +252,16 @@
         .error-text {
           display: block;
           margin-top: 0.5rem;
-          font-size: 0.85rem;
+          font-family: "Rubik", sans-serif;
+          font-size: 0.8125rem;
           color: #f87171;
         }
       }
 
       .form-actions {
         display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: 0.875rem;
+        margin-top: 1.5rem;
 
         @media (max-width: 640px) {
           flex-direction: column;
@@ -258,10 +269,11 @@
 
         button {
           flex: 1;
-          padding: 0.875rem 1.5rem;
+          padding: 0.75rem 1.25rem;
           border: none;
-          border-radius: 12px;
-          font-size: 0.95rem;
+          border-radius: 10px;
+          font-family: "Rubik", sans-serif;
+          font-size: 0.875rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -271,8 +283,8 @@
           gap: 0.5rem;
 
           svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             stroke-width: 2;
           }
 
@@ -305,8 +317,8 @@
           }
 
           .button-spinner {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
@@ -321,23 +333,24 @@
   .actions-section {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 
     .password-section,
     .delete-section {
       background: rgba(30, 41, 59, 0.85);
       backdrop-filter: blur(20px);
       border-radius: 20px;
-      padding: 2.5rem;
+      padding: 1.75rem;
       border: 1px solid rgba(148, 163, 184, 0.15);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
 
     .section-title {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-family: "Days One", sans-serif;
+      font-size: 1.125rem;
+      font-weight: 400;
       color: #f1f5f9;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
 
     .form-group {
@@ -345,20 +358,22 @@
 
       label {
         display: block;
-        font-size: 0.9rem;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.8125rem;
         color: #cbd5e1;
         margin-bottom: 0.5rem;
         font-weight: 500;
       }
 
       input {
-        width: 100%;
-        padding: 0.875rem 1rem;
+        width: 92%;
+        padding: 0.75rem 0.875rem;
         background: rgba(15, 23, 42, 0.5);
         border: 1px solid rgba(148, 163, 184, 0.2);
         border-radius: 10px;
         color: #f1f5f9;
-        font-size: 0.95rem;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.875rem;
         transition: all 0.3s ease;
 
         &:focus {
@@ -380,19 +395,21 @@
       .error-text {
         display: block;
         margin-top: 0.5rem;
-        font-size: 0.85rem;
+        font-family: "Rubik", sans-serif;
+        font-size: 0.8125rem;
         color: #f87171;
       }
     }
 
     .change-password-button {
       width: 100%;
-      padding: 0.875rem 1.5rem;
+      padding: 0.75rem 1.25rem;
       background: linear-gradient(135deg, #5b6ef6 0%, #4656eb 100%);
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      border-radius: 10px;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -411,19 +428,21 @@
     }
 
     .warning-text {
-      font-size: 0.9rem;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.8125rem;
       color: #fca5a5;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
 
     .delete-button {
       width: 100%;
-      padding: 0.875rem 1.5rem;
+      padding: 0.75rem 1.25rem;
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 12px;
-      font-size: 0.95rem;
+      border-radius: 10px;
+      font-family: "Rubik", sans-serif;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -470,15 +489,15 @@
     background: rgba(30, 41, 59, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 20px;
-    padding: 2.5rem;
-    max-width: 500px;
+    padding: 2rem;
+    max-width: 460px;
     width: 100%;
     border: 1px solid rgba(148, 163, 184, 0.2);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     animation: slideUp 0.3s ease;
 
     @media (max-width: 640px) {
-      padding: 2rem;
+      padding: 1.75rem;
     }
   }
 
@@ -494,17 +513,17 @@
   }
 
   .modal-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.25rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     svg {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       stroke-width: 2;
     }
 
@@ -528,15 +547,17 @@
   }
 
   .modal-content h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-family: "Days One", sans-serif;
+    font-size: 1.375rem;
+    font-weight: 400;
     color: #f1f5f9;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
   }
 
   .modal-content p {
-    font-size: 1rem;
+    font-family: "Rubik", sans-serif;
+    font-size: 0.9375rem;
     color: #cbd5e1;
     text-align: center;
     line-height: 1.6;
@@ -544,15 +565,16 @@
   }
 
   .countdown-text {
+    font-family: "Rubik", sans-serif;
     color: #fbbf24 !important;
     font-weight: 600;
-    margin-top: 1rem !important;
+    margin-top: 0.875rem !important;
   }
 
   .modal-actions {
     display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 0.875rem;
+    margin-top: 1.75rem;
 
     @media (max-width: 480px) {
       flex-direction: column;
@@ -561,10 +583,11 @@
 
   .modal-button {
     flex: 1;
-    padding: 0.875rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     border: none;
-    border-radius: 12px;
-    font-size: 0.95rem;
+    border-radius: 10px;
+    font-family: "Rubik", sans-serif;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -619,20 +642,20 @@
 
     .header-section {
       .page-title {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
       }
     }
 
     .profile-info-section,
     .password-section,
     .delete-section {
-      padding: 1.5rem;
+      padding: 1.25rem;
     }
 
     .avatar-circle {
-      width: 100px !important;
-      height: 100px !important;
-      font-size: 2.5rem !important;
+      width: 90px !important;
+      height: 90px !important;
+      font-size: 2.25rem !important;
     }
 
     .user-name {

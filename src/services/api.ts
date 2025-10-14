@@ -1,6 +1,6 @@
 /**
  * Base API configuration and HTTP client setup
- * Handles authentication tokens, error handling, and request/response interceptors
+ * Handles authentication with HTTP-only cookies, error handling, and request/response interceptors
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -21,35 +21,33 @@ export class ApiError extends Error {
 }
 
 /**
- * Get authentication token from localStorage
- */
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('authToken');
-};
-
-/**
- * Set authentication token in localStorage
+ * DEPRECATED: Token management moved to HTTP-only cookies
+ * These functions are kept for backwards compatibility but do nothing
+ * @deprecated Use HTTP-only cookies instead
  */
 export const setAuthToken = (token: string): void => {
-  localStorage.setItem('authToken', token);
+  // Tokens are now handled by HTTP-only cookies set by the server
+  void token; // Suppress unused parameter warning
+  console.warn('setAuthToken is deprecated. Authentication now uses HTTP-only cookies.');
 };
 
 /**
- * Remove authentication token from localStorage
+ * DEPRECATED: Token removal moved to HTTP-only cookies
+ * @deprecated Use HTTP-only cookies instead
  */
 export const removeAuthToken = (): void => {
-  localStorage.removeItem('authToken');
+  // Tokens are now handled by HTTP-only cookies cleared by the server
+  console.warn('removeAuthToken is deprecated. Authentication now uses HTTP-only cookies.');
 };
 
 /**
- * Base fetch wrapper with error handling and token management
+ * Base fetch wrapper with error handling and cookie-based authentication
+ * Cookies are automatically sent by the browser with credentials: 'include'
  */
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = getAuthToken();
-  
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -59,14 +57,11 @@ async function apiFetch<T>(
     Object.assign(headers, options.headers);
   }
 
-  // Add authorization header if token exists
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+  // Include credentials to send HTTP-only cookies
   const config: RequestInit = {
     ...options,
     headers,
+    credentials: 'include', // Important: sends cookies with cross-origin requests
   };
 
   try {

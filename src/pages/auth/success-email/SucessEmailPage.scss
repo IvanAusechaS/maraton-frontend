@@ -15,7 +15,7 @@
   &__back {
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     font-family: var(--font-body);
     font-size: 0.95rem;
     cursor: pointer;
@@ -23,10 +23,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 
     &:hover {
       color: #ffffff;
+    }
+
+    &:focus {
+      outline: 3px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
     }
   }
 
@@ -141,6 +146,11 @@
     &:active {
       transform: translateY(0);
     }
+
+    &:focus {
+      outline: 3px solid rgba(0, 123, 255, 0.5);
+      outline-offset: 2px;
+    }
   }
 
   &__footer {
@@ -166,6 +176,12 @@
     &:hover {
       color: #0056b3;
       text-decoration: underline;
+    }
+
+    &:focus {
+      outline: 3px solid rgba(0, 123, 255, 0.5);
+      outline-offset: 2px;
+      border-radius: 2px;
     }
   }
 }

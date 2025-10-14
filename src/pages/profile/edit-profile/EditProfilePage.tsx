@@ -356,11 +356,20 @@ const EditProfilePage = () => {
   }
 
   return (
-    <div className="edit-profile-page">
+    <div className="edit-profile-page" role="main">
       <div className="edit-profile-container">
-        <div className="header-section">
-          <button className="back-button" onClick={handleCancel}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <header className="header-section">
+          <button
+            className="back-button"
+            onClick={handleCancel}
+            aria-label="Volver a la página de perfil"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -371,11 +380,20 @@ const EditProfilePage = () => {
             Volver al perfil
           </button>
           <h1 className="page-title">Editar Perfil</h1>
-        </div>
+        </header>
 
         {error && (
-          <div className="message-banner error">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <div
+            className="message-banner error"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -388,8 +406,17 @@ const EditProfilePage = () => {
         )}
 
         {success && (
-          <div className="message-banner success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <div
+            className="message-banner success"
+            role="alert"
+            aria-live="polite"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

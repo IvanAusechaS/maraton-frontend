@@ -20,17 +20,23 @@ const SuccessEmailPage: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="success-email-page">
+    <div className="success-email-page" role="main">
       <div className="success-email-page__container">
-        <div className="success-email-page__card">
+        <section
+          className="success-email-page__card"
+          aria-labelledby="success-title"
+          role="alert"
+          aria-live="polite"
+        >
           <button
             className="success-email-page__back"
             onClick={() => navigate("/")}
+            aria-label="Regresar a la página de inicio"
           >
             ← Regresar al inicio
           </button>
 
-          <div className="success-email-page__icon">
+          <div className="success-email-page__icon" aria-hidden="true">
             <svg
               width="80"
               height="80"
@@ -49,7 +55,7 @@ const SuccessEmailPage: React.FC = () => {
             </svg>
           </div>
 
-          <h1 className="success-email-page__title">
+          <h1 className="success-email-page__title" id="success-title">
             ¡Correo enviado con éxito!
           </h1>
 
@@ -59,7 +65,7 @@ const SuccessEmailPage: React.FC = () => {
             restablecer tu contraseña.
           </p>
 
-          <div className="success-email-page__info">
+          <div className="success-email-page__info" role="note">
             <p>
               <strong>Nota:</strong> Si no recibes el correo en los próximos
               minutos, revisa tu carpeta de spam o correo no deseado.
@@ -69,6 +75,7 @@ const SuccessEmailPage: React.FC = () => {
           <button
             className="success-email-page__button"
             onClick={() => navigate("/login")}
+            aria-label="Ir a la página de inicio de sesión"
           >
             IR A INICIAR SESIÓN
           </button>
@@ -79,11 +86,12 @@ const SuccessEmailPage: React.FC = () => {
               type="button"
               className="success-email-page__footer-link"
               onClick={() => navigate("/recuperar")}
+              aria-label="Reenviar correo de recuperación"
             >
               Reenviar
             </button>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

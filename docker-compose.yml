@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Servicio de desarrollo
+  maraton-frontend-dev:
+    container_name: maraton-frontend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Montar código fuente para hot-reload (con permisos SELinux para Fedora)
+      - .:/app:z
+      # Excluir node_modules del host
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    networks:
+      - maraton-network
+
+  # Servicio de producción (para testing local)
+  maraton-frontend-prod:
+    container_name: maraton-frontend-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - maraton-network
+    profiles:
+      - production
+
+networks:
+  maraton-network:
+    driver: bridge

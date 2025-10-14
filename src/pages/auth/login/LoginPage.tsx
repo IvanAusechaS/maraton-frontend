@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
       // }
       
       // Redirect to home or dashboard
-      navigate("/");
+      navigate("/peliculas");
     } catch (err) {
       if (err instanceof ApiError) {
         const errorData = err.data as { message?: string } | undefined;

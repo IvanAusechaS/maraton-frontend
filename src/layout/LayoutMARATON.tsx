@@ -24,8 +24,13 @@ interface LayoutMARATONProps {
 const LayoutMARATON: React.FC<LayoutMARATONProps> = ({ children }) => {
   return (
     <>
+      <a href="#main-content" className="skip-to-main">
+        Saltar al contenido principal
+      </a>
       <Navbar />
-      <main className="container-page">{children}</main>
+      <main className="container-page" role="main" id="main-content">
+        {children}
+      </main>
       <Footer />
     </>
   );

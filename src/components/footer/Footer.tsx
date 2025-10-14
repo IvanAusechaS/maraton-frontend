@@ -1,6 +1,8 @@
-import { type FC, useState } from "react";
+import { type FC, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./Footer.scss";
 import Modal from "../modal/Modal";
+import { authService } from "../../services/authService";
 
 const testSpeed = "https://fast.com/es";
 const instagramLink = "https://www.instagram.com/maraton_app/";
@@ -18,6 +20,23 @@ type ModalType =
 
 const Footer: FC = () => {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(authService.isAuthenticated());
+
+    const handleAuthChange = () => {
+      setIsAuthenticated(authService.isAuthenticated());
+    };
+
+    window.addEventListener("authChanged", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChanged", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
 
   const modalContents = {
     cookies: {
@@ -172,82 +191,216 @@ const Footer: FC = () => {
   };
 
   return (
-    <footer className="footer">
+    <footer className="footer" role="contentinfo">
       <div className="footer__container">
-        <div className="footer__logo">
-          <img src="/logo.svg" alt="Maraton Logo" />
-        </div>
+        {/* Sitemap Section */}
+        <nav
+          className="footer__sitemap"
+          aria-label="Navegación del pie de página"
+        >
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Navegación</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <Link to="/" aria-label="Ir a la página de inicio">
+                  Inicio
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/peliculas"
+                  aria-label="Explorar catálogo de películas"
+                >
+                  Películas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/sobre-nosotros"
+                  aria-label="Conocer más sobre Maraton"
+                >
+                  Sobre Nosotros
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-        <nav className="footer__links">
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("cookies")}
-          >
-            Preferencias de cookies
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => {
-              window.location.href = "/#faq";
-            }}
-          >
-            FAQ
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("privacy")}
-          >
-            Privacidad
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("terms")}
-          >
-            Términos de uso
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("accessibility")}
-          >
-            Accesibilidad
-          </button>
-          <a
-            href={testSpeed}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer__link"
-          >
-            Test de velocidad
-          </a>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("contact")}
-          >
-            Contáctanos
-          </button>
+          {!isAuthenticated ? (
+            <div className="footer__sitemap-section">
+              <h3 className="footer__sitemap-title">Cuenta</h3>
+              <ul className="footer__sitemap-list">
+                <li>
+                  <Link to="/login" aria-label="Acceder a tu cuenta">
+                    Iniciar Sesión
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/registro" aria-label="Crear una cuenta nueva">
+                    Registrarse
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/recuperar"
+                    aria-label="Restablecer contraseña olvidada"
+                  >
+                    Recuperar Contraseña
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div className="footer__sitemap-section">
+              <h3 className="footer__sitemap-title">Mi Cuenta</h3>
+              <ul className="footer__sitemap-list">
+                <li>
+                  <Link to="/perfil" aria-label="Ver información de mi perfil">
+                    Ver Perfil
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/profile/edit"
+                    aria-label="Modificar información de mi perfil"
+                  >
+                    Editar Perfil
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Ayuda</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <button
+                  onClick={() => setActiveModal("contact")}
+                  className="footer__sitemap-link"
+                  aria-label="Abrir formulario de contacto"
+                >
+                  Contáctanos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    window.location.href = "/#faq";
+                  }}
+                  className="footer__sitemap-link"
+                  aria-label="Ver preguntas frecuentes"
+                >
+                  Preguntas Frecuentes
+                </button>
+              </li>
+              <li>
+                <a
+                  href={testSpeed}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Probar velocidad de conexión (abre en nueva ventana)"
+                >
+                  Test de Velocidad
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Legal</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <button
+                  onClick={() => setActiveModal("privacy")}
+                  className="footer__sitemap-link"
+                  aria-label="Ver política de privacidad"
+                >
+                  Privacidad
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("terms")}
+                  className="footer__sitemap-link"
+                  aria-label="Ver términos y condiciones de uso"
+                >
+                  Términos de Uso
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("cookies")}
+                  className="footer__sitemap-link"
+                  aria-label="Gestionar preferencias de cookies"
+                >
+                  Cookies
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("accessibility")}
+                  className="footer__sitemap-link"
+                  aria-label="Información sobre accesibilidad"
+                >
+                  Accesibilidad
+                </button>
+              </li>
+            </ul>
+          </div>
         </nav>
+
+        <div className="footer__logo">
+          <img
+            src="/logo.svg"
+            alt="Logotipo de Maraton - Plataforma de streaming"
+          />
+        </div>
 
         <div className="footer__copyright">
           <p>
-            @2025 Maraton Company, LLC. Todos los derechos reservados. Maraton
+            © 2025 Maraton Company, LLC. Todos los derechos reservados. Maraton
             es de uso libre
           </p>
         </div>
 
-        <div className="footer__social">
-          <a href={youtubeLink} target="_blank" rel="noopener noreferrer">
-            <img src="/youtube-icon.svg" alt="YouTube" />
+        <nav className="footer__social" aria-label="Redes sociales">
+          <a
+            href={youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visitar canal de YouTube de Maraton (abre en nueva ventana)"
+          >
+            <img src="/youtube-icon.svg" alt="" role="presentation" />
+            <span className="sr-only">YouTube</span>
           </a>
-          <a href={tiktokLink} target="_blank" rel="noopener noreferrer">
-            <img src="/tiktok-icon.svg" alt="TikTok" />
+          <a
+            href={tiktokLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visitar perfil de TikTok de Maraton (abre en nueva ventana)"
+          >
+            <img src="/tiktok-icon.svg" alt="" role="presentation" />
+            <span className="sr-only">TikTok</span>
           </a>
-          <a href={facebookLink} target="_blank" rel="noopener noreferrer">
-            <img src="/facebook-icon.svg" alt="Facebook" />
+          <a
+            href={facebookLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visitar página de Facebook de Maraton (abre en nueva ventana)"
+          >
+            <img src="/facebook-icon.svg" alt="" role="presentation" />
+            <span className="sr-only">Facebook</span>
           </a>
-          <a href={instagramLink} target="_blank" rel="noopener noreferrer">
-            <img src="/instagram-icon.svg" alt="Instagram" />
+          <a
+            href={instagramLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visitar perfil de Instagram de Maraton (abre en nueva ventana)"
+          >
+            <img src="/instagram-icon.svg" alt="" role="presentation" />
+            <span className="sr-only">Instagram</span>
           </a>
-        </div>
+        </nav>
       </div>
 
       {activeModal && (

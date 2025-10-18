@@ -1,4 +1,5 @@
 import { type FC, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MoviePage.scss";
 import {
   searchVideos,
@@ -103,6 +104,7 @@ interface VideoRowProps {
 }
 
 const VideoRow: FC<VideoRowProps> = ({ title, videos, loading }) => {
+  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -161,22 +163,46 @@ const VideoRow: FC<VideoRowProps> = ({ title, videos, loading }) => {
         )}
 
         <div className="video-row__container" id={`video-row-${title}`}>
-          {videos.map((video) => (
-            <div key={video.id} className="video-card">
-              <div className="video-card__image">
-                <img src={video.image} alt={`Video ${video.id}`} />
-                <div className="video-card__overlay">
-                  <button className="video-card__play">▶</button>
+          {videos.map((video, index) => {
+            // Usar un ID válido (1, 2, o 3) basado en el índice
+            // Esto permite que cada video muestre una película diferente
+            const movieId = ((index % 3) + 1).toString();
+
+            return (
+              <div
+                key={video.id}
+                className="video-card"
+                onClick={() => navigate(`/pelicula/${movieId}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(`/pelicula/${movieId}`);
+                  }
+                }}
+                aria-label={`Ver detalles del video ${video.id}`}
+              >
+                <div className="video-card__image">
+                  <img src={video.image} alt={`Video ${video.id}`} />
+                  <div className="video-card__overlay">
+                    <button
+                      className="video-card__play"
+                      aria-label="Reproducir video"
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+                <div className="video-card__info">
+                  <span className="video-card__duration">
+                    {Math.floor(video.duration / 60)}:
+                    {String(Math.floor(video.duration % 60)).padStart(2, "0")}
+                  </span>
                 </div>
               </div>
-              <div className="video-card__info">
-                <span className="video-card__duration">
-                  {Math.floor(video.duration / 60)}:
-                  {String(Math.floor(video.duration % 60)).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {canScrollRight && (

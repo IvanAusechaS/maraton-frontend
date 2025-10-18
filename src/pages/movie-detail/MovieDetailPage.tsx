@@ -126,8 +126,7 @@ const MovieDetailPage: React.FC = () => {
   };
 
   const handleWatch = () => {
-    // TODO: Implementar lógica para reproducir la película
-    console.log("Reproducir película:", movie.titulo);
+    navigate(`/pelicula/${movie.id}/player`);
   };
 
   const handleToggleFavorite = () => {

@@ -3,6 +3,7 @@ import HomePage from "../pages/home/HomePage";
 import AboutPage from "../pages/about/AboutPage";
 import MoviePage from "../pages/movie/MoviePage";
 import MovieDetailPage from "../pages/movie-detail/MovieDetailPage";
+import MoviePlayerPage from "../pages/movie-player/MoviePlayerPage";
 import Carousel from "../pages/home/components/carousel/Carousel";
 import LayoutMARATON from "../layout/LayoutMARATON";
 import SignUp from "../pages/auth/signup/SignupPage";
@@ -31,6 +32,7 @@ const RoutesMARATON = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/peliculas" element={<MoviePage />} />
           <Route path="/pelicula/:id" element={<MovieDetailPage />} />
+          <Route path="/pelicula/:id/player" element={<MoviePlayerPage />} />
           <Route path="/sobre-nosotros" element={<AboutPage />} />
           <Route path="/registro" element={<SignUp />} />
           <Route path="/carousel" element={<Carousel />} />

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./MoviePlayer.scss";
+import { getMovieById } from "../../services/movieService";
 
 /**
  * Movie Player Page component.
@@ -26,32 +27,10 @@ import "./MoviePlayer.scss";
  */
 
 interface Movie {
-  id: string;
+  id: number;
   titulo: string;
   videoUrl: string;
 }
-
-// Video por defecto de Pexels hasta que se conecte el backend
-// Video by Clément Proust from Pexels: https://www.pexels.com/video/aerial-view-of-mont-saint-michel-at-dusk-32766348/
-const DEFAULT_VIDEO = {
-  titulo: "Aerial View of Mont Saint-Michel at Dusk",
-  videoUrl:
-    "https://videos.pexels.com/video-files/32766348/13968433_1920_1080_30fps.mp4", // 1080p HD
-  videoUrl4K:
-    "https://videos.pexels.com/video-files/32766348/13968435_3840_2160_30fps.mp4", // 4K (opcional)
-  videoUrl720p:
-    "https://videos.pexels.com/video-files/32766348/13968432_1280_720_30fps.mp4", // 720p (fallback)
-  author: "Clément Proust",
-  pexelsUrl:
-    "https://www.pexels.com/video/aerial-view-of-mont-saint-michel-at-dusk-32766348/",
-};
-
-// Mock data para IDs 1, 2, 3 (del carousel) - solo títulos
-const mockMovieTitles: { [key: string]: string } = {
-  "1": "Stranger Things",
-  "2": "Star Wars: A New Hope",
-  "3": "The Mandalorian",
-};
 
 const MoviePlayerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,6 +39,9 @@ const MoviePlayerPage: React.FC = () => {
   const playerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<number | null>(null);
 
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -69,27 +51,35 @@ const MoviePlayerPage: React.FC = () => {
   const [showControls, setShowControls] = useState(true);
   const [showSubtitlesMenu, setShowSubtitlesMenu] = useState(false);
   const [buffered, setBuffered] = useState(0);
-  const [movie, setMovie] = useState<Movie | null>(null);
 
-  // Usar video por defecto hasta que se conecte el backend
+  // Fetch movie data from backend
   useEffect(() => {
     if (!id) {
+      setError("No movie ID provided");
+      setIsLoading(false);
       return;
     }
 
-    // Por ahora, usar siempre el video por defecto independientemente del ID
-    // Cuando el backend esté listo, aquí se hará el fetch real
-    console.log(`Loading default video for movie ID: ${id}`);
+    const fetchMovie = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const movieData = await getMovieById(parseInt(id));
+        
+        setMovie({
+          id: movieData.id,
+          titulo: movieData.titulo,
+          videoUrl: movieData.largometraje,
+        });
+      } catch (err) {
+        console.error("Error loading movie:", err);
+        setError("Failed to load movie. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    setMovie({
-      id: id,
-      titulo: mockMovieTitles[id] || DEFAULT_VIDEO.titulo,
-      videoUrl: DEFAULT_VIDEO.videoUrl,
-    });
-
-    console.log("Default video loaded successfully!");
-    console.log(`Video: ${DEFAULT_VIDEO.titulo} by ${DEFAULT_VIDEO.author}`);
-    console.log(`Source: ${DEFAULT_VIDEO.pexelsUrl}`);
+    fetchMovie();
   }, [id]);
 
   // Play/Pause toggle
@@ -275,13 +265,33 @@ const MoviePlayerPage: React.FC = () => {
     navigate(-1);
   };
 
-  // Si no hay película cargada, mostrar loading
-  if (!movie) {
+  // Show loading state
+  if (isLoading) {
     return (
       <div className="movie-player movie-player--loading">
         <div className="movie-player__loading">
           <div className="movie-player__spinner"></div>
           <p className="movie-player__loading-text">Cargando video...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !movie) {
+    return (
+      <div className="movie-player movie-player--loading">
+        <div className="movie-player__loading">
+          <p className="movie-player__loading-text" style={{ color: 'red' }}>
+            {error || 'No se pudo cargar el video'}
+          </p>
+          <button 
+            className="btn btn--primary" 
+            onClick={() => navigate(-1)}
+            style={{ marginTop: '1rem' }}
+          >
+            Volver
+          </button>
         </div>
       </div>
     );

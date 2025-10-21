@@ -1,18 +1,19 @@
 import api from "./api";
 
-// Backend Movie interface
+// Backend Movie interface - matches Prisma schema
 export interface Movie {
   id: number;
-  titulo: string;
-  descripcion: string;
   duracion: number;
+  largometraje: string;
+  actores: string;
+  año: number;
+  disponible: boolean;
+  sinopsis: string;
+  trailer: string;
+  titulo: string;
+  director: string;
   portada: string;
-  video_url: string;
-  calificacion: number;
-  genero: string;
-  fecha_lanzamiento: string;
-  created_at?: string;
-  updated_at?: string;
+  idiomaId: number;
 }
 
 /**

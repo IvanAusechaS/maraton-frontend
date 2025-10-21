@@ -169,11 +169,8 @@ const MovieDetailPage: React.FC = () => {
     );
   }
 
-  // Helper para obtener el año de la fecha de lanzamiento
-  const releaseYear = new Date(movie.fecha_lanzamiento).getFullYear();
-  
-  // Helper para formatear el género (el backend guarda como string)
-  const genres = movie.genero ? movie.genero.split(',').map((g: string) => g.trim()) : [];
+  // Helper para formatear actores (el backend guarda como string separado por comas)
+  const actoresList = movie.actores ? movie.actores.split(',').map((a: string) => a.trim()) : [];
 
   return (
     <div className="movie-detail">
@@ -244,9 +241,9 @@ const MovieDetailPage: React.FC = () => {
             <div className="movie-detail__metadata">
               <span
                 className="movie-detail__year"
-                aria-label={`Año ${releaseYear}`}
+                aria-label={`Año ${movie.año}`}
               >
-                {releaseYear}
+                {movie.año}
               </span>
               <span className="movie-detail__dot" aria-hidden="true">
                 •
@@ -262,21 +259,15 @@ const MovieDetailPage: React.FC = () => {
               </span>
               <span
                 className="movie-detail__classification"
-                aria-label={`Calificación ${movie.calificacion}`}
+                aria-label={`Disponible: ${movie.disponible ? 'Sí' : 'No'}`}
               >
-                ⭐ {movie.calificacion}/10
+                {movie.disponible ? '✓ Disponible' : '✗ No disponible'}
               </span>
             </div>
             <div className="movie-detail__genres" role="list">
-              {genres.map((genre: string, index: number) => (
-                <span
-                  key={index}
-                  className="movie-detail__genre"
-                  role="listitem"
-                >
-                  {genre}
-                </span>
-              ))}
+              <span className="movie-detail__genre" role="listitem">
+                Director: {movie.director}
+              </span>
             </div>
 
             {/* Botones de acción dentro del overlay */}
@@ -422,7 +413,7 @@ const MovieDetailPage: React.FC = () => {
               <h2 id="sinopsis-title" className="movie-detail__section-title">
                 Sinopsis
               </h2>
-              <p className="movie-detail__sinopsis">{movie.descripcion}</p>
+              <p className="movie-detail__sinopsis">{movie.sinopsis}</p>
             </section>
 
             <section
@@ -434,35 +425,47 @@ const MovieDetailPage: React.FC = () => {
               </h2>
               <div className="movie-detail__info-grid">
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">Género:</span>
+                  <span className="movie-detail__info-label">Director:</span>
                   <span className="movie-detail__info-value">
-                    {movie.genero}
+                    {movie.director}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">
-                    Fecha de estreno:
+                    Actores:
                   </span>
                   <span className="movie-detail__info-value">
-                    {new Date(movie.fecha_lanzamiento).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {actoresList.join(', ')}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">
-                    Calificación:
+                    Año:
                   </span>
-                  <span className="movie-detail__info-value movie-detail__info-value--available">
-                    ⭐ {movie.calificacion}/10
+                  <span className="movie-detail__info-value">
+                    {movie.año}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">Duración:</span>
                   <span className="movie-detail__info-value">
                     {movie.duracion} minutos
+                  </span>
+                </div>
+                <div className="movie-detail__info-item">
+                  <span className="movie-detail__info-label">Disponibilidad:</span>
+                  <span className="movie-detail__info-value movie-detail__info-value--available">
+                    {movie.disponible ? 'Disponible' : 'No disponible'}
+                  </span>
+                </div>
+                <div className="movie-detail__info-item">
+                  <span className="movie-detail__info-label">Trailer:</span>
+                  <span className="movie-detail__info-value">
+                    {movie.trailer ? (
+                      <a href={movie.trailer} target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-primary)'}}>
+                        Ver trailer
+                      </a>
+                    ) : 'No disponible'}
                   </span>
                 </div>
               </div>

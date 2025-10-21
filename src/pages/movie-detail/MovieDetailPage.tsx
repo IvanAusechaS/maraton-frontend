@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./MovieDetailPage.scss";
+import { getMovieById, type Movie as BackendMovie, addToFavorites, removeFromFavorites } from "../../services/movieService";
+import { authService } from "../../services/authService";
 
 /**
  * Movie detail page component.
@@ -26,111 +28,82 @@ import "./MovieDetailPage.scss";
  * - Responsive design for all devices
  */
 
-// Mock data for movies - será reemplazado cuando el backend esté listo
-// Para cualquier ID que venga de videos externos, usamos una película por defecto
-interface Movie {
-  id: string;
-  titulo: string;
-  director: string;
-  duracion: number;
-  año: number;
-  genero: string[];
-  clasificacion: string;
-  disponibilidad: string;
-  actores: string[];
-  sinopsis: string;
-  poster: string;
-}
-
-const mockMoviesData: { [key: string]: Movie } = {
-  "1": {
-    id: "1",
-    titulo: "Stranger Things",
-    director: "Matt Duffer, Ross Duffer",
-    duracion: 51,
-    año: 2016,
-    genero: ["Drama", "Fantasía", "Terror"],
-    clasificacion: "16+",
-    disponibilidad: "Disponible",
-    actores: ["Millie Bobby Brown", "Finn Wolfhard", "Winona Ryder"],
-    sinopsis:
-      "En 1983, en el pequeño pueblo de Hawkins, Indiana, un niño desaparece misteriosamente durante una noche aparentemente normal. Mientras sus amigos, familiares y la policía local buscan respuestas, se ven envueltos en un misterio extraordinario que involucra experimentos gubernamentales secretos, fuerzas sobrenaturales aterradoras y una niña muy extraña con habilidades psíquicas. A medida que la búsqueda se intensifica, descubren un mundo alternativo oscuro y peligroso que existe en paralelo al suyo, conocido como el 'Upside Down'. Los habitantes de Hawkins deben enfrentar sus miedos más profundos y unirse para combatir una amenaza que podría destruir su mundo tal como lo conocen. Entre tensiones familiares, secretos gubernamentales y criaturas de pesadilla, un grupo de niños demuestra que el coraje y la amistad pueden ser las armas más poderosas contra las fuerzas de la oscuridad.",
-    poster:
-      "https://images.pexels.com/photos/2752777/pexels-photo-2752777.jpeg",
-  },
-  "2": {
-    id: "2",
-    titulo: "Star Wars: A New Hope",
-    director: "George Lucas",
-    duracion: 121,
-    año: 1977,
-    genero: ["Ciencia Ficción", "Aventura", "Acción"],
-    clasificacion: "13+",
-    disponibilidad: "Disponible",
-    actores: ["Mark Hamill", "Harrison Ford", "Carrie Fisher"],
-    sinopsis:
-      "En una galaxia muy, muy lejana, el malvado Imperio Galáctico ha construido la Estrella de la Muerte, una estación espacial con el poder de destruir planetas enteros. La Princesa Leia, líder de la Alianza Rebelde, logra robar los planos de esta terrible arma, pero es capturada por el temible Lord Darth Vader. Los planos caen en manos de Luke Skywalker, un joven granjero de Tatooine que sueña con aventuras más allá de su árido planeta. Guiado por el misterioso Obi-Wan Kenobi, un antiguo Caballero Jedi, Luke se embarca en una misión épica para rescatar a la princesa y entregar los planos a la Rebelión. Junto al contrabandista Han Solo, su copiloto Chewbacca y los droides R2-D2 y C-3PO, Luke descubrirá su verdadero destino y aprenderá sobre el poder místico de la Fuerza. En una batalla final contra el tiempo, deberá usar sus nuevas habilidades para ayudar a destruir la Estrella de la Muerte antes de que el Imperio aplaste definitivamente toda esperanza de libertad en la galaxia.",
-    poster:
-      "https://images.pexels.com/photos/28310406/pexels-photo-28310406.jpeg",
-  },
-  "3": {
-    id: "3",
-    titulo: "The Mandalorian",
-    director: "Jon Favreau",
-    duracion: 40,
-    año: 2019,
-    genero: ["Ciencia Ficción", "Western", "Aventura"],
-    clasificacion: "13+",
-    disponibilidad: "Disponible",
-    actores: ["Pedro Pascal", "Gina Carano", "Carl Weathers"],
-    sinopsis:
-      "Cinco años después de la caída del Imperio Galáctico, en los confines más alejados de la galaxia donde la ley de la Nueva República apenas tiene alcance, un solitario cazarrecompensas mandaloriano conocido simplemente como 'Mando' se gana la vida capturando fugitivos peligrosos. Conocido por su armadura de beskar y su estricto código de honor, acepta un trabajo misterioso que lo lleva a un planeta remoto. Lo que descubre allí cambiará su vida para siempre: un pequeño ser de la misma especie que el legendario Maestro Yoda, al que todos llaman 'El Niño' o 'Grogu'. A pesar de su naturaleza solitaria y su entrenamiento para no mostrar emociones, el Mandaloriano desarrolla un vínculo protector con la criatura. Perseguidos por remanentes del Imperio que desean capturar al niño por sus habilidades en la Fuerza, Mando debe viajar por la galaxia, enfrentando peligros constantes, cazarrecompensas rivales y decisiones morales difíciles. En su viaje, aprenderá sobre la paternidad, el sacrificio y que incluso el guerrero más curtido puede encontrar un propósito mayor que él mismo.",
-    poster:
-      "https://images.pexels.com/photos/32671609/pexels-photo-32671609.jpeg",
-  },
-};
-
-// Película por defecto para IDs que no existen en mockMoviesData
-const getDefaultMovie = (id: string): Movie => ({
-  id: id,
-  titulo: "Película de Ejemplo",
-  director: "Sofia Coppola",
-  duracion: 120,
-  año: 2023,
-  genero: ["Drama", "Acción", "Aventura"],
-  clasificacion: "13+",
-  disponibilidad: "Disponible",
-  actores: ["Actor Principal 1", "Actor Principal 2", "Actor Principal 3"],
-  sinopsis:
-    "Una conmovedora historia sobre una familia que se enfrenta ante la adversidad más desafiante de sus vidas. Cuando circunstancias inesperadas los obligan a abandonar su hogar y todo lo que conocen, deben encontrar la fuerza interior y el coraje para sobrevivir en un lugar completamente desconocido y hostil. A través de pruebas que ponen a prueba sus límites físicos y emocionales, descubren que el verdadero significado de la familia va más allá de los lazos de sangre. En medio del caos y la incertidumbre, encuentran aliados inesperados y aprenden lecciones valiosas sobre la resiliencia, el perdón y el poder transformador del amor incondicional. Esta es una película profundamente emotiva sobre las familias, la esperanza inquebrantable en tiempos difíciles, y la capacidad del espíritu humano para superar incluso las circunstancias más devastadoras. Con actuaciones magistrales y una cinematografía impresionante, esta obra maestra del cine contemporáneo nos recuerda que incluso en la oscuridad más profunda, siempre hay una luz de esperanza esperando ser descubierta.",
-  poster: "https://images.pexels.com/photos/2752777/pexels-photo-2752777.jpeg",
-});
-
 const MovieDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [movie, setMovie] = useState<BackendMovie | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "comments">("info");
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
 
-  // Obtener los datos de la película (mock data por ahora)
-  // Si el ID existe en mockMoviesData, usar esos datos, sino usar película por defecto
-  const movie: Movie =
-    id && mockMoviesData[id]
-      ? mockMoviesData[id]
-      : getDefaultMovie(id || "default");
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = authService.isAuthenticated();
+      setIsAuthenticated(authenticated);
+    };
+    checkAuth();
+  }, []);
+
+  // Fetch movie data from backend
+  useEffect(() => {
+    const fetchMovie = async () => {
+      if (!id) {
+        setError("ID de película no válido");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const movieData = await getMovieById(parseInt(id));
+        setMovie(movieData);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading movie:", err);
+        setError("No se pudo cargar la película. Intenta nuevamente.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovie();
+  }, [id]);
 
   const handleBack = () => {
     navigate(-1);
   };
 
   const handleWatch = () => {
-    navigate(`/pelicula/${movie.id}/player`);
+    if (movie) {
+      navigate(`/pelicula/${movie.id}/player`);
+    }
   };
 
-  const handleToggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      alert("Debes iniciar sesión para agregar a favoritos");
+      return;
+    }
+
+    if (!movie) return;
+
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(movie.id);
+        setIsFavorite(false);
+      } else {
+        await addToFavorites(movie.id);
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("No se pudo actualizar favoritos. Intenta nuevamente.");
+    }
   };
 
   const handleShare = async () => {
@@ -170,12 +143,44 @@ const MovieDetailPage: React.FC = () => {
     setHoverRating(0);
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="movie-detail">
+        <div className="movie-detail__loading">
+          <div className="spinner"></div>
+          <p>Cargando película...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !movie) {
+    return (
+      <div className="movie-detail">
+        <div className="movie-detail__error">
+          <p>{error || "Película no encontrada"}</p>
+          <button onClick={handleBack} className="movie-detail__action-button movie-detail__action-button--primary">
+            Regresar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Helper para obtener el año de la fecha de lanzamiento
+  const releaseYear = new Date(movie.fecha_lanzamiento).getFullYear();
+  
+  // Helper para formatear el género (el backend guarda como string)
+  const genres = movie.genero ? movie.genero.split(',').map((g: string) => g.trim()) : [];
+
   return (
     <div className="movie-detail">
       {/* Header con imagen de fondo */}
       <div
         className="movie-detail__header"
-        style={{ backgroundImage: `url(${movie.poster})` }}
+        style={{ backgroundImage: `url(${movie.portada})` }}
         role="img"
         aria-label={`Imagen de fondo de ${movie.titulo}`}
       >
@@ -239,9 +244,9 @@ const MovieDetailPage: React.FC = () => {
             <div className="movie-detail__metadata">
               <span
                 className="movie-detail__year"
-                aria-label={`Año ${movie.año}`}
+                aria-label={`Año ${releaseYear}`}
               >
-                {movie.año}
+                {releaseYear}
               </span>
               <span className="movie-detail__dot" aria-hidden="true">
                 •
@@ -257,13 +262,13 @@ const MovieDetailPage: React.FC = () => {
               </span>
               <span
                 className="movie-detail__classification"
-                aria-label={`Clasificación ${movie.clasificacion}`}
+                aria-label={`Calificación ${movie.calificacion}`}
               >
-                {movie.clasificacion}
+                ⭐ {movie.calificacion}/10
               </span>
             </div>
             <div className="movie-detail__genres" role="list">
-              {movie.genero.map((genre: string, index: number) => (
+              {genres.map((genre: string, index: number) => (
                 <span
                   key={index}
                   className="movie-detail__genre"
@@ -417,7 +422,7 @@ const MovieDetailPage: React.FC = () => {
               <h2 id="sinopsis-title" className="movie-detail__section-title">
                 Sinopsis
               </h2>
-              <p className="movie-detail__sinopsis">{movie.sinopsis}</p>
+              <p className="movie-detail__sinopsis">{movie.descripcion}</p>
             </section>
 
             <section
@@ -429,9 +434,9 @@ const MovieDetailPage: React.FC = () => {
               </h2>
               <div className="movie-detail__info-grid">
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">Director:</span>
+                  <span className="movie-detail__info-label">Género:</span>
                   <span className="movie-detail__info-value">
-                    {movie.director}
+                    {movie.genero}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
@@ -439,21 +444,25 @@ const MovieDetailPage: React.FC = () => {
                     Fecha de estreno:
                   </span>
                   <span className="movie-detail__info-value">
-                    8 de septiembre, {movie.año}
+                    {new Date(movie.fecha_lanzamiento).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">
-                    Disponibilidad:
+                    Calificación:
                   </span>
                   <span className="movie-detail__info-value movie-detail__info-value--available">
-                    {movie.disponibilidad}
+                    ⭐ {movie.calificacion}/10
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">Actores:</span>
+                  <span className="movie-detail__info-label">Duración:</span>
                   <span className="movie-detail__info-value">
-                    {movie.actores.join(", ")}
+                    {movie.duracion} minutos
                   </span>
                 </div>
               </div>

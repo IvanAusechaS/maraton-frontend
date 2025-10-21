@@ -4,6 +4,48 @@
   color: var(--color-text);
   padding-bottom: 15rem;
 
+  // Loading state
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 1.5rem;
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  // Error state
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 2rem;
+    padding: 2rem;
+    text-align: center;
+
+    p {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      max-width: 500px;
+    }
+  }
+
   &__header {
     position: relative;
     height: 60vh;
@@ -654,6 +696,15 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

@@ -53,10 +53,42 @@ const MoviePage: FC = () => {
       checkAuth();
     };
 
+    // Listen for favorites changes
+    const handleFavoritesChange = () => {
+      // Reload favorites when they change
+      if (authService.isAuthenticated()) {
+        getFavoriteMovies()
+          .then((favoritesData) => {
+            setCategories((prev) => ({
+              ...prev,
+              favorites: {
+                ...prev.favorites,
+                movies: favoritesData,
+                loading: false,
+                visible: true,
+              },
+            }));
+          })
+          .catch(() => {
+            setCategories((prev) => ({
+              ...prev,
+              favorites: {
+                ...prev.favorites,
+                movies: [],
+                loading: false,
+                visible: true,
+              },
+            }));
+          });
+      }
+    };
+
     window.addEventListener("authChanged", handleAuthChange);
+    window.addEventListener("favoritesChanged", handleFavoritesChange);
 
     return () => {
       window.removeEventListener("authChanged", handleAuthChange);
+      window.removeEventListener("favoritesChanged", handleFavoritesChange);
     };
   }, []);
 

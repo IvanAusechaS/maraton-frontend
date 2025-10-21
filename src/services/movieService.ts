@@ -25,11 +25,19 @@ export const getMoviesByGenre = async (genre: string): Promise<Movie[]> => {
 };
 
 /**
+ * Response from getFavoriteMovies endpoint
+ */
+interface FavoritesResponse {
+  total: number;
+  movies: Movie[];
+}
+
+/**
  * Get user's favorite movies (requires authentication)
  */
 export const getFavoriteMovies = async (): Promise<Movie[]> => {
-  const movies = await api.get<Movie[]>("/usuarios/favorites");
-  return movies;
+  const response = await api.get<FavoritesResponse>("/usuarios/favorites");
+  return response.movies || [];
 };
 
 /**
@@ -50,16 +58,36 @@ export const getMovieById = async (id: number): Promise<Movie> => {
 
 /**
  * Add movie to favorites
+ * Creates or updates the Gusto preference with favoritos: true
  */
 export const addToFavorites = async (movieId: number): Promise<void> => {
-  await api.post(`/usuarios/favorites/${movieId}`);
+  await api.post("/usuarios/favorites", { peliculaId: movieId });
+  // Clear favorites cache to force refresh
+  api.clearCache("/usuarios/favorites");
 };
 
 /**
  * Remove movie from favorites
+ * Updates the Gusto preference with favoritos: false (doesn't delete the record)
  */
 export const removeFromFavorites = async (movieId: number): Promise<void> => {
-  await api.delete(`/usuarios/favorites/${movieId}`);
+  await api.patch(`/usuarios/favorites/${movieId}`, { favorite: false });
+  // Clear favorites cache to force refresh
+  api.clearCache("/usuarios/favorites");
+};
+
+/**
+ * Check if a movie is in user's favorites
+ */
+export const checkIfFavorite = async (movieId: number): Promise<boolean> => {
+  try {
+    const response = await api.get<FavoritesResponse>("/usuarios/favorites");
+    const favorites = response.movies || [];
+    return favorites.some((movie) => movie.id === movieId);
+  } catch (error) {
+    console.error("Error checking favorite status:", error);
+    return false;
+  }
 };
 
 /**

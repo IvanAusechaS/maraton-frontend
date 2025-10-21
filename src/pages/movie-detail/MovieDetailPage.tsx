@@ -6,6 +6,7 @@ import {
   type Movie as BackendMovie,
   addToFavorites,
   removeFromFavorites,
+  checkIfFavorite,
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
 
@@ -79,6 +80,26 @@ const MovieDetailPage: React.FC = () => {
     fetchMovie();
   }, [id]);
 
+  // Check if movie is in favorites (only if authenticated)
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!isAuthenticated || !id) {
+        setIsFavorite(false);
+        return;
+      }
+
+      try {
+        const favoriteStatus = await checkIfFavorite(parseInt(id));
+        setIsFavorite(favoriteStatus);
+      } catch (err) {
+        console.error("Error checking favorite status:", err);
+        setIsFavorite(false);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [isAuthenticated, id]);
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -105,6 +126,9 @@ const MovieDetailPage: React.FC = () => {
         await addToFavorites(movie.id);
         setIsFavorite(true);
       }
+      
+      // Dispatch custom event to notify favorites changed
+      window.dispatchEvent(new Event("favoritesChanged"));
     } catch (error) {
       console.error("Error toggling favorite:", error);
       alert("No se pudo actualizar favoritos. Intenta nuevamente.");

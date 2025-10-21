@@ -379,8 +379,7 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
                 <div className="video-card__info">
                   <h3 className="video-card__title">{movie.titulo}</h3>
                   <span className="video-card__duration">
-                    {Math.floor(movie.duracion / 60)}:
-                    {String(Math.floor(movie.duracion % 60)).padStart(2, "0")}
+                    {movie.duracion} min
                   </span>
                 </div>
               </div>

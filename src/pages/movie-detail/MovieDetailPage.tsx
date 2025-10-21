@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./MovieDetailPage.scss";
-import { getMovieById, type Movie as BackendMovie, addToFavorites, removeFromFavorites } from "../../services/movieService";
+import {
+  getMovieById,
+  type Movie as BackendMovie,
+  addToFavorites,
+  removeFromFavorites,
+} from "../../services/movieService";
 import { authService } from "../../services/authService";
 
 /**
@@ -161,7 +166,10 @@ const MovieDetailPage: React.FC = () => {
       <div className="movie-detail">
         <div className="movie-detail__error">
           <p>{error || "Película no encontrada"}</p>
-          <button onClick={handleBack} className="movie-detail__action-button movie-detail__action-button--primary">
+          <button
+            onClick={handleBack}
+            className="movie-detail__action-button movie-detail__action-button--primary"
+          >
             Regresar
           </button>
         </div>
@@ -170,7 +178,9 @@ const MovieDetailPage: React.FC = () => {
   }
 
   // Helper para formatear actores (el backend guarda como string separado por comas)
-  const actoresList = movie.actores ? movie.actores.split(',').map((a: string) => a.trim()) : [];
+  const actoresList = movie.actores
+    ? movie.actores.split(",").map((a: string) => a.trim())
+    : [];
 
   return (
     <div className="movie-detail">
@@ -259,9 +269,9 @@ const MovieDetailPage: React.FC = () => {
               </span>
               <span
                 className="movie-detail__classification"
-                aria-label={`Disponible: ${movie.disponible ? 'Sí' : 'No'}`}
+                aria-label={`Disponible: ${movie.disponible ? "Sí" : "No"}`}
               >
-                {movie.disponible ? '✓ Disponible' : '✗ No disponible'}
+                {movie.disponible ? "✓ Disponible" : "✗ No disponible"}
               </span>
             </div>
             <div className="movie-detail__genres" role="list">
@@ -431,20 +441,14 @@ const MovieDetailPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">
-                    Actores:
-                  </span>
+                  <span className="movie-detail__info-label">Actores:</span>
                   <span className="movie-detail__info-value">
-                    {actoresList.join(', ')}
+                    {actoresList.join(", ")}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">
-                    Año:
-                  </span>
-                  <span className="movie-detail__info-value">
-                    {movie.año}
-                  </span>
+                  <span className="movie-detail__info-label">Año:</span>
+                  <span className="movie-detail__info-value">{movie.año}</span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">Duración:</span>
@@ -453,19 +457,28 @@ const MovieDetailPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
-                  <span className="movie-detail__info-label">Disponibilidad:</span>
+                  <span className="movie-detail__info-label">
+                    Disponibilidad:
+                  </span>
                   <span className="movie-detail__info-value movie-detail__info-value--available">
-                    {movie.disponible ? 'Disponible' : 'No disponible'}
+                    {movie.disponible ? "Disponible" : "No disponible"}
                   </span>
                 </div>
                 <div className="movie-detail__info-item">
                   <span className="movie-detail__info-label">Trailer:</span>
                   <span className="movie-detail__info-value">
                     {movie.trailer ? (
-                      <a href={movie.trailer} target="_blank" rel="noopener noreferrer" style={{color: 'var(--color-primary)'}}>
+                      <a
+                        href={movie.trailer}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "var(--color-primary)" }}
+                      >
                         Ver trailer
                       </a>
-                    ) : 'No disponible'}
+                    ) : (
+                      "No disponible"
+                    )}
                   </span>
                 </div>
               </div>

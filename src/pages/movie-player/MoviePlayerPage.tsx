@@ -50,7 +50,8 @@ const MoviePlayerPage: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [showSubtitlesMenu, setShowSubtitlesMenu] = useState(false);
-  const [buffered, setBuffered] = useState(0);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  // const [buffered, setBuffered] = useState(0); // Commented out - not used without progress bar
 
   // Fetch movie data from backend
   useEffect(() => {
@@ -65,7 +66,7 @@ const MoviePlayerPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         const movieData = await getMovieById(parseInt(id));
-        
+
         setMovie({
           id: movieData.id,
           titulo: movieData.titulo,
@@ -85,23 +86,32 @@ const MoviePlayerPage: React.FC = () => {
   // Play/Pause toggle
   const togglePlay = useCallback(() => {
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
+      if (videoRef.current.paused || videoRef.current.ended) {
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+            })
+            .catch((error) => {
+              console.error("Error playing video:", error);
+              setIsPlaying(false);
+            });
+        }
       } else {
-        videoRef.current.play();
+        videoRef.current.pause();
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
     }
-  }, [isPlaying]);
+  }, []);
 
-  // Seek video
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
-  };
+  // Seek video - Commented out - not used without progress bar
+  // const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const time = parseFloat(e.target.value);
+  //   if (videoRef.current) {
+  //     videoRef.current.currentTime = time;
+  //   }
+  // };
 
   // Volume control
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,12 +131,21 @@ const MoviePlayerPage: React.FC = () => {
     }
   }, [isMuted]);
 
-  // Skip forward/backward
-  const skip = (seconds: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime += seconds;
-    }
+  // Toggle volume slider visibility
+  const toggleVolumeSlider = () => {
+    setShowVolumeSlider(!showVolumeSlider);
   };
+
+  // Skip forward/backward
+  const skip = useCallback((seconds: number) => {
+    if (videoRef.current && videoRef.current.duration) {
+      const newTime = videoRef.current.currentTime + seconds;
+      videoRef.current.currentTime = Math.max(
+        0,
+        Math.min(newTime, videoRef.current.duration)
+      );
+    }
+  }, []);
 
   // Toggle fullscreen
   const toggleFullscreen = () => {
@@ -171,36 +190,65 @@ const MoviePlayerPage: React.FC = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
+    const handlePlay = () => {
+      console.log("Video play event");
+      setIsPlaying(true);
+      // Ocultar controles después de 3 segundos cuando está reproduciendo
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
     };
-
+    const handlePause = () => {
+      console.log("Video pause event");
+      setIsPlaying(false);
+      setShowControls(true);
+    };
+    const handlePlaying = () => {
+      console.log("Video playing event");
+      setIsPlaying(true);
+    };
+    const handleWaiting = () => {
+      console.log("Video waiting event");
+      setIsPlaying(false);
+    };
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
     const handleLoadedMetadata = () => {
+      console.log("Video metadata loaded, duration:", video.duration);
       setDuration(video.duration);
     };
-
-    const handleProgress = () => {
-      if (video.buffered.length > 0) {
-        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-        const percentage = (bufferedEnd / video.duration) * 100;
-        setBuffered(percentage);
-      }
-    };
-
+    // Commented out - not used without progress bar
+    // const handleProgress = () => {
+    //   if (video.buffered.length > 0) {
+    //     const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+    //     const percentage = (bufferedEnd / video.duration) * 100;
+    //     setBuffered(percentage);
+    //   }
+    // };
     const handleEnded = () => {
       setIsPlaying(false);
       setShowControls(true);
     };
 
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+    video.addEventListener("playing", handlePlaying);
+    video.addEventListener("waiting", handleWaiting);
     video.addEventListener("timeupdate", handleTimeUpdate);
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
-    video.addEventListener("progress", handleProgress);
+    // video.addEventListener("progress", handleProgress); // Commented out - not used without progress bar
     video.addEventListener("ended", handleEnded);
 
     return () => {
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+      video.removeEventListener("playing", handlePlaying);
+      video.removeEventListener("waiting", handleWaiting);
       video.removeEventListener("timeupdate", handleTimeUpdate);
       video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      video.removeEventListener("progress", handleProgress);
+      // video.removeEventListener("progress", handleProgress); // Commented out - not used without progress bar
       video.removeEventListener("ended", handleEnded);
     };
   }, []);
@@ -216,11 +264,11 @@ const MoviePlayerPage: React.FC = () => {
           break;
         case "ArrowLeft":
           e.preventDefault();
-          skip(-10);
+          skip(-5);
           break;
         case "ArrowRight":
           e.preventDefault();
-          skip(10);
+          skip(5);
           break;
         case "ArrowUp":
           e.preventDefault();
@@ -248,7 +296,7 @@ const MoviePlayerPage: React.FC = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isPlaying, isMuted, showSubtitlesMenu, togglePlay, toggleMute]);
+  }, [isPlaying, isMuted, showSubtitlesMenu, togglePlay, toggleMute, skip]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -282,13 +330,13 @@ const MoviePlayerPage: React.FC = () => {
     return (
       <div className="movie-player movie-player--loading">
         <div className="movie-player__loading">
-          <p className="movie-player__loading-text" style={{ color: 'red' }}>
-            {error || 'No se pudo cargar el video'}
+          <p className="movie-player__loading-text" style={{ color: "red" }}>
+            {error || "No se pudo cargar el video"}
           </p>
-          <button 
-            className="btn btn--primary" 
+          <button
+            className="btn btn--primary"
             onClick={() => navigate(-1)}
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: "1rem" }}
           >
             Volver
           </button>
@@ -314,12 +362,60 @@ const MoviePlayerPage: React.FC = () => {
         onClick={togglePlay}
       />
 
-      {/* Loading indicator */}
-      {!duration && (
-        <div className="movie-player__loading">
-          <div className="movie-player__spinner"></div>
-        </div>
+      {/* Center Play Button (when paused) */}
+      {!isPlaying && (
+        <button
+          className="movie-player__center-play"
+          onClick={togglePlay}
+          aria-label="Reproducir"
+        >
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
       )}
+
+      {/* Center Skip Controls */}
+      <div className="movie-player__center-controls">
+        <button
+          className="movie-player__skip-button movie-player__skip-button--backward"
+          onClick={() => skip(-5)}
+          aria-label="Retroceder 5 segundos"
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+          </svg>
+          <span className="movie-player__skip-label">5</span>
+        </button>
+
+        {/* Center Play Button */}
+        <button
+          className="movie-player__center-play-button"
+          onClick={togglePlay}
+          aria-label={isPlaying ? "Pausar" : "Reproducir"}
+        >
+          {isPlaying ? (
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+          ) : (
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+        </button>
+
+        <button
+          className="movie-player__skip-button movie-player__skip-button--forward"
+          onClick={() => skip(5)}
+          aria-label="Adelantar 5 segundos"
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z" />
+          </svg>
+          <span className="movie-player__skip-label">5</span>
+        </button>
+      </div>
 
       {/* Controls Overlay */}
       <div
@@ -363,8 +459,8 @@ const MoviePlayerPage: React.FC = () => {
 
         {/* Bottom Controls */}
         <div className="movie-player__bottom-controls">
-          {/* Progress Bar */}
-          <div className="movie-player__progress-container">
+          {/* Progress Bar - COMMENTED OUT: Not working correctly */}
+          {/* <div className="movie-player__progress-container">
             <div
               className="movie-player__progress-buffered"
               style={{ width: `${buffered}%` }}
@@ -385,85 +481,29 @@ const MoviePlayerPage: React.FC = () => {
                 }%, rgba(255, 255, 255, 0.3) 100%)`,
               }}
             />
-          </div>
+          </div> */}
 
           {/* Controls Row */}
           <div className="movie-player__controls-row">
-            {/* Left Controls */}
-            <div className="movie-player__controls-left">
-              <button
-                className="movie-player__control-button"
-                onClick={togglePlay}
-                aria-label={isPlaying ? "Pausar" : "Reproducir"}
-              >
-                {isPlaying ? (
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                  </svg>
-                ) : (
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
-              </button>
+            {/* Time Display */}
+            <span className="movie-player__time">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </span>
 
-              <button
-                className="movie-player__control-button"
-                onClick={() => skip(-10)}
-                aria-label="Retroceder 10 segundos"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                    fill="currentColor"
-                  />
-                  <path
-                    d="M12.5 7H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className="movie-player__skip-text">-10</span>
-              </button>
-
-              <button
-                className="movie-player__control-button"
-                onClick={() => skip(10)}
-                aria-label="Adelantar 10 segundos"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                    fill="currentColor"
-                  />
-                  <path
-                    d="M12.5 7H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className="movie-player__skip-text">+10</span>
-              </button>
-
+            {/* Right Controls */}
+            <div className="movie-player__controls-right">
               {/* Volume Control */}
-              <div className="movie-player__volume-control">
+              <div className="movie-player__volume-container">
                 <button
-                  className="movie-player__control-button"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? "Activar sonido" : "Silenciar"}
+                  className="movie-player__volume-button"
+                  onClick={toggleVolumeSlider}
+                  aria-label="Control de volumen"
+                  aria-expanded={showVolumeSlider}
                 >
                   {isMuted || volume === 0 ? (
                     <svg
-                      width="24"
-                      height="24"
+                      width="28"
+                      height="28"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
@@ -471,8 +511,8 @@ const MoviePlayerPage: React.FC = () => {
                     </svg>
                   ) : volume < 0.5 ? (
                     <svg
-                      width="24"
-                      height="24"
+                      width="28"
+                      height="28"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
@@ -480,8 +520,8 @@ const MoviePlayerPage: React.FC = () => {
                     </svg>
                   ) : (
                     <svg
-                      width="24"
-                      height="24"
+                      width="28"
+                      height="28"
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
@@ -489,34 +529,31 @@ const MoviePlayerPage: React.FC = () => {
                     </svg>
                   )}
                 </button>
-                <input
-                  type="range"
-                  className="movie-player__volume-slider"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  aria-label="Control de volumen"
-                />
+                {showVolumeSlider && (
+                  <div className="movie-player__volume-slider-container">
+                    <input
+                      type="range"
+                      className="movie-player__volume-slider"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      aria-label="Control de volumen"
+                    />
+                  </div>
+                )}
               </div>
 
-              <span className="movie-player__time">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            </div>
-
-            {/* Right Controls */}
-            <div className="movie-player__controls-right">
               <button
-                className="movie-player__control-button"
+                className="movie-player__control-button-simple"
                 onClick={() => setShowSubtitlesMenu(!showSubtitlesMenu)}
                 aria-label="Subtítulos"
                 aria-expanded={showSubtitlesMenu}
               >
                 <svg
-                  width="24"
-                  height="24"
+                  width="32"
+                  height="32"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
@@ -525,7 +562,7 @@ const MoviePlayerPage: React.FC = () => {
               </button>
 
               <button
-                className="movie-player__control-button"
+                className="movie-player__control-button-simple"
                 onClick={toggleFullscreen}
                 aria-label={
                   isFullscreen
@@ -535,8 +572,8 @@ const MoviePlayerPage: React.FC = () => {
               >
                 {isFullscreen ? (
                   <svg
-                    width="24"
-                    height="24"
+                    width="32"
+                    height="32"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -544,8 +581,8 @@ const MoviePlayerPage: React.FC = () => {
                   </svg>
                 ) : (
                   <svg
-                    width="24"
-                    height="24"
+                    width="32"
+                    height="32"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >

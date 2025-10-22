@@ -120,10 +120,22 @@ const MovieDetailPage: React.FC = () => {
   };
 
   const handleToggleFavorite = async () => {
-    // Check authentication first
+    // Check authentication first (local check)
     if (!isAuthenticated) {
       const shouldLogin = window.confirm(
         "Debes iniciar sesión para agregar películas a favoritos. ¿Quieres ir a la página de inicio de sesión?"
+      );
+      if (shouldLogin) {
+        navigate("/login");
+      }
+      return;
+    }
+
+    // Verify authentication with server (important for mobile)
+    const isReallyAuthenticated = await authService.verifyAuthentication();
+    if (!isReallyAuthenticated) {
+      const shouldLogin = window.confirm(
+        "Tu sesión ha expirado. ¿Quieres iniciar sesión nuevamente?"
       );
       if (shouldLogin) {
         navigate("/login");

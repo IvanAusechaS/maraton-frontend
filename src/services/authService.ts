@@ -4,7 +4,7 @@
  * Uses HTTP-only cookies for secure token management
  */
 
-import api from './api';
+import api, { ApiError } from './api';
 
 /**
  * User interface based on backend response
@@ -215,8 +215,38 @@ class AuthService {
 
   /**
    * Check if user is authenticated
+   * Makes a lightweight request to verify the JWT cookie is valid
+   */
+  async verifyAuthentication(): Promise<boolean> {
+    try {
+      // Try to fetch user's favorites as a lightweight auth check
+      // If this succeeds, the JWT cookie is valid
+      await api.get('/usuarios/favorites');
+      return true;
+    } catch (error) {
+      // If 401, user is not authenticated
+      if (error instanceof ApiError && error.status === 401) {
+        // Clear invalid user data
+        localStorage.removeItem('user');
+        try {
+          window.dispatchEvent(new CustomEvent('authChanged'));
+        } catch (err) {
+          console.warn('Failed to dispatch authChanged event', err);
+        }
+        return false;
+      }
+      // For other errors, assume authenticated (network issues, etc.)
+      return this.isAuthenticated();
+    }
+  }
+
+  /**
+   * Check if user is authenticated (local check only)
    * With HTTP-only cookies, we check if user data exists in localStorage
    * The actual authentication token is in a secure HTTP-only cookie
+   * 
+   * Note: This is a fast local check. For critical operations,
+   * use verifyAuthentication() to check with the server.
    */
   isAuthenticated(): boolean {
     const user = localStorage.getItem('user');

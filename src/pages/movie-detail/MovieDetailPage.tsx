@@ -10,6 +10,7 @@ import {
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
 import { useFavoritesContext } from "../../contexts/useFavoritesContext";
+import { ApiError } from "../../services/api";
 
 /**
  * Movie detail page component.
@@ -131,18 +132,6 @@ const MovieDetailPage: React.FC = () => {
       return;
     }
 
-    // Verify authentication with server (important for mobile)
-    const isReallyAuthenticated = await authService.verifyAuthentication();
-    if (!isReallyAuthenticated) {
-      const shouldLogin = window.confirm(
-        "Tu sesión ha expirado. ¿Quieres iniciar sesión nuevamente?"
-      );
-      if (shouldLogin) {
-        navigate("/login");
-      }
-      return;
-    }
-
     if (!movie) return;
 
     // Optimistic update - change UI immediately
@@ -164,7 +153,23 @@ const MovieDetailPage: React.FC = () => {
       console.error("Error toggling favorite:", error);
       // Revert optimistic update on error
       setIsFavorite(wasInFavorites);
-      alert("No se pudo actualizar favoritos. Intenta nuevamente.");
+      
+      // Check if it's an authentication error (401)
+      if (error instanceof ApiError && error.status === 401) {
+        // Clear user data since session is invalid
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        
+        const shouldLogin = window.confirm(
+          "Tu sesión ha expirado. ¿Quieres iniciar sesión nuevamente?"
+        );
+        if (shouldLogin) {
+          navigate("/login");
+        }
+      } else {
+        // Other errors
+        alert("No se pudo actualizar favoritos. Intenta nuevamente.");
+      }
     }
   };
 

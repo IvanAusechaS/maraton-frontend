@@ -170,6 +170,21 @@ export const api = {
   },
 
   /**
+   * PATCH request
+   */
+  patch: <T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestInit
+  ): Promise<T> => {
+    return apiFetch<T>(endpoint, {
+      ...options,
+      method: "PATCH",
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  },
+
+  /**
    * DELETE request
    */
   delete: <T>(endpoint: string, options?: RequestInit): Promise<T> => {

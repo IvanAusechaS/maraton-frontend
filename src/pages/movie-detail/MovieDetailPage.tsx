@@ -6,8 +6,10 @@ import {
   type Movie as BackendMovie,
   addToFavorites,
   removeFromFavorites,
+  getFavoriteMovies,
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
+import { useFavoritesContext } from "../../contexts/useFavoritesContext";
 
 /**
  * Movie detail page component.
@@ -36,6 +38,7 @@ import { authService } from "../../services/authService";
 const MovieDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { refreshFavorites: notifyFavoritesChange } = useFavoritesContext();
   const [movie, setMovie] = useState<BackendMovie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +56,29 @@ const MovieDetailPage: React.FC = () => {
     };
     checkAuth();
   }, []);
+
+  // Check if movie is in user's favorites ONLY when movie loads
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      // Only check if user is authenticated AND movie is loaded
+      if (!isAuthenticated || !movie) {
+        setIsFavorite(false);
+        return;
+      }
+
+      try {
+        const favorites = await getFavoriteMovies();
+        const isFav = favorites.some((fav) => fav.id === movie.id);
+        setIsFavorite(isFav);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+        // If error (e.g., 401), set as not favorite
+        setIsFavorite(false);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [isAuthenticated, movie]); // Remove favoritesVersion from dependencies
 
   // Fetch movie data from backend
   useEffect(() => {
@@ -80,7 +106,11 @@ const MovieDetailPage: React.FC = () => {
   }, [id]);
 
   const handleBack = () => {
-    navigate(-1);
+    // Refresh favorites when going back to ensure the favorites list is updated
+    notifyFavoritesChange();
+    
+    // Force a full page reload to ensure fresh data
+    window.location.href = '/peliculas';
   };
 
   const handleWatch = () => {
@@ -90,23 +120,38 @@ const MovieDetailPage: React.FC = () => {
   };
 
   const handleToggleFavorite = async () => {
+    // Check authentication first
     if (!isAuthenticated) {
-      alert("Debes iniciar sesión para agregar a favoritos");
+      const shouldLogin = window.confirm(
+        "Debes iniciar sesión para agregar películas a favoritos. ¿Quieres ir a la página de inicio de sesión?"
+      );
+      if (shouldLogin) {
+        navigate("/login");
+      }
       return;
     }
 
     if (!movie) return;
 
+    // Optimistic update - change UI immediately
+    const wasInFavorites = isFavorite;
+    setIsFavorite(!isFavorite);
+
     try {
-      if (isFavorite) {
+      if (wasInFavorites) {
+        // Remove from favorites
         await removeFromFavorites(movie.id);
-        setIsFavorite(false);
       } else {
+        // Add to favorites
         await addToFavorites(movie.id);
-        setIsFavorite(true);
       }
+      
+      // Success - notify other components to refresh their favorites
+      notifyFavoritesChange();
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      // Revert optimistic update on error
+      setIsFavorite(wasInFavorites);
       alert("No se pudo actualizar favoritos. Intenta nuevamente.");
     }
   };

@@ -4,10 +4,10 @@ import "./MoviePage.scss";
 import {
   getMoviesByGenre,
   getFavoriteMovies,
-  getWatchLaterMovies,
   type Movie,
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
+import { useFavoritesContext } from "../../contexts/useFavoritesContext";
 
 interface MovieCategory {
   title: string;
@@ -17,18 +17,15 @@ interface MovieCategory {
 }
 
 const MoviePage: FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Initialize authentication status immediately (not in useEffect)
+  const [isAuthenticated, setIsAuthenticated] = useState(() => authService.isAuthenticated());
+  const { favoritesVersion } = useFavoritesContext(); // Listen to favorites changes
+  
   const [categories, setCategories] = useState<{
     [key: string]: MovieCategory;
   }>({
     favorites: {
       title: "Favoritos",
-      movies: [],
-      loading: true,
-      visible: false,
-    },
-    watchLater: {
-      title: "Ver más tarde",
       movies: [],
       loading: true,
       visible: false,
@@ -60,79 +57,77 @@ const MoviePage: FC = () => {
     };
   }, []);
 
+  // Load favorites when authentication or favorites change
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        // Si el usuario está autenticado, cargar favoritos y ver más tarde
-        if (isAuthenticated) {
-          // Favoritos - SIEMPRE VISIBLE cuando está autenticado
-          try {
-            const favoritesData = await getFavoriteMovies();
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: favoritesData,
-                loading: false,
-                visible: true, // Siempre visible si está autenticado
-              },
-            }));
-          } catch {
-            // Si falla, mostrar vacío pero MANTENER VISIBLE
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: [],
-                loading: false,
-                visible: true, // MANTENER VISIBLE aunque haya error
-              },
-            }));
-          }
-
-          // Ver más tarde - SIEMPRE VISIBLE cuando está autenticado
-          try {
-            const watchLaterData = await getWatchLaterMovies();
-            setCategories((prev) => ({
-              ...prev,
-              watchLater: {
-                ...prev.watchLater,
-                movies: watchLaterData,
-                loading: false,
-                visible: true, // Siempre visible si está autenticado
-              },
-            }));
-          } catch {
-            // Si falla, mostrar vacío pero MANTENER VISIBLE
-            setCategories((prev) => ({
-              ...prev,
-              watchLater: {
-                ...prev.watchLater,
-                movies: [],
-                loading: false,
-                visible: true, // MANTENER VISIBLE aunque haya error
-              },
-            }));
-          }
-        } else {
-          // Si no está autenticado, ocultar estas categorías inmediatamente
+    const fetchFavorites = async () => {
+      if (isAuthenticated) {
+        try {
+          const favoritesData = await getFavoriteMovies();
+          setCategories((prev) => ({
+            ...prev,
+            favorites: {
+              ...prev.favorites,
+              movies: favoritesData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        } catch (error) {
+          console.error('Error fetching favorites:', error);
           setCategories((prev) => ({
             ...prev,
             favorites: {
               ...prev.favorites,
               movies: [],
               loading: false,
-              visible: false,
-            },
-            watchLater: {
-              ...prev.watchLater,
-              movies: [],
-              loading: false,
-              visible: false,
+              visible: true,
             },
           }));
         }
+      } else {
+        setCategories((prev) => ({
+          ...prev,
+          favorites: {
+            ...prev.favorites,
+            movies: [],
+            loading: false,
+            visible: false,
+          },
+        }));
+      }
+    };
 
+    fetchFavorites();
+  }, [isAuthenticated, favoritesVersion]);
+
+  // Also reload favorites when the page becomes visible (tab focus)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isAuthenticated) {
+        getFavoriteMovies().then(favoritesData => {
+          setCategories((prev) => ({
+            ...prev,
+            favorites: {
+              ...prev.favorites,
+              movies: favoritesData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isAuthenticated]);
+
+  // Load genre movies once on mount
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
         // Terror
         try {
           const terrorData = await getMoviesByGenre("Terror");
@@ -238,7 +233,7 @@ const MoviePage: FC = () => {
     };
 
     fetchMovies();
-  }, [isAuthenticated]);
+  }, []); // ✅ Load genres only once on mount
 
   return (
     <div className="movie-page">
@@ -319,7 +314,7 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
       <div className="video-row">
         <h2 className="video-row__title">{title}</h2>
         <div className="video-row__empty">
-          {title === "Favoritos" || title === "Ver más tarde"
+          {title === "Favoritos"
             ? `No tienes películas en ${title.toLowerCase()}`
             : "Temporalmente no disponible. Intenta más tarde."}
         </div>
@@ -335,8 +330,11 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
           <button
             className="video-row__arrow video-row__arrow--left"
             onClick={() => handleScroll("left")}
+            aria-label="Previous"
           >
-            <img src="/arrow-white.svg" alt="Previous" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
         )}
 
@@ -391,8 +389,11 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
           <button
             className="video-row__arrow video-row__arrow--right"
             onClick={() => handleScroll("right")}
+            aria-label="Next"
           >
-            <img src="/arrow-white.svg" alt="Next" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
         )}
       </div>

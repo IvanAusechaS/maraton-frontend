@@ -1,0 +1,136 @@
+/**
+ * Favorite Button Styles
+ * Styles for the interactive favorite/heart button
+ */
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--active {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgb(220, 38, 38);
+    color: rgb(220, 38, 38);
+
+    &:hover:not(:disabled) {
+      background: rgba(220, 38, 38, 0.3);
+      border-color: rgb(239, 68, 68);
+    }
+
+    .favorite-button__icon {
+      animation: heartBeat 0.3s ease-in-out;
+    }
+  }
+
+  // Size variants
+  &--small {
+    padding: 0.375rem;
+    
+    .favorite-button__icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &--medium {
+    padding: 0.5rem;
+    
+    .favorite-button__icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &--large {
+    padding: 0.75rem;
+    
+    .favorite-button__icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .favorite-button {
+    &--small {
+      padding: 0.25rem;
+      
+      .favorite-button__icon {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &--medium {
+      padding: 0.375rem;
+      
+      .favorite-button__icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    &--large {
+      padding: 0.5rem;
+      
+      .favorite-button__icon {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}

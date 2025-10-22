@@ -25,19 +25,21 @@ export const getMoviesByGenre = async (genre: string): Promise<Movie[]> => {
 };
 
 /**
- * Get user's favorite movies (requires authentication)
+ * Favorites response interface from backend
  */
-export const getFavoriteMovies = async (): Promise<Movie[]> => {
-  const movies = await api.get<Movie[]>("/usuarios/favorites");
-  return movies;
-};
+export interface FavoritesResponse {
+  total: number;
+  movies: Movie[];
+}
 
 /**
- * Get user's watch later movies (requires authentication)
+ * Get user's favorite movies (requires authentication)
+ * GET /api/usuarios/favorites
+ * Returns: { total: number, movies: Movie[] }
  */
-export const getWatchLaterMovies = async (): Promise<Movie[]> => {
-  const movies = await api.get<Movie[]>("/usuarios/watch-later");
-  return movies;
+export const getFavoriteMovies = async (): Promise<Movie[]> => {
+  const response = await api.get<FavoritesResponse>("/usuarios/favorites");
+  return response.movies; // Extract movies array from response
 };
 
 /**
@@ -49,31 +51,44 @@ export const getMovieById = async (id: number): Promise<Movie> => {
 };
 
 /**
+ * Get all available movies
+ * GET /api/peliculas
+ */
+export const getAllMovies = async (): Promise<Movie[]> => {
+  const movies = await api.get<Movie[]>("/peliculas");
+  return movies;
+};
+
+/**
+ * Get all genres
+ * GET /api/peliculas/generos
+ */
+export interface Genre {
+  id: number;
+  nombre: string;
+  estado: boolean;
+}
+
+export const getAllGenres = async (): Promise<Genre[]> => {
+  const genres = await api.get<Genre[]>("/peliculas/generos");
+  return genres;
+};
+
+/**
  * Add movie to favorites
+ * POST /api/usuarios/favorites
+ * Body: { peliculaId: number }
  */
 export const addToFavorites = async (movieId: number): Promise<void> => {
-  await api.post(`/usuarios/favorites/${movieId}`);
+  await api.post("/usuarios/favorites", { peliculaId: movieId });
 };
 
 /**
  * Remove movie from favorites
+ * DELETE /api/usuarios/favorites/:id
  */
 export const removeFromFavorites = async (movieId: number): Promise<void> => {
-  await api.delete(`/usuarios/favorites/${movieId}`);
-};
-
-/**
- * Add movie to watch later
- */
-export const addToWatchLater = async (movieId: number): Promise<void> => {
-  await api.post(`/usuarios/watch-later/${movieId}`);
-};
-
-/**
- * Remove movie from watch later
- */
-export const removeFromWatchLater = async (movieId: number): Promise<void> => {
-  await api.delete(`/usuarios/watch-later/${movieId}`);
+  await api.patch(`/usuarios/favorites/${movieId}`, { favorite: false });
 };
 
 // ===== LEGACY PEXELS CODE (kept for reference, not used) =====

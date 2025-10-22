@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import RoutesMARATON from "./routes/RoutesMARATON.tsx";
+import { FavoritesProvider } from "./contexts/FavoritesContext.tsx";
 import "./index.scss";
 
 /**
@@ -9,6 +10,8 @@ import "./index.scss";
  */
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RoutesMARATON />
+    <FavoritesProvider>
+      <RoutesMARATON />
+    </FavoritesProvider>
   </React.StrictMode>
 );

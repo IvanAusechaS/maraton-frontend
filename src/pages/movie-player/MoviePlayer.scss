@@ -287,6 +287,13 @@
     align-items: center;
     pointer-events: none;
     z-index: 11;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &--visible {
+      opacity: 1;
+      pointer-events: all;
+    }
 
     @media (max-width: 768px) {
       gap: 2rem;

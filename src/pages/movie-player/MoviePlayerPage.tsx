@@ -362,7 +362,7 @@ const MoviePlayerPage: React.FC = () => {
         onClick={togglePlay}
       />
 
-      {/* Center Play Button (when paused) */}
+      {/* Center Play Button (when paused) - Outside controls to always be visible when paused */}
       {!isPlaying && (
         <button
           className="movie-player__center-play"
@@ -375,8 +375,12 @@ const MoviePlayerPage: React.FC = () => {
         </button>
       )}
 
-      {/* Center Skip Controls */}
-      <div className="movie-player__center-controls">
+      {/* Center Skip Controls - Now controlled by showControls */}
+      <div
+        className={`movie-player__center-controls ${
+          showControls ? "movie-player__center-controls--visible" : ""
+        }`}
+      >
         <button
           className="movie-player__skip-button movie-player__skip-button--backward"
           onClick={() => skip(-5)}

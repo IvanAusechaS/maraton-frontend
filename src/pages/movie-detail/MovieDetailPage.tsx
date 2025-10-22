@@ -14,13 +14,13 @@ import { ApiError } from "../../services/api";
 
 /**
  * MovieDetailPage Component
- * 
+ *
  * Comprehensive movie detail page displaying all information about a selected movie.
  * Provides interactive features including favorites management, rating, and commenting.
  *
  * @component
  * @returns {JSX.Element} Movie detail view with complete movie information and interactive features
- * 
+ *
  * @example
  * ```tsx
  * // Accessed via route: /pelicula/:id
@@ -38,7 +38,7 @@ import { ApiError } from "../../services/api";
  * - Share functionality (copy link to clipboard)
  * - Trailer link access
  * - Real-time favorites synchronization
- * 
+ *
  * @usability
  * Heuristics Applied:
  * - **Visibility of System Status**: Loading indicators, favorite status, rating feedback
@@ -54,21 +54,21 @@ import { ApiError } from "../../services/api";
  *
  * @accessibility
  * WCAG 2.1 Level AA Compliance:
- * 
+ *
  * **1. Perceivable**
  * - Semantic HTML5 elements (section, header, button, form)
  * - Alt text for all images with descriptive content
  * - ARIA labels for interactive elements
  * - Sufficient color contrast (4.5:1 minimum for text)
  * - Text alternatives for non-text content
- * 
+ *
  * **2. Operable**
  * - Full keyboard navigation support
  * - Focus indicators on all interactive elements
  * - Touch targets minimum 44x44px (mobile-friendly)
  * - No keyboard traps
  * - Sufficient time for interactions (no time limits on reading)
- * 
+ *
  * **3. Understandable (New Implementation)**
  * - Clear, consistent labeling across all elements
  * - Predictable navigation patterns
@@ -76,7 +76,7 @@ import { ApiError } from "../../services/api";
  * - Error identification with descriptive messages
  * - Language attribute declared
  * - Consistent component behavior
- * 
+ *
  * **4. Robust (New Implementation)**
  * - Valid HTML5 markup
  * - Compatible with assistive technologies (NVDA, JAWS, VoiceOver)
@@ -174,7 +174,7 @@ const MovieDetailPage: React.FC = () => {
   /**
    * Handles navigation back to the movies list page.
    * Ensures favorites are refreshed and reloads the page for fresh data.
-   * 
+   *
    * @usability
    * - **User Control and Freedom**: Allows easy navigation back
    * - **Consistency**: Ensures data consistency across views
@@ -182,14 +182,14 @@ const MovieDetailPage: React.FC = () => {
   const handleBack = () => {
     // Refresh favorites when going back to ensure the favorites list is updated
     notifyFavoritesChange();
-    
+
     // Force a full page reload to ensure fresh data
-    window.location.href = '/peliculas';
+    window.location.href = "/peliculas";
   };
 
   /**
    * Initiates movie playback by navigating to the player page.
-   * 
+   *
    * @usability
    * - **Flexibility and Efficiency**: Quick access to main action
    */
@@ -203,15 +203,15 @@ const MovieDetailPage: React.FC = () => {
    * Toggles the favorite status of the current movie.
    * Implements optimistic UI updates with error recovery.
    * Handles authentication requirements and session validation.
-   * 
+   *
    * @async
    * @throws {ApiError} When API request fails
-   * 
+   *
    * @usability
    * - **Error Prevention**: Checks authentication before attempting action
    * - **Visibility of System Status**: Immediate visual feedback via optimistic update
    * - **Help Users Recover from Errors**: Clear error messages with recovery options
-   * 
+   *
    * @accessibility
    * - Announces status changes for screen readers
    * - Provides clear confirmation dialogs
@@ -242,20 +242,20 @@ const MovieDetailPage: React.FC = () => {
         // Add to favorites
         await addToFavorites(movie.id);
       }
-      
+
       // Success - notify other components to refresh their favorites
       notifyFavoritesChange();
     } catch (error) {
       console.error("Error toggling favorite:", error);
       // Revert optimistic update on error
       setIsFavorite(wasInFavorites);
-      
+
       // Check if it's an authentication error (401)
       if (error instanceof ApiError && error.status === 401) {
         // Clear user data since session is invalid
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
         setIsAuthenticated(false);
-        
+
         const shouldLogin = window.confirm(
           "Tu sesión ha expirado. ¿Quieres iniciar sesión nuevamente?"
         );
@@ -272,14 +272,14 @@ const MovieDetailPage: React.FC = () => {
   /**
    * Copies the current page URL to the clipboard for sharing.
    * Provides fallback for browsers without Clipboard API support.
-   * 
+   *
    * @async
-   * 
+   *
    * @usability
    * - **Flexibility and Efficiency**: Quick share functionality
    * - **Error Prevention**: Graceful fallback for older browsers
    * - **Visibility of System Status**: Immediate feedback via alert
-   * 
+   *
    * @robust
    * - Progressive enhancement with fallback
    * - Cross-browser compatibility
@@ -307,9 +307,9 @@ const MovieDetailPage: React.FC = () => {
 
   /**
    * Switches between information and comments tabs.
-   * 
+   *
    * @param {"info" | "comments"} tab - The tab to switch to
-   * 
+   *
    * @usability
    * - **Consistency and Standards**: Standard tabbed interface pattern
    * - **Flexibility and Efficiency**: Quick content access
@@ -320,9 +320,9 @@ const MovieDetailPage: React.FC = () => {
 
   /**
    * Handles star rating selection.
-   * 
+   *
    * @param {number} rating - Rating value from 1 to 5
-   * 
+   *
    * @usability
    * - **Recognition Rather Than Recall**: Visual star representation
    * - **Visibility of System Status**: Shows selected rating
@@ -333,9 +333,9 @@ const MovieDetailPage: React.FC = () => {
 
   /**
    * Handles hover preview for star ratings.
-   * 
+   *
    * @param {number} rating - Rating value being hovered
-   * 
+   *
    * @usability
    * - **Visibility of System Status**: Preview of selection before commit
    */
@@ -345,7 +345,7 @@ const MovieDetailPage: React.FC = () => {
 
   /**
    * Resets hover state when mouse leaves rating stars.
-   * 
+   *
    * @usability
    * - **Visibility of System Status**: Clear feedback on interaction state
    */
@@ -357,9 +357,9 @@ const MovieDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="movie-detail" role="main">
-        <div 
-          className="movie-detail__loading" 
-          role="status" 
+        <div
+          className="movie-detail__loading"
+          role="status"
           aria-live="polite"
           aria-label="Cargando información de la película"
         >
@@ -374,11 +374,7 @@ const MovieDetailPage: React.FC = () => {
   if (error || !movie) {
     return (
       <div className="movie-detail" role="main">
-        <div 
-          className="movie-detail__error" 
-          role="alert"
-          aria-live="assertive"
-        >
+        <div className="movie-detail__error" role="alert" aria-live="assertive">
           <p>{error || "Película no encontrada"}</p>
           <button
             onClick={handleBack}
@@ -462,8 +458,14 @@ const MovieDetailPage: React.FC = () => {
           </button>
 
           <div className="movie-detail__title-section">
-            <h1 className="movie-detail__title" id="movie-title">{movie.titulo}</h1>
-            <div className="movie-detail__metadata" role="list" aria-label="Metadata de la película">
+            <h1 className="movie-detail__title" id="movie-title">
+              {movie.titulo}
+            </h1>
+            <div
+              className="movie-detail__metadata"
+              role="list"
+              aria-label="Metadata de la película"
+            >
               <span
                 className="movie-detail__year"
                 role="listitem"
@@ -471,7 +473,11 @@ const MovieDetailPage: React.FC = () => {
               >
                 {movie.año}
               </span>
-              <span className="movie-detail__dot" aria-hidden="true" role="presentation">
+              <span
+                className="movie-detail__dot"
+                aria-hidden="true"
+                role="presentation"
+              >
                 •
               </span>
               <span
@@ -481,18 +487,30 @@ const MovieDetailPage: React.FC = () => {
               >
                 {movie.duracion} min
               </span>
-              <span className="movie-detail__dot" aria-hidden="true" role="presentation">
+              <span
+                className="movie-detail__dot"
+                aria-hidden="true"
+                role="presentation"
+              >
                 •
               </span>
               <span
                 className="movie-detail__classification"
                 role="listitem"
-                aria-label={`Estado de disponibilidad: ${movie.disponible ? "Disponible para ver" : "No disponible actualmente"}`}
+                aria-label={`Estado de disponibilidad: ${
+                  movie.disponible
+                    ? "Disponible para ver"
+                    : "No disponible actualmente"
+                }`}
               >
                 {movie.disponible ? "✓ Disponible" : "✗ No disponible"}
               </span>
             </div>
-            <div className="movie-detail__genres" role="list" aria-label="Información del director">
+            <div
+              className="movie-detail__genres"
+              role="list"
+              aria-label="Información del director"
+            >
               <span className="movie-detail__genre" role="listitem">
                 Director: {movie.director}
               </span>

@@ -1,20 +1,3 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
 # 🎬 Maraton Frontend
 
 Movie streaming platform built with React, TypeScript, and Vite.
@@ -48,23 +31,38 @@ Visit `http://localhost:5173`
 
 ```
 maraton-frontend/
-├── public/              # Static assets (SVG icons, images)
+├── docs/               # 📚 Complete documentation (see docs/README.md)
+├── public/             # Static assets (SVG icons, images)
 ├── src/
-│   ├── components/     # Reusable components (Navbar, Footer, Modal)
-│   ├── pages/         # Page components
-│   │   ├── auth/      # Authentication pages (Login, Signup, etc.)
-│   │   ├── home/      # Home page with Hero and Carousel
-│   │   ├── movie/     # Movie details page
-│   │   ├── profile/   # User profile page
-│   │   └── about/     # About us page
-│   ├── layout/        # Layout components
-│   ├── routes/        # Route configuration
-│   ├── services/      # API services (auth, movies)
-│   └── main.tsx       # App entry point
-├── .env               # Local environment variables
-├── .env.production    # Production environment variables
-└── DEPLOYMENT.md      # Deployment guide
+│   ├── components/     # Reusable components (Navbar, Footer, Modal, FavoriteButton)
+│   ├── contexts/       # React contexts (FavoritesContext)
+│   ├── hooks/          # Custom React hooks (useFavorites)
+│   ├── pages/          # Page components
+│   │   ├── auth/       # Authentication pages (Login, Signup)
+│   │   ├── home/       # Home page with Hero and Carousel
+│   │   ├── movie/      # Movies browsing page
+│   │   ├── movie-detail/  # Movie detail page
+│   │   ├── movie-player/  # Video player page
+│   │   ├── profile/    # User profile page
+│   │   └── about/      # About us page
+│   ├── layout/         # Layout components
+│   ├── routes/         # Route configuration
+│   ├── services/       # API services (auth, movies)
+│   └── main.tsx        # App entry point
+├── .env                # Local environment variables
+└── vite.config.ts      # Vite configuration
 ```
+
+## 📚 Documentation
+
+All project documentation is organized in the [`docs/`](./docs/) directory:
+
+- **[Complete Documentation Index](./docs/README.md)** - Start here for all docs
+- **[Deployment Guide](./docs/DEPLOYMENT.md)** - How to deploy the application
+- **[WCAG & Usability](./docs/USABILITY_WCAG_DOCUMENTATION.md)** - Accessibility compliance
+- **[Features Documentation](./docs/)** - Movies, authentication, favorites, and more
+
+> 💡 **Tip**: Check the [docs/README.md](./docs/README.md) for a complete table of contents.
 
 ## 🛠️ Tech Stack
 
@@ -79,13 +77,17 @@ maraton-frontend/
 
 ## 🎨 Features
 
-- ✅ User authentication (Login/Signup/Logout)
+- ✅ User authentication (Login/Signup/Logout) with JWT
 - ✅ Password recovery and reset
-- ✅ Movie catalog with filters (Familiar, Terror, Acción, Romance)
+- ✅ Movie catalog with genre filters (Terror, Aventura, Acción, Romance)
+- ✅ Favorites system with real-time synchronization
+- ✅ Full-screen video player with keyboard controls
+- ✅ Movie detail pages with ratings and comments
 - ✅ Search functionality
-- ✅ Responsive design (Desktop/Mobile)
+- ✅ Responsive design (Desktop/Tablet/Mobile)
 - ✅ User profile management
 - ✅ Protected routes
+- ✅ WCAG 2.1 Level AA accessibility compliance
 - ✅ Custom modal system
 - ✅ Toast notifications
 

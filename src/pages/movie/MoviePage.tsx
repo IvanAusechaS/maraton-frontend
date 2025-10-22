@@ -11,7 +11,7 @@ import { useFavoritesContext } from "../../contexts/useFavoritesContext";
 
 /**
  * Represents a movie category with its associated data and state.
- * 
+ *
  * @interface MovieCategory
  * @property {string} title - Display title of the category
  * @property {Movie[]} movies - Array of movies in this category
@@ -27,18 +27,18 @@ interface MovieCategory {
 
 /**
  * MoviePage Component
- * 
+ *
  * Main movie browsing page that displays movies organized by categories (genres and favorites).
  * Implements horizontal scrollable rows for each category with dynamic loading and authentication-based features.
- * 
+ *
  * @component
  * @returns {JSX.Element} The rendered movie browsing page
- * 
+ *
  * @example
  * ```tsx
  * <MoviePage />
  * ```
- * 
+ *
  * @description
  * Features:
  * - Dynamic category loading (Terror, Aventura, Acción, Romance)
@@ -47,7 +47,7 @@ interface MovieCategory {
  * - Responsive horizontal scrolling per category
  * - Error handling with graceful degradation
  * - Empty state messaging
- * 
+ *
  * @usability
  * Heuristics Applied:
  * - **Visibility of System Status**: Loading states and real-time feedback
@@ -55,14 +55,14 @@ interface MovieCategory {
  * - **Consistency and Standards**: Uniform card design across all categories
  * - **Error Prevention**: Authentication checks before protected actions
  * - **Recognition Rather Than Recall**: Clear visual categories and labels
- * 
+ *
  * @accessibility
  * WCAG 2.1 Level AA Compliance:
  * - **Perceivable**: Semantic HTML structure, alt text for images, clear labels
  * - **Operable**: Keyboard navigation support, sufficient touch target sizes (44x44px)
  * - **Understandable**: Clear error messages, consistent navigation patterns
  * - **Robust**: Compatible with assistive technologies, works across modern browsers
- * 
+ *
  * @wcag
  * - WCAG 2.1 Level AA compliant
  * - Guideline 1.3: Adaptable content structure
@@ -73,9 +73,11 @@ interface MovieCategory {
  */
 const MoviePage: FC = () => {
   // Initialize authentication status immediately (not in useEffect)
-  const [isAuthenticated, setIsAuthenticated] = useState(() => authService.isAuthenticated());
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+    authService.isAuthenticated()
+  );
   const { favoritesVersion } = useFavoritesContext(); // Listen to favorites changes
-  
+
   const [categories, setCategories] = useState<{
     [key: string]: MovieCategory;
   }>({
@@ -128,7 +130,7 @@ const MoviePage: FC = () => {
             },
           }));
         } catch (error) {
-          console.error('Error fetching favorites:', error);
+          console.error("Error fetching favorites:", error);
           setCategories((prev) => ({
             ...prev,
             favorites: {
@@ -159,7 +161,7 @@ const MoviePage: FC = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && isAuthenticated) {
-        getFavoriteMovies().then(favoritesData => {
+        getFavoriteMovies().then((favoritesData) => {
           setCategories((prev) => ({
             ...prev,
             favorites: {
@@ -173,9 +175,9 @@ const MoviePage: FC = () => {
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isAuthenticated]);
 
@@ -313,7 +315,7 @@ const MoviePage: FC = () => {
 
 /**
  * Props for the MovieRow component.
- * 
+ *
  * @interface MovieRowProps
  * @property {string} title - The category title displayed above the row
  * @property {Movie[]} movies - Array of movies to display in the row
@@ -327,23 +329,23 @@ interface MovieRowProps {
 
 /**
  * MovieRow Component
- * 
+ *
  * Displays a horizontal scrollable row of movie cards for a specific category.
  * Includes navigation arrows and handles empty/loading states.
- * 
+ *
  * @component
  * @param {MovieRowProps} props - Component props
  * @returns {JSX.Element} The rendered movie row
- * 
+ *
  * @example
  * ```tsx
- * <MovieRow 
- *   title="Terror" 
- *   movies={terrorMovies} 
- *   loading={false} 
+ * <MovieRow
+ *   title="Terror"
+ *   movies={terrorMovies}
+ *   loading={false}
  * />
  * ```
- * 
+ *
  * @description
  * Features:
  * - Horizontal scroll with smooth behavior
@@ -352,12 +354,12 @@ interface MovieRowProps {
  * - Empty state messaging
  * - Keyboard navigation support
  * - Responsive card layout
- * 
+ *
  * @usability
  * - **Consistency**: Uniform appearance across all rows
  * - **Error Prevention**: Disabled arrows when cannot scroll further
  * - **Aesthetic and Minimalist Design**: Clean, uncluttered interface
- * 
+ *
  * @accessibility
  * - Semantic HTML with proper ARIA labels
  * - Keyboard navigation (Enter/Space for selection)
@@ -374,9 +376,9 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
   /**
    * Handles horizontal scroll navigation for the movie row.
    * Updates scroll position and arrow visibility based on scroll boundaries.
-   * 
+   *
    * @param {"left" | "right"} direction - The direction to scroll
-   * 
+   *
    * @usability
    * - Smooth scrolling animation for better user experience
    * - Provides immediate visual feedback
@@ -415,11 +417,15 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
 
   if (loading) {
     return (
-      <div className="video-row" role="region" aria-label={`Categoría ${title}`}>
+      <div
+        className="video-row"
+        role="region"
+        aria-label={`Categoría ${title}`}
+      >
         <h2 className="video-row__title">{title}</h2>
-        <div 
-          className="video-row__loading" 
-          role="status" 
+        <div
+          className="video-row__loading"
+          role="status"
           aria-live="polite"
           aria-label={`Cargando películas de ${title}`}
         >
@@ -432,13 +438,13 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
   // Si no hay películas, mostrar mensaje apropiado (Error Prevention: Clear feedback)
   if (movies.length === 0) {
     return (
-      <div className="video-row" role="region" aria-label={`Categoría ${title}`}>
+      <div
+        className="video-row"
+        role="region"
+        aria-label={`Categoría ${title}`}
+      >
         <h2 className="video-row__title">{title}</h2>
-        <div 
-          className="video-row__empty" 
-          role="status"
-          aria-live="polite"
-        >
+        <div className="video-row__empty" role="status" aria-live="polite">
           {title === "Favoritos"
             ? `No tienes películas en ${title.toLowerCase()}`
             : "Temporalmente no disponible. Intenta más tarde."}
@@ -449,7 +455,9 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
 
   return (
     <div className="video-row" role="region" aria-label={`Categoría ${title}`}>
-      <h2 className="video-row__title" id={`title-${title}`}>{title}</h2>
+      <h2 className="video-row__title" id={`title-${title}`}>
+        {title}
+      </h2>
       <div className="video-row__wrapper">
         {canScrollLeft && (
           <button
@@ -459,21 +467,27 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
             aria-describedby={`title-${title}`}
             title={`Ver películas anteriores de ${title}`}
           >
-            <svg 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         )}
 
-        <div 
-          className="video-row__container" 
+        <div
+          className="video-row__container"
           id={`movie-row-${title}`}
           role="list"
           aria-label={`Películas de ${title}`}
@@ -503,8 +517,9 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
                       // Error Prevention: Graceful fallback for failed images
                       (e.target as HTMLImageElement).src =
                         "/placeholder-movie.jpg";
-                      (e.target as HTMLImageElement).alt = 
-                        `Imagen no disponible para ${movie.titulo}`;
+                      (
+                        e.target as HTMLImageElement
+                      ).alt = `Imagen no disponible para ${movie.titulo}`;
                     }}
                   />
                   <div className="video-card__overlay" aria-hidden="true">
@@ -519,7 +534,10 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
                 </div>
                 <div className="video-card__info">
                   <h3 className="video-card__title">{movie.titulo}</h3>
-                  <span className="video-card__duration" aria-label={`Duración: ${movie.duracion} minutos`}>
+                  <span
+                    className="video-card__duration"
+                    aria-label={`Duración: ${movie.duracion} minutos`}
+                  >
                     {movie.duracion} min
                   </span>
                 </div>
@@ -536,15 +554,21 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
             aria-describedby={`title-${title}`}
             title={`Ver más películas de ${title}`}
           >
-            <svg 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
-              <path d="M9 18L15 12L9 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M9 18L15 12L9 6"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         )}

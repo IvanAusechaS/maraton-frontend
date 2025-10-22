@@ -5,13 +5,13 @@ import { getMovieById } from "../../services/movieService";
 
 /**
  * MoviePlayerPage Component
- * 
+ *
  * Full-screen video player with comprehensive playback controls.
  * Provides professional-grade media player experience with keyboard shortcuts and accessibility features.
  *
  * @component
  * @returns {JSX.Element} Full-screen movie player with controls
- * 
+ *
  * @example
  * ```tsx
  * // Accessed via route: /pelicula/:id/player
@@ -30,7 +30,7 @@ import { getMovieById } from "../../services/movieService";
  * - Subtitles menu (placeholder for future implementation)
  * - Time display (current/total)
  * - Loading and error states
- * 
+ *
  * Keyboard Shortcuts:
  * - Space/K: Play/Pause
  * - Left Arrow: Skip backward 5 seconds
@@ -56,14 +56,14 @@ import { getMovieById } from "../../services/movieService";
  *
  * @accessibility
  * WCAG 2.1 Level AA Compliance:
- * 
+ *
  * **1. Perceivable**
  * - Visual controls with clear icons
  * - ARIA labels for all interactive elements
  * - High contrast control overlay
  * - Time information always visible (when controls shown)
  * - Text alternatives for icons
- * 
+ *
  * **2. Operable**
  * - Full keyboard control (no mouse required)
  * - Minimum 44x44px touch targets for mobile
@@ -71,14 +71,14 @@ import { getMovieById } from "../../services/movieService";
  * - Focus indicators on all controls
  * - Sufficient time to interact (no auto-advance)
  * - Skip controls for efficient navigation
- * 
+ *
  * **3. Understandable (New Implementation)**
  * - Predictable control behavior
  * - Consistent button placement
  * - Clear labels and instructions
  * - Logical focus order
  * - Standard media player conventions
- * 
+ *
  * **4. Robust (New Implementation)**
  * - HTML5 video with broad browser support
  * - Progressive enhancement approach
@@ -100,7 +100,7 @@ import { getMovieById } from "../../services/movieService";
  * - **3.2.2 On Input (Level A)**: Predictable control behavior
  * - **4.1.2 Name, Role, Value (Level A)**: Proper ARIA attributes
  * - **4.1.3 Status Messages (Level AA)**: Loading and error announcements
- * 
+ *
  * @performance
  * - Lazy loading of video content
  * - Efficient event listeners with cleanup
@@ -110,7 +110,7 @@ import { getMovieById } from "../../services/movieService";
 
 /**
  * Movie data structure for the player.
- * 
+ *
  * @interface Movie
  * @property {number} id - Unique identifier for the movie
  * @property {string} titulo - Title of the movie
@@ -176,11 +176,11 @@ const MoviePlayerPage: React.FC = () => {
   /**
    * Toggles play/pause state of the video.
    * Handles promise-based play() method with error handling.
-   * 
+   *
    * @usability
    * - **User Control and Freedom**: Easy play/pause toggle
    * - **Error Prevention**: Handles play errors gracefully
-   * 
+   *
    * @accessibility
    * - Can be triggered by keyboard (Space/K) or click
    */
@@ -208,9 +208,9 @@ const MoviePlayerPage: React.FC = () => {
   /**
    * Handles volume slider changes.
    * Updates both video element and mute state.
-   * 
+   *
    * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event
-   * 
+   *
    * @usability
    * - **User Control**: Fine-grained volume control
    * - **Consistency**: Volume 0 automatically mutes
@@ -226,10 +226,10 @@ const MoviePlayerPage: React.FC = () => {
 
   /**
    * Toggles mute state of the video.
-   * 
+   *
    * @usability
    * - **Flexibility and Efficiency**: Quick mute with M key or button
-   * 
+   *
    * @accessibility
    * - Keyboard shortcut (M)
    * - Clear visual indicator
@@ -243,7 +243,7 @@ const MoviePlayerPage: React.FC = () => {
 
   /**
    * Toggles visibility of the volume slider.
-   * 
+   *
    * @usability
    * - **Aesthetic and Minimalist Design**: Shows slider only when needed
    */
@@ -254,13 +254,13 @@ const MoviePlayerPage: React.FC = () => {
   /**
    * Skips video forward or backward by specified seconds.
    * Ensures time stays within valid range (0 to duration).
-   * 
+   *
    * @param {number} seconds - Number of seconds to skip (negative for backward)
-   * 
+   *
    * @usability
    * - **Flexibility and Efficiency**: Quick navigation within video
    * - **Error Prevention**: Clamps to valid time range
-   * 
+   *
    * @accessibility
    * - Keyboard shortcuts (Left/Right arrows)
    * - Visual skip buttons
@@ -277,15 +277,15 @@ const MoviePlayerPage: React.FC = () => {
 
   /**
    * Toggles fullscreen mode.
-   * 
+   *
    * @usability
    * - **Flexibility and Efficiency**: F key or button for fullscreen
    * - **User Control**: Easy exit with Escape
-   * 
+   *
    * @accessibility
    * - Keyboard accessible (F and Escape)
    * - Clear visual indicators
-   * 
+   *
    * @robust
    * - Uses standard Fullscreen API
    * - Cross-browser compatible
@@ -302,10 +302,10 @@ const MoviePlayerPage: React.FC = () => {
 
   /**
    * Formats time in seconds to human-readable string (HH:MM:SS or MM:SS).
-   * 
+   *
    * @param {number} time - Time in seconds
    * @returns {string} Formatted time string
-   * 
+   *
    * @usability
    * - **Match Between System and Real World**: Familiar time format
    * - **Visibility of System Status**: Clear progress indication
@@ -326,7 +326,7 @@ const MoviePlayerPage: React.FC = () => {
   /**
    * Shows controls temporarily and hides them after 3 seconds of inactivity.
    * Resets timer on each mouse movement.
-   * 
+   *
    * @usability
    * - **Aesthetic and Minimalist Design**: Auto-hiding for immersive viewing
    * - **User Control**: Mouse movement brings controls back

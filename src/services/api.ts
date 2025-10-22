@@ -1,11 +1,11 @@
 /**
  * API Service Module
- * 
+ *
  * Provides a centralized HTTP client for all API communications.
  * Implements cookie-based authentication, caching, retry logic, and comprehensive error handling.
- * 
+ *
  * @module services/api
- * 
+ *
  * @description
  * Features:
  * - HTTP-only cookie authentication (secure, XSS-protected)
@@ -15,17 +15,17 @@
  * - Support for all HTTP methods (GET, POST, PUT, PATCH, DELETE)
  * - TypeScript generic type support for type-safe responses
  * - CORS-compliant with credentials support
- * 
+ *
  * @security
  * - HTTP-only cookies prevent XSS attacks
  * - credentials: 'include' ensures cookies sent with requests
  * - No token storage in localStorage/sessionStorage
- * 
+ *
  * @performance
  * - 30-second cache duration for GET requests
  * - Retry logic with backoff for transient failures
  * - Lazy cache invalidation
- * 
+ *
  * @robust
  * - Cross-browser compatible
  * - Network error recovery
@@ -35,7 +35,7 @@
 /**
  * Base URL for all API requests.
  * Falls back to localhost if environment variable not set.
- * 
+ *
  * @constant
  * @type {string}
  */
@@ -45,7 +45,7 @@ const API_BASE_URL =
 /**
  * In-memory cache storage for GET requests.
  * Maps endpoint URLs to cached responses with timestamps.
- * 
+ *
  * @type {Map<string, {data: unknown, timestamp: number}>}
  */
 const cache = new Map<string, { data: unknown; timestamp: number }>();
@@ -53,7 +53,7 @@ const cache = new Map<string, { data: unknown; timestamp: number }>();
 /**
  * Cache duration in milliseconds.
  * Cached responses are considered fresh for this duration.
- * 
+ *
  * @constant
  * @type {number}
  */
@@ -61,7 +61,7 @@ const CACHE_DURATION = 30000; // 30 seconds
 
 /**
  * Utility function to pause execution for retry logic.
- * 
+ *
  * @param {number} ms - Milliseconds to sleep
  * @returns {Promise<void>} Promise that resolves after the specified duration
  */
@@ -70,14 +70,14 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /**
  * Custom error class for API-related errors.
  * Extends native Error with HTTP status code and response data.
- * 
+ *
  * @class ApiError
  * @extends Error
- * 
+ *
  * @property {string} name - Error name, always "ApiError"
  * @property {number} status - HTTP status code (0 for network errors)
  * @property {unknown} [data] - Optional error response data from server
- * 
+ *
  * @example
  * ```typescript
  * throw new ApiError("Unauthorized", 401, { message: "Invalid token" });
@@ -89,7 +89,7 @@ export class ApiError extends Error {
 
   /**
    * Creates an instance of ApiError.
-   * 
+   *
    * @param {string} message - Error message
    * @param {number} status - HTTP status code
    * @param {unknown} [data] - Optional error data from response
@@ -123,14 +123,14 @@ export const removeAuthToken = (): void => {
 /**
  * Core fetch wrapper with comprehensive features.
  * Handles caching, retries, authentication, and error management.
- * 
+ *
  * @template T - Expected response type
  * @param {string} endpoint - API endpoint path (relative to base URL)
  * @param {RequestInit} [options={}] - Fetch API options
  * @param {number} [retries=2] - Number of retry attempts remaining
  * @returns {Promise<T>} Promise resolving to typed response data
  * @throws {ApiError} When request fails after all retries
- * 
+ *
  * @description
  * Flow:
  * 1. Check cache for GET requests
@@ -139,12 +139,12 @@ export const removeAuthToken = (): void => {
  * 4. Handle errors with retry logic (500 errors and network failures)
  * 5. Cache successful GET responses
  * 6. Return typed data
- * 
+ *
  * Retry Logic:
  * - 500 errors: Retry with exponential backoff
  * - Network errors: Retry with exponential backoff
  * - Other errors: Fail immediately
- * 
+ *
  * @example
  * ```typescript
  * const movies = await apiFetch<Movie[]>('/peliculas', { method: 'GET' });
@@ -231,20 +231,20 @@ async function apiFetch<T>(
 /**
  * API client object exposing HTTP method wrappers.
  * Provides type-safe, Promise-based API for all HTTP operations.
- * 
+ *
  * @namespace api
- * 
+ *
  * @example
  * ```typescript
  * // GET request
  * const user = await api.get<User>('/usuarios/me');
- * 
+ *
  * // POST request
  * const newMovie = await api.post<Movie>('/peliculas', { titulo: 'Test' });
- * 
+ *
  * // PATCH request
  * await api.patch('/usuarios/favorites/123', { favorite: false });
- * 
+ *
  * // Clear cache
  * api.clearCache('/peliculas');
  * ```
@@ -253,13 +253,13 @@ export const api = {
   /**
    * Performs a GET HTTP request.
    * Automatically caches successful responses.
-   * 
+   *
    * @template T - Expected response type
    * @param {string} endpoint - API endpoint path
    * @param {RequestInit} [options] - Additional fetch options
    * @returns {Promise<T>} Promise resolving to typed response
    * @throws {ApiError} On request failure
-   * 
+   *
    * @example
    * ```typescript
    * const movies = await api.get<Movie[]>('/peliculas');
@@ -272,14 +272,14 @@ export const api = {
   /**
    * Performs a POST HTTP request.
    * Automatically serializes data to JSON.
-   * 
+   *
    * @template T - Expected response type
    * @param {string} endpoint - API endpoint path
    * @param {unknown} [data] - Request body data (will be JSON stringified)
    * @param {RequestInit} [options] - Additional fetch options
    * @returns {Promise<T>} Promise resolving to typed response
    * @throws {ApiError} On request failure
-   * 
+   *
    * @example
    * ```typescript
    * const created = await api.post<Movie>('/peliculas', { titulo: 'New Movie' });
@@ -300,14 +300,14 @@ export const api = {
   /**
    * Performs a PUT HTTP request.
    * Automatically serializes data to JSON.
-   * 
+   *
    * @template T - Expected response type
    * @param {string} endpoint - API endpoint path
    * @param {unknown} [data] - Request body data (will be JSON stringified)
    * @param {RequestInit} [options] - Additional fetch options
    * @returns {Promise<T>} Promise resolving to typed response
    * @throws {ApiError} On request failure
-   * 
+   *
    * @example
    * ```typescript
    * const updated = await api.put<Movie>('/peliculas/123', movieData);
@@ -329,14 +329,14 @@ export const api = {
    * Performs a PATCH HTTP request.
    * Automatically serializes data to JSON.
    * Used for partial updates.
-   * 
+   *
    * @template T - Expected response type
    * @param {string} endpoint - API endpoint path
    * @param {unknown} [data] - Request body data (will be JSON stringified)
    * @param {RequestInit} [options] - Additional fetch options
    * @returns {Promise<T>} Promise resolving to typed response
    * @throws {ApiError} On request failure
-   * 
+   *
    * @example
    * ```typescript
    * await api.patch('/usuarios/favorites/123', { favorite: false });
@@ -356,13 +356,13 @@ export const api = {
 
   /**
    * Performs a DELETE HTTP request.
-   * 
+   *
    * @template T - Expected response type
    * @param {string} endpoint - API endpoint path
    * @param {RequestInit} [options] - Additional fetch options
    * @returns {Promise<T>} Promise resolving to typed response
    * @throws {ApiError} On request failure
-   * 
+   *
    * @example
    * ```typescript
    * await api.delete('/peliculas/123');
@@ -375,14 +375,14 @@ export const api = {
   /**
    * Clears cached responses.
    * Can clear a specific endpoint or all cached data.
-   * 
+   *
    * @param {string} [endpoint] - Specific endpoint to clear (omit to clear all)
-   * 
+   *
    * @example
    * ```typescript
    * // Clear specific endpoint
    * api.clearCache('/peliculas');
-   * 
+   *
    * // Clear all cache
    * api.clearCache();
    * ```

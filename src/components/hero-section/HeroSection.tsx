@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
-import authService from "../../../../services/authService";
+import authService from "../../services/authService";
 import "./HeroSection.scss";
 
 const HeroSection = () => {

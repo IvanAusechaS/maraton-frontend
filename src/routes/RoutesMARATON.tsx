@@ -5,7 +5,7 @@ import MoviePage from "../pages/movie/MoviePage";
 import FavoritesPage from "../pages/favorites/FavoritesPage";
 import MovieDetailPage from "../pages/movie-detail/MovieDetailPage";
 import MoviePlayerPage from "../pages/movie-player/MoviePlayerPage";
-import Carousel from "../pages/home/components/carousel/Carousel";
+import Carousel from "../components/carousel/Carousel";
 import LayoutMARATON from "../layout/LayoutMARATON";
 import SignUp from "../pages/auth/signup/SignupPage";
 import LoginPage from "../pages/auth/login/LoginPage";
@@ -15,6 +15,7 @@ import SuccessEmailPage from "../pages/auth/success-email/SucessEmailPage";
 import ProfilePage from "../pages/profile/profile/ProfilePage";
 import EditProfilePage from "../pages/profile/edit-profile/EditProfilePage";
 import NotFoundPage from "../pages/not-found/NotFoundPage";
+import ScrollToTop from "../components/ScrollToTop";
 
 /**
  * Top-level route configuration for the MARATON app.
@@ -28,6 +29,7 @@ import NotFoundPage from "../pages/not-found/NotFoundPage";
 const RoutesMARATON = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <LayoutMARATON>
         <Routes>
           <Route path="/" element={<HomePage />} />

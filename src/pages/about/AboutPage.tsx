@@ -1,6 +1,6 @@
 import "./AboutPage.scss";
 import { type FC } from "react";
-import HeroSection from "../home/components/hero-section/HeroSection";
+import HeroSection from "../../components/hero-section/HeroSection";
 const AboutPage: FC = () => {
   return (
     <div className="about-page">

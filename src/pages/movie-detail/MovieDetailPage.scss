@@ -203,6 +203,20 @@
     opacity: 0.6;
   }
 
+  &__rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+    font-family: "Days One", sans-serif;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
   &__genres {
     display: flex;
     gap: 0.75rem;

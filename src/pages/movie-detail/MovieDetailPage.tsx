@@ -70,7 +70,6 @@ const MovieDetailPage: React.FC = () => {
     total: 0,
     average: 0,
   });
-  const [loadingRatings, setLoadingRatings] = useState(false);
   const [userHasRated, setUserHasRated] = useState(false);
 
   // Check authentication status
@@ -154,14 +153,11 @@ const MovieDetailPage: React.FC = () => {
   const loadRatings = useCallback(async () => {
     if (!id) return;
 
-    setLoadingRatings(true);
     try {
       const ratingsData = await getMovieRatings(parseInt(id));
       setRatingStats(ratingsData);
     } catch (error) {
       console.error("Error loading ratings:", error);
-    } finally {
-      setLoadingRatings(false);
     }
   }, [id]);
 
@@ -462,6 +458,19 @@ const MovieDetailPage: React.FC = () => {
               >
                 {movie.disponible ? "✓ Disponible" : "✗ No disponible"}
               </span>
+              {ratingStats.total > 0 && (
+                <>
+                  <span className="movie-detail__dot" aria-hidden="true">
+                    •
+                  </span>
+                  <span
+                    className="movie-detail__rating-badge"
+                    aria-label={`Calificación ${ratingStats.average.toFixed(1)} de 5`}
+                  >
+                    ⭐ {ratingStats.average.toFixed(1)}
+                  </span>
+                </>
+              )}
             </div>
             <div className="movie-detail__genres" role="list">
               <span className="movie-detail__genre" role="listitem">

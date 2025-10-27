@@ -7,6 +7,7 @@ import {
   type Movie,
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
+import { getMovieRatings } from "../../services/commentService";
 
 interface MovieCategory {
   title: string;
@@ -234,6 +235,33 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [movieRatings, setMovieRatings] = useState<{
+    [key: number]: number;
+  }>({});
+
+  // Load ratings for all movies in this row
+  useEffect(() => {
+    const loadRatings = async () => {
+      const ratings: { [key: number]: number } = {};
+      
+      for (const movie of movies) {
+        try {
+          const ratingData = await getMovieRatings(movie.id);
+          if (ratingData.total > 0) {
+            ratings[movie.id] = ratingData.average;
+          }
+        } catch (error) {
+          console.error(`Error loading rating for movie ${movie.id}:`, error);
+        }
+      }
+      
+      setMovieRatings(ratings);
+    };
+
+    if (movies.length > 0) {
+      loadRatings();
+    }
+  }, [movies]);
 
   const handleScroll = (direction: "left" | "right") => {
     const container = document.getElementById(`movie-row-${title}`);
@@ -340,9 +368,19 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
                 </div>
                 <div className="video-card__info">
                   <h3 className="video-card__title">{movie.titulo}</h3>
-                  <span className="video-card__duration">
-                    {movie.duracion} min
-                  </span>
+                  <div className="video-card__meta">
+                    <span className="video-card__duration">
+                      {movie.duracion} min
+                    </span>
+                    {movieRatings[movie.id] && (
+                      <>
+                        <span className="video-card__separator">•</span>
+                        <span className="video-card__rating">
+                          ⭐ {movieRatings[movie.id].toFixed(1)}
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             );

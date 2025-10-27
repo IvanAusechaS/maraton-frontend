@@ -272,9 +272,19 @@
     }
   }
 
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+    }
+  }
+
   &__duration {
     font-family: var(--font-body);
-    font-size: 0.875rem;
     color: rgba(255, 255, 255, 0.8);
     display: flex;
     align-items: center;
@@ -284,9 +294,18 @@
       content: "⏱";
       font-size: 1rem;
     }
+  }
 
-    @media (max-width: 768px) {
-      font-size: 0.75rem;
-    }
+  &__separator {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  &__rating {
+    font-family: "Days One", sans-serif;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
   }
 }

@@ -15,6 +15,7 @@ La información y los componentes de la interfaz deben presentarse a los usuario
 **Criterio**: La información, estructura y relaciones comunicadas a través de la presentación pueden ser determinadas programáticamente.
 
 **Implementación**:
+
 ```tsx
 // Estructura semántica HTML5
 <div role="region" aria-label="Panel de controles del lector de contenido">
@@ -23,7 +24,7 @@ La información y los componentes de la interfaz deben presentarse a los usuario
 </div>
 
 // ARIA para relaciones
-<button 
+<button
   aria-expanded={isOpen}
   aria-controls="reader-panel"
 >
@@ -38,6 +39,7 @@ La información y los componentes de la interfaz deben presentarse a los usuario
 **Criterio**: Texto y controles tienen ratio de contraste mínimo 4.5:1 (texto) y 3:1 (UI).
 
 **Implementación**:
+
 ```scss
 // Verificado con WebAIM Contrast Checker
 
@@ -64,6 +66,7 @@ outline: 3px solid #ffd700;
 **Criterio**: Componentes de interfaz y objetos gráficos tienen contraste mínimo 3:1.
 
 **Implementación**:
+
 ```scss
 // Controles UI
 .web-content-reader__btn {
@@ -84,6 +87,7 @@ background: #d32f2f; // Contraste 5.5:1 vs fondo
 **Criterio**: Contenido adicional que aparece con hover/focus es dismissable, hoverable y persistent.
 
 **Implementación**:
+
 ```tsx
 // Tooltips nativos con title
 <button title="Reproducir lectura">
@@ -111,6 +115,7 @@ Los componentes de interfaz y navegación deben ser operables.
 **Criterio**: Toda funcionalidad disponible mediante teclado.
 
 **Implementación**:
+
 ```tsx
 // Navegación por Tab
 <button>Reproducir</button>
@@ -124,6 +129,7 @@ Los componentes de interfaz y navegación deben ser operables.
 ```
 
 **Atajos de teclado**:
+
 - `Tab` / `Shift+Tab`: Navegación
 - `Enter` / `Space`: Activar
 - `Escape`: Cerrar panel
@@ -139,6 +145,7 @@ Los componentes de interfaz y navegación deben ser operables.
 **Criterio**: Contenido en movimiento/auto-actualización puede ser pausado, detenido u ocultado.
 
 **Implementación**:
+
 ```tsx
 // Controles siempre disponibles
 <button onClick={togglePause} disabled={!isReading}>
@@ -161,6 +168,7 @@ Los componentes de interfaz y navegación deben ser operables.
 **Criterio**: Indicador de foco del teclado es visible.
 
 **Implementación**:
+
 ```scss
 // Foco visible en todos los elementos interactivos
 .web-content-reader__fab:focus {
@@ -195,6 +203,7 @@ Los componentes de interfaz y navegación deben ser operables.
 **Criterio**: Labels visibles están incluidos en nombres accesibles.
 
 **Implementación**:
+
 ```tsx
 // Texto visible coincide con aria-label
 <button aria-label="Iniciar lectura">
@@ -222,6 +231,7 @@ La información y operación de la interfaz deben ser comprensibles.
 **Criterio**: Idioma de cada pasaje puede ser determinado programáticamente.
 
 **Implementación**:
+
 ```tsx
 // Configuración de idioma
 utterance.lang = "es-ES";
@@ -242,6 +252,7 @@ if (voice) {
 **Criterio**: Enfocar un componente no causa cambio de contexto.
 
 **Implementación**:
+
 ```tsx
 // Solo acciones explícitas cambian estado
 onClick={startReading} // Requiere click/Enter
@@ -260,6 +271,7 @@ onFocus={() => {}} // No implementado
 **Criterio**: Componentes con misma funcionalidad identificados consistentemente.
 
 **Implementación**:
+
 ```tsx
 // Iconos consistentes
 // Play: triángulo hacia derecha
@@ -286,6 +298,7 @@ aria-label="Detener lectura"
 **Criterio**: Labels o instrucciones proporcionadas cuando se requiere entrada.
 
 **Implementación**:
+
 ```tsx
 // Labels descriptivos
 <label htmlFor="reader-rate">
@@ -319,6 +332,7 @@ El contenido debe ser robusto para interpretación por tecnologías asistivas.
 **Criterio**: Nombre y rol determinables programáticamente, estados/propiedades configurables.
 
 **Implementación**:
+
 ```tsx
 // Nombres accesibles
 <button aria-label="Abrir panel de lectura">
@@ -331,7 +345,7 @@ El contenido debe ser robusto para interpretación por tecnologías asistivas.
 <button aria-expanded={isOpen} aria-controls="reader-panel">
 
 // Valores
-<input 
+<input
   type="range"
   aria-valuemin={0.5}
   aria-valuemax={2}
@@ -349,6 +363,7 @@ El contenido debe ser robusto para interpretación por tecnologías asistivas.
 **Criterio**: Mensajes de estado pueden ser determinados por tecnologías asistivas.
 
 **Implementación**:
+
 ```tsx
 // Región live para notificaciones
 <div
@@ -385,11 +400,13 @@ const showNotification = (message: string) => {
 ### Herramientas Utilizadas
 
 1. **Automated Testing**:
+
    - axe DevTools (Chrome Extension)
    - WAVE Web Accessibility Evaluation Tool
    - Lighthouse Accessibility Audit
 
 2. **Manual Testing**:
+
    - Navegación por teclado (Chrome, Firefox)
    - NVDA Screen Reader (Windows)
    - JAWS Screen Reader (Windows)
@@ -402,14 +419,14 @@ const showNotification = (message: string) => {
 
 ### Resultados de Testing
 
-| Herramienta | Score | Fecha | Notas |
-|-------------|-------|-------|-------|
-| axe DevTools | 0 issues | 2024 | Sin violaciones |
-| WAVE | 0 errors | 2024 | Sin errores |
-| Lighthouse | 100/100 | 2024 | Perfect score |
-| NVDA | ✅ Pass | 2024 | Navegación fluida |
-| JAWS | ✅ Pass | 2024 | Anuncios correctos |
-| VoiceOver | ✅ Pass | 2024 | Funcionamiento OK |
+| Herramienta  | Score    | Fecha | Notas              |
+| ------------ | -------- | ----- | ------------------ |
+| axe DevTools | 0 issues | 2024  | Sin violaciones    |
+| WAVE         | 0 errors | 2024  | Sin errores        |
+| Lighthouse   | 100/100  | 2024  | Perfect score      |
+| NVDA         | ✅ Pass  | 2024  | Navegación fluida  |
+| JAWS         | ✅ Pass  | 2024  | Anuncios correctos |
+| VoiceOver    | ✅ Pass  | 2024  | Funcionamiento OK  |
 
 ---
 

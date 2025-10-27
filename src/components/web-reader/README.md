@@ -19,28 +19,32 @@ Lector de contenido web accesible que permite a los usuarios escuchar el conteni
 
 #### ✅ Principio 1: Perceptible
 
-- **1.3.1 Info and Relationships (A)**: 
+- **1.3.1 Info and Relationships (A)**:
+
   - Estructura semántica con HTML5
   - ARIA labels en todos los controles
   - Roles apropiados (region, status)
 
-- **1.4.3 Contrast (Minimum) (AA)**: 
+- **1.4.3 Contrast (Minimum) (AA)**:
+
   - Texto: Mínimo 4.5:1 (logrado 16.1:1)
   - UI Components: Mínimo 3:1 (logrado 5.5:1)
   - Botones con gradientes contrastantes
 
-- **1.4.11 Non-text Contrast (AA)**: 
+- **1.4.11 Non-text Contrast (AA)**:
   - Controles con ratio 3:1 mínimo
   - Indicadores visuales de estado claramente visibles
 
 #### ✅ Principio 2: Operable
 
 - **2.1.1 Keyboard (A)**:
+
   - Navegación completa por teclado (Tab, Shift+Tab)
   - Activación con Enter/Space
   - Escape para cerrar panel
 
 - **2.2.2 Pause, Stop, Hide (A)**:
+
   - Controles de pausa y detención siempre disponibles
   - Usuario tiene control total sobre la reproducción
 
@@ -52,6 +56,7 @@ Lector de contenido web accesible que permite a los usuarios escuchar el conteni
 #### ✅ Principio 3: Comprensible
 
 - **3.1.2 Language of Parts (AA)**:
+
   - Configuración de idioma (lang="es-ES")
   - Soporte para voces en múltiples idiomas
 
@@ -63,6 +68,7 @@ Lector de contenido web accesible que permite a los usuarios escuchar el conteni
 #### ✅ Principio 4: Robusto
 
 - **4.1.2 Name, Role, Value (A)**:
+
   - ARIA labels descriptivos
   - aria-expanded, aria-controls
   - Roles semánticos apropiados
@@ -104,7 +110,7 @@ color: #e0e0e0;
 ### Integración en el Proyecto
 
 ```tsx
-import WebContentReader from '@/components/web-reader/WebContentReader';
+import WebContentReader from "@/components/web-reader/WebContentReader";
 
 function Layout() {
   return (
@@ -139,12 +145,12 @@ Las preferencias se guardan automáticamente:
 
 ## ⌨️ Atajos de Teclado
 
-| Tecla | Acción |
-|-------|--------|
-| `Tab` | Navegar entre controles |
-| `Shift + Tab` | Navegar atrás |
+| Tecla             | Acción                   |
+| ----------------- | ------------------------ |
+| `Tab`             | Navegar entre controles  |
+| `Shift + Tab`     | Navegar atrás            |
 | `Enter` / `Space` | Activar control enfocado |
-| `Escape` | Cerrar panel |
+| `Escape`          | Cerrar panel             |
 
 ## 🔧 Tecnologías
 
@@ -181,12 +187,12 @@ Las preferencias se guardan automáticamente:
 ### Navegadores Soportados
 
 | Navegador | Versión Mínima | TTS Support |
-|-----------|----------------|-------------|
-| Chrome | 33+ | ✅ Completo |
-| Firefox | 49+ | ✅ Completo |
-| Safari | 7+ | ✅ Completo |
-| Edge | 14+ | ✅ Completo |
-| Opera | 21+ | ✅ Completo |
+| --------- | -------------- | ----------- |
+| Chrome    | 33+            | ✅ Completo |
+| Firefox   | 49+            | ✅ Completo |
+| Safari    | 7+             | ✅ Completo |
+| Edge      | 14+            | ✅ Completo |
+| Opera     | 21+            | ✅ Completo |
 
 ### Voces por Sistema Operativo
 
@@ -234,8 +240,8 @@ window.speechSynthesis.cancel();
 
 ```typescript
 // Verificar localStorage disponible
-if (typeof localStorage !== 'undefined') {
-  localStorage.setItem('webReaderPreferences', JSON.stringify(prefs));
+if (typeof localStorage !== "undefined") {
+  localStorage.setItem("webReaderPreferences", JSON.stringify(prefs));
 }
 ```
 

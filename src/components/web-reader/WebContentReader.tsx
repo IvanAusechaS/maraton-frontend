@@ -1,15 +1,15 @@
 /**
  * WebContentReader Component
- * 
+ *
  * Lector de contenido web accesible que cumple con WCAG 2.1 Level AA
- * 
+ *
  * Cumplimiento WCAG:
  * - 1.4.3 Contrast (AA): Ratios de contraste mínimo 4.5:1
  * - 2.1.1 Keyboard: Completamente navegable por teclado
  * - 2.4.7 Focus Visible: Indicadores de foco claros
  * - 3.2.4 Consistent Identification: Componentes consistentes
  * - 4.1.2 Name, Role, Value: ARIA attributes correctos
- * 
+ *
  * @author MARATON Team
  * @version 1.0.0
  */
@@ -35,35 +35,51 @@ const WebContentReader: React.FC = () => {
   const [rate, setRate] = useState(1.0); // Velocidad de lectura (0.1 - 2.0)
   const [pitch, setPitch] = useState(1.0); // Tono de voz (0 - 2)
   const [notification, setNotification] = useState<string>("");
+  const [isSupported, setIsSupported] = useState(true);
   
   // Referencias
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const textChunksRef = useRef<string[]>([]);
+  const currentChunkIndexRef = useRef<number>(0);  /**
+   * Verificar compatibilidad del navegador
+   * La Web Speech API requiere HTTPS en producción
+   */
+  useEffect(() => {
+    const supported = "speechSynthesis" in window;
+    setIsSupported(supported);
+
+    if (!supported) {
+      console.warn("Web Speech API no está disponible en este navegador");
+    }
+  }, []);
 
   /**
    * WCAG 4.1.2 - Name, Role, Value
    * Carga las voces disponibles del navegador
+   * Filtra solo español, inglés y francés
    */
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
       if (availableVoices.length > 0) {
-        setVoices(availableVoices);
-        
-        // Preferir voces en español
-        const spanishVoice = availableVoices.find(
-          (v) => v.lang.startsWith("es")
-        );
-        if (spanishVoice) {
-          setSelectedVoice(spanishVoice.voiceURI);
-        } else if (availableVoices[0]) {
-          setSelectedVoice(availableVoices[0].voiceURI);
+        // Filtrar solo voces en español
+        const filteredVoices = availableVoices.filter((voice) => {
+          const lang = voice.lang.toLowerCase();
+          return lang.startsWith("es"); // Solo español
+        });
+
+        setVoices(filteredVoices);
+
+        // Seleccionar la primera voz en español disponible
+        if (filteredVoices.length > 0) {
+          setSelectedVoice(filteredVoices[0].voiceURI);
         }
       }
     };
 
     loadVoices();
-    
+
     // Algunos navegadores cargan las voces de forma asíncrona
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -125,9 +141,9 @@ const WebContentReader: React.FC = () => {
   const getPageContent = (): string => {
     // Buscar el contenido principal (main, article, o role="main")
     const mainContent =
-      document.querySelector('main') ||
+      document.querySelector("main") ||
       document.querySelector('[role="main"]') ||
-      document.querySelector('article') ||
+      document.querySelector("article") ||
       document.body;
 
     if (!mainContent) return "";
@@ -143,12 +159,103 @@ const WebContentReader: React.FC = () => {
 
     // Obtener texto visible
     let text = clone.innerText || clone.textContent || "";
-    
+
     // Limpiar espacios múltiples y saltos de línea excesivos
     text = text.replace(/\s+/g, " ").trim();
-    
+
     return text;
   };
+
+  /**
+   * Dividir texto en fragmentos para evitar el límite de caracteres
+   * La Web Speech API tiene un límite (generalmente 4000-32000 caracteres)
+   * Dividimos por oraciones para mantener la naturalidad
+   */
+  const splitTextIntoChunks = (text: string, maxChunkSize: number = 200): string[] => {
+    // Dividir por oraciones (punto, signo de interrogación, exclamación)
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    const chunks: string[] = [];
+    let currentChunk = "";
+
+    sentences.forEach((sentence) => {
+      // Si agregar la oración excede el límite, guardar chunk actual
+      if ((currentChunk + sentence).length > maxChunkSize && currentChunk.length > 0) {
+        chunks.push(currentChunk.trim());
+        currentChunk = sentence;
+      } else {
+        currentChunk += sentence;
+      }
+    });
+
+    // Agregar el último chunk si existe
+    if (currentChunk.trim().length > 0) {
+      chunks.push(currentChunk.trim());
+    }
+
+    return chunks.length > 0 ? chunks : [text];
+  };
+
+  /**
+   * Leer un fragmento específico de texto
+   */
+  const speakChunk = useCallback((chunkIndex: number) => {
+    const chunks = textChunksRef.current;
+    
+    if (chunkIndex >= chunks.length) {
+      // Terminar lectura
+      setIsReading(false);
+      setIsPaused(false);
+      currentChunkIndexRef.current = 0;
+      showNotification("Lectura finalizada");
+      return;
+    }
+
+    const chunk = chunks[chunkIndex];
+    const utterance = new SpeechSynthesisUtterance(chunk);
+
+    // Configurar voz seleccionada
+    const voice = voices.find((v) => v.voiceURI === selectedVoice);
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+    } else {
+      utterance.lang = "es-ES";
+    }
+
+    // Aplicar configuraciones
+    utterance.rate = rate;
+    utterance.pitch = pitch;
+
+    // Evento al terminar este fragmento: leer el siguiente
+    utterance.onend = () => {
+      currentChunkIndexRef.current = chunkIndex + 1;
+      
+      // Si hay más fragmentos, continuar leyendo
+      if (currentChunkIndexRef.current < chunks.length) {
+        // Pequeña pausa entre fragmentos para evitar problemas
+        setTimeout(() => {
+          speakChunk(currentChunkIndexRef.current);
+        }, 100);
+      } else {
+        // Terminar lectura
+        setIsReading(false);
+        setIsPaused(false);
+        currentChunkIndexRef.current = 0;
+        showNotification("Lectura finalizada");
+      }
+    };
+
+    utterance.onerror = (event) => {
+      console.error("Error en lectura del fragmento:", event);
+      setIsReading(false);
+      setIsPaused(false);
+      currentChunkIndexRef.current = 0;
+      showNotification("Error en la lectura");
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, [voices, selectedVoice, rate, pitch]);
 
   /**
    * Iniciar lectura del contenido
@@ -164,48 +271,24 @@ const WebContentReader: React.FC = () => {
     window.speechSynthesis.cancel();
 
     const content = getPageContent();
-    
+
     if (!content) {
       showNotification("No hay contenido para leer");
       return;
     }
 
-    // Crear nuevo utterance
-    const utterance = new SpeechSynthesisUtterance(content);
-    
-    // Configurar voz seleccionada
-    const voice = voices.find((v) => v.voiceURI === selectedVoice);
-    if (voice) {
-      utterance.voice = voice;
-    }
+    // Dividir contenido en fragmentos
+    const chunks = splitTextIntoChunks(content);
+    textChunksRef.current = chunks;
+    currentChunkIndexRef.current = 0;
 
-    // Aplicar configuraciones
-    utterance.rate = rate;
-    utterance.pitch = pitch;
-    utterance.lang = "es-ES";
+    // Iniciar estado de lectura
+    setIsReading(true);
+    setIsPaused(false);
+    showNotification("Lectura iniciada");
 
-    // Eventos para actualizar el estado
-    utterance.onstart = () => {
-      setIsReading(true);
-      setIsPaused(false);
-      showNotification("Lectura iniciada");
-    };
-
-    utterance.onend = () => {
-      setIsReading(false);
-      setIsPaused(false);
-      showNotification("Lectura finalizada");
-    };
-
-    utterance.onerror = (event) => {
-      console.error("Error en lectura:", event);
-      setIsReading(false);
-      setIsPaused(false);
-      showNotification("Error en la lectura");
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    // Comenzar a leer desde el primer fragmento
+    speakChunk(0);
     savePreferences();
   };
 
@@ -237,6 +320,11 @@ const WebContentReader: React.FC = () => {
     window.speechSynthesis.cancel();
     setIsReading(false);
     setIsPaused(false);
+    
+    // Limpiar referencias de fragmentos
+    textChunksRef.current = [];
+    currentChunkIndexRef.current = 0;
+    
     showNotification("Lectura detenida");
   };
 
@@ -247,14 +335,25 @@ const WebContentReader: React.FC = () => {
   const handleRateChange = (newRate: number) => {
     setRate(newRate);
     savePreferences();
-    
-    // Si está leyendo, reiniciar con nueva velocidad
+
+    // Si está leyendo, actualizar utterance actual
     if (isReading && utteranceRef.current) {
-      const wasReading = !isPaused;
+      // Reiniciar desde el fragmento actual con nueva velocidad
+      const currentIndex = currentChunkIndexRef.current;
       stopReading();
-      if (wasReading) {
-        setTimeout(startReading, 100);
-      }
+      
+      setTimeout(() => {
+        // Restaurar índice y continuar
+        currentChunkIndexRef.current = currentIndex;
+        const chunks = textChunksRef.current;
+        
+        if (chunks.length > 0) {
+          textChunksRef.current = chunks;
+          setIsReading(true);
+          setIsPaused(false);
+          speakChunk(currentIndex);
+        }
+      }, 100);
     }
   };
 
@@ -273,7 +372,7 @@ const WebContentReader: React.FC = () => {
    */
   const togglePanel = () => {
     setIsOpen(!isOpen);
-    
+
     // Enfocar el primer elemento interactivo cuando se abre
     if (!isOpen) {
       setTimeout(() => {
@@ -298,6 +397,11 @@ const WebContentReader: React.FC = () => {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen]);
 
+  // No renderizar si el navegador no soporta Web Speech API
+  if (!isSupported) {
+    return null;
+  }
+
   return (
     <>
       {/* 
@@ -308,7 +412,9 @@ const WebContentReader: React.FC = () => {
       <button
         className="web-content-reader__fab"
         onClick={togglePanel}
-        aria-label={isOpen ? "Cerrar panel de lectura" : "Abrir panel de lectura"}
+        aria-label={
+          isOpen ? "Cerrar panel de lectura" : "Abrir panel de lectura"
+        }
         aria-expanded={isOpen}
         aria-controls="reader-panel"
         title="Lector de contenido web"
@@ -358,9 +464,7 @@ const WebContentReader: React.FC = () => {
           aria-label="Panel de controles del lector de contenido"
         >
           <div className="web-content-reader__header">
-            <h2 className="web-content-reader__title">
-              Lector de Contenido
-            </h2>
+            <h2 className="web-content-reader__title">Lector de Contenido</h2>
             <button
               onClick={togglePanel}
               className="web-content-reader__close"
@@ -464,21 +568,21 @@ const WebContentReader: React.FC = () => {
                 htmlFor="reader-voice"
                 className="web-content-reader__label"
               >
-                Voz
+                Voz en Español
               </label>
               <select
                 id="reader-voice"
                 value={selectedVoice}
                 onChange={(e) => handleVoiceChange(e.target.value)}
                 className="web-content-reader__select"
-                aria-label="Seleccionar voz para lectura"
+                aria-label="Seleccionar voz en español para lectura"
               >
                 {voices.length === 0 ? (
                   <option>Cargando voces...</option>
                 ) : (
                   voices.map((voice) => (
                     <option key={voice.voiceURI} value={voice.voiceURI}>
-                      {voice.name} ({voice.lang})
+                      🇪🇸 {voice.name}
                     </option>
                   ))
                 )}
@@ -493,13 +597,19 @@ const WebContentReader: React.FC = () => {
             >
               {isReading && !isPaused && (
                 <div className="web-content-reader__status-indicator">
-                  <span className="web-content-reader__status-dot" aria-hidden="true"></span>
+                  <span
+                    className="web-content-reader__status-dot"
+                    aria-hidden="true"
+                  ></span>
                   Leyendo contenido...
                 </div>
               )}
               {isPaused && (
                 <div className="web-content-reader__status-indicator web-content-reader__status-indicator--paused">
-                  <span className="web-content-reader__status-dot" aria-hidden="true"></span>
+                  <span
+                    className="web-content-reader__status-dot"
+                    aria-hidden="true"
+                  ></span>
                   En pausa
                 </div>
               )}

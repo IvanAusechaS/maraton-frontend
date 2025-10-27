@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./MoviePage.scss";
 import {
   getMoviesByGenre,
-  getFavoriteMovies,
   getWatchLaterMovies,
   type Movie,
 } from "../../services/movieService";
@@ -21,12 +20,6 @@ const MoviePage: FC = () => {
   const [categories, setCategories] = useState<{
     [key: string]: MovieCategory;
   }>({
-    favorites: {
-      title: "Favoritos",
-      movies: [],
-      loading: true,
-      visible: false,
-    },
     watchLater: {
       title: "Ver más tarde",
       movies: [],
@@ -53,75 +46,18 @@ const MoviePage: FC = () => {
       checkAuth();
     };
 
-    // Listen for favorites changes
-    const handleFavoritesChange = () => {
-      // Reload favorites when they change
-      if (authService.isAuthenticated()) {
-        getFavoriteMovies()
-          .then((favoritesData) => {
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: favoritesData,
-                loading: false,
-                visible: true,
-              },
-            }));
-          })
-          .catch(() => {
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: [],
-                loading: false,
-                visible: true,
-              },
-            }));
-          });
-      }
-    };
-
     window.addEventListener("authChanged", handleAuthChange);
-    window.addEventListener("favoritesChanged", handleFavoritesChange);
 
     return () => {
       window.removeEventListener("authChanged", handleAuthChange);
-      window.removeEventListener("favoritesChanged", handleFavoritesChange);
     };
   }, []);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        // Si el usuario está autenticado, cargar favoritos y ver más tarde
+        // Si el usuario está autenticado, cargar ver más tarde
         if (isAuthenticated) {
-          // Favoritos - SIEMPRE VISIBLE cuando está autenticado
-          try {
-            const favoritesData = await getFavoriteMovies();
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: favoritesData,
-                loading: false,
-                visible: true, // Siempre visible si está autenticado
-              },
-            }));
-          } catch {
-            // Si falla, mostrar vacío pero MANTENER VISIBLE
-            setCategories((prev) => ({
-              ...prev,
-              favorites: {
-                ...prev.favorites,
-                movies: [],
-                loading: false,
-                visible: true, // MANTENER VISIBLE aunque haya error
-              },
-            }));
-          }
-
           // Ver más tarde - SIEMPRE VISIBLE cuando está autenticado
           try {
             const watchLaterData = await getWatchLaterMovies();
@@ -147,15 +83,9 @@ const MoviePage: FC = () => {
             }));
           }
         } else {
-          // Si no está autenticado, ocultar estas categorías inmediatamente
+          // Si no está autenticado, ocultar esta categoría inmediatamente
           setCategories((prev) => ({
             ...prev,
-            favorites: {
-              ...prev.favorites,
-              movies: [],
-              loading: false,
-              visible: false,
-            },
             watchLater: {
               ...prev.watchLater,
               movies: [],

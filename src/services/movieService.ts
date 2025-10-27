@@ -14,6 +14,7 @@ export interface Movie {
   director: string;
   portada: string;
   idiomaId: number;
+  genero?: string; // Optional: genre name from backend
 }
 
 /**

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "../pages/home/HomePage";
 import AboutPage from "../pages/about/AboutPage";
 import MoviePage from "../pages/movie/MoviePage";
+import FavoritesPage from "../pages/favorites/FavoritesPage";
 import MovieDetailPage from "../pages/movie-detail/MovieDetailPage";
 import MoviePlayerPage from "../pages/movie-player/MoviePlayerPage";
 import Carousel from "../pages/home/components/carousel/Carousel";
@@ -31,6 +32,7 @@ const RoutesMARATON = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/peliculas" element={<MoviePage />} />
+          <Route path="/favoritos" element={<FavoritesPage />} />
           <Route path="/pelicula/:id" element={<MovieDetailPage />} />
           <Route path="/pelicula/:id/player" element={<MoviePlayerPage />} />
           <Route path="/sobre-nosotros" element={<AboutPage />} />

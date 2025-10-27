@@ -106,6 +106,11 @@ const Navbar: FC = () => {
           <Link to="/peliculas" className="navbar__link">
             Catálogo
           </Link>
+          {isAuthenticated && (
+            <Link to="/favoritos" className="navbar__link">
+              Favoritos
+            </Link>
+          )}
           <Link to="/sobre-nosotros" className="navbar__link">
             Sobre nosotros
           </Link>
@@ -283,6 +288,15 @@ const Navbar: FC = () => {
             >
               Catálogo
             </Link>
+            {isAuthenticated && (
+              <Link
+                to="/favoritos"
+                className="navbar__link"
+                onClick={handleLinkClick}
+              >
+                Favoritos
+              </Link>
+            )}
             <Link
               to="/sobre-nosotros"
               className="navbar__link"

@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
+import WebContentReader from "../components/web-reader/WebContentReader";
 
 /**
  * Props accepted by {@link LayoutMARATON}.
@@ -27,6 +28,7 @@ const LayoutMARATON: React.FC<LayoutMARATONProps> = ({ children }) => {
       <Navbar />
       <main className="container-page">{children}</main>
       <Footer />
+      <WebContentReader />
     </>
   );
 };

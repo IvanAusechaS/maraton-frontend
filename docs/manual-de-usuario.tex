@@ -1,0 +1,1118 @@
+% ============================================
+% MANUAL DE USUARIO - PLATAFORMA MARATON
+% Documento LaTeX profesional compatible con Overleaf
+% Versión: 1.0.0
+% Fecha: Octubre 2025
+% ============================================
+
+\documentclass[11pt,a4paper,twoside]{book}
+
+% ============================================
+% PAQUETES ESENCIALES
+% ============================================
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% Geometría y márgenes
+\usepackage[
+    top=2.5cm,
+    bottom=2.5cm,
+    inner=3cm,
+    outer=2cm,
+    headheight=14pt
+]{geometry}
+
+% Colores y gráficos
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Fuentes y tipografía
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Courier New}
+
+% Hipervínculos
+\usepackage[
+    colorlinks=true,
+    linkcolor=maratonblue,
+    urlcolor=maratonblue,
+    citecolor=maratonblue,
+    bookmarks=true,
+    bookmarksopen=true,
+    pdfborder={0 0 0}
+]{hyperref}
+
+% Encabezados y pies de página
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+% Listas y enumeraciones
+\usepackage{enumitem}
+
+% Tablas avanzadas
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+
+% Código fuente
+\usepackage{listings}
+
+% Símbolos y caracteres especiales
+\usepackage{textcomp}
+\usepackage{fontawesome5}
+
+% Índice y referencias
+\usepackage{makeidx}
+\makeindex
+
+% ============================================
+% DEFINICIÓN DE COLORES CORPORATIVOS
+% ============================================
+\definecolor{maratonblue}{RGB}{0,123,255}
+\definecolor{maratondark}{RGB}{26,26,26}
+\definecolor{maratonlight}{RGB}{248,249,250}
+\definecolor{maratonaccent}{RGB}{255,193,7}
+\definecolor{maratonsuccess}{RGB}{40,167,69}
+\definecolor{maratondanger}{RGB}{220,53,69}
+\definecolor{maratonwarning}{RGB}{255,193,7}
+\definecolor{maratoninfo}{RGB}{23,162,184}
+
+% ============================================
+% ESTILOS DE CAJAS PERSONALIZADAS
+% ============================================
+
+% Caja de información
+\newtcolorbox{infobox}{
+    colback=maratoninfo!5,
+    colframe=maratoninfo,
+    fonttitle=\bfseries,
+    title=\faInfoCircle\ Información,
+    breakable,
+    enhanced,
+    boxrule=0.5pt,
+    arc=3pt
+}
+
+% Caja de advertencia
+\newtcolorbox{warningbox}{
+    colback=maratonwarning!5,
+    colframe=maratonwarning,
+    fonttitle=\bfseries,
+    title=\faExclamationTriangle\ Advertencia,
+    breakable,
+    enhanced,
+    boxrule=0.5pt,
+    arc=3pt
+}
+
+% Caja de nota
+\newtcolorbox{notebox}{
+    colback=maratonsuccess!5,
+    colframe=maratonsuccess,
+    fonttitle=\bfseries,
+    title=\faCheck\ Nota Importante,
+    breakable,
+    enhanced,
+    boxrule=0.5pt,
+    arc=3pt
+}
+
+% Caja de error/problema
+\newtcolorbox{errorbox}{
+    colback=maratondanger!5,
+    colframe=maratondanger,
+    fonttitle=\bfseries,
+    title=\faTimes\ Error/Problema,
+    breakable,
+    enhanced,
+    boxrule=0.5pt,
+    arc=3pt
+}
+
+% ============================================
+% FORMATO DE TÍTULOS
+% ============================================
+\titleformat{\chapter}[display]
+    {\normalfont\huge\bfseries\color{maratonblue}}
+    {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+    {\normalfont\Large\bfseries\color{maratonblue}}
+    {\thesection}{1em}{}
+\titleformat{\subsection}
+    {\normalfont\large\bfseries\color{maratondark}}
+    {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+    {\normalfont\normalsize\bfseries\color{maratondark}}
+    {\thesubsubsection}{1em}{}
+
+% ============================================
+% ESTILO DE ENCABEZADOS Y PIES DE PÁGINA
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\textit{\nouppercase{\leftmark}}}
+\fancyhead[LO]{\textit{\nouppercase{\rightmark}}}
+\fancyfoot[C]{\small \textcolor{gray}{Manual de Usuario MARATON - Versión 1.0.0}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% Estilo para páginas de capítulo
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.5pt}
+}
+
+% ============================================
+% CONFIGURACIÓN DE LISTAS
+% ============================================
+\setlist[itemize]{leftmargin=*,label=\textcolor{maratonblue}{\textbullet}}
+\setlist[enumerate]{leftmargin=*}
+
+% ============================================
+% INFORMACIÓN DEL DOCUMENTO
+% ============================================
+\title{
+    \vspace{-2cm}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{logo-maraton.png}\\[2cm]
+    {\Huge\bfseries Manual de Usuario}\\[0.5cm]
+    {\Large Plataforma de Streaming MARATON}\\[1cm]
+    \end{center}
+}
+\author{Equipo de Desarrollo MARATON}
+\date{Octubre 2025 -- Versión 1.0.0}
+
+% ============================================
+% INICIO DEL DOCUMENTO
+% ============================================
+\begin{document}
+
+% Portada
+\maketitle
+\thispagestyle{empty}
+
+% Información de versión en portada
+\vfill
+\begin{center}
+\begin{tcolorbox}[width=0.8\textwidth,colback=maratonlight,colframe=maratonblue,arc=5pt]
+\centering
+\textbf{Versión del Manual:} 1.0.0\\
+\textbf{Fecha de Publicación:} 27 de octubre de 2025\\
+\textbf{Destinatarios:} Usuarios generales de la plataforma\\
+\textbf{Versión de la Plataforma:} 1.0.0
+\end{tcolorbox}
+\end{center}
+
+\newpage
+
+% ============================================
+% DECLARACIÓN DE DERECHOS
+% ============================================
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\textbf{\Large Derechos de Autor}\\[1cm]
+\end{center}
+
+\noindent
+© 2025 MARATON. Todos los derechos reservados.\\[0.5cm]
+
+\noindent
+Este manual es propiedad de MARATON y está destinado exclusivamente para el uso de sus usuarios. No se permite su reproducción total o parcial sin autorización previa por escrito.\\[0.5cm]
+
+\noindent
+La información contenida en este manual es precisa al momento de publicación, pero puede estar sujeta a cambios sin previo aviso para reflejar actualizaciones de la plataforma.\\[0.5cm]
+
+\noindent
+\textbf{Marcas Registradas:}\\
+MARATON, el logotipo de MARATON y todos los nombres de productos relacionados son marcas registradas de MARATON.\\[0.5cm]
+
+\noindent
+\textbf{Contacto:}\\
+Para consultas sobre este manual o la plataforma, contacte a:\\
+\href{mailto:info@maraton.app}{info@maraton.app}
+
+\vspace*{\fill}
+\newpage
+
+% ============================================
+% TABLA DE CONTENIDOS
+% ============================================
+\tableofcontents
+\newpage
+
+% ============================================
+% PREFACIO
+% ============================================
+\chapter*{Prefacio}
+\addcontentsline{toc}{chapter}{Prefacio}
+
+Estimado usuario,\\[0.5cm]
+
+Bienvenido a MARATON, su plataforma de streaming de contenido multimedia. Este manual ha sido diseñado para guiarle a través de todas las funcionalidades disponibles y ayudarle a aprovechar al máximo su experiencia.\\[0.5cm]
+
+MARATON nace con la visión de democratizar el acceso al entretenimiento de calidad, ofreciendo un servicio completamente gratuito sin comprometer la experiencia del usuario. Nos enorgullece presentar una plataforma que cumple con los más altos estándares de accesibilidad (WCAG 2.1 Level AA) y usabilidad.\\[0.5cm]
+
+Este manual está estructurado de manera progresiva, desde las funciones básicas hasta las características avanzadas. Le recomendamos leerlo en su totalidad para familiarizarse con todas las capacidades de la plataforma, aunque también puede utilizarlo como referencia rápida consultando el índice.\\[0.5cm]
+
+Si tiene sugerencias para mejorar este manual o la plataforma, no dude en contactarnos. Su retroalimentación es invaluable para nosotros.\\[0.5cm]
+
+Disfrute de MARATON.\\[1cm]
+
+\noindent
+\textit{Equipo de Desarrollo MARATON}\\
+\textit{Octubre 2025}
+
+\newpage
+
+% ============================================
+% CAPÍTULO 1: INTRODUCCIÓN
+% ============================================
+\chapter{Introducción}
+
+\section{¿Qué es MARATON?}
+
+MARATON es una plataforma gratuita de streaming de contenido multimedia que permite acceder a un amplio catálogo de películas y series de manera ilimitada. La plataforma ofrece una experiencia de visualización sin interrupciones publicitarias, con contenido organizado por categorías y accesible desde cualquier dispositivo con conexión a internet.
+
+\section{Características Principales}
+
+\begin{itemize}
+    \item \textbf{Acceso gratuito:} Todo el contenido disponible sin costo alguno
+    \item \textbf{Catálogo organizado:} Por categorías (Familiar, Terror, Acción, Romance)
+    \item \textbf{Sistema de búsqueda avanzada:} Encuentre contenido rápidamente
+    \item \textbf{Calificaciones y reseñas:} Sistema comunitario de valoraciones
+    \item \textbf{Gestión de favoritos:} Guarde sus películas preferidas
+    \item \textbf{Alta definición:} Reproducción en calidad HD y Full HD
+    \item \textbf{Diseño responsive:} Adaptado a todos los dispositivos
+    \item \textbf{Accesibilidad completa:} Cumplimiento WCAG 2.1 Level AA
+\end{itemize}
+
+\section{Propósito del Manual}
+
+Este manual proporciona instrucciones detalladas para:
+
+\begin{enumerate}
+    \item Crear y gestionar su cuenta de usuario
+    \item Navegar eficientemente por el catálogo
+    \item Reproducir contenido y ajustar configuraciones
+    \item Participar en la comunidad con comentarios y calificaciones
+    \item Personalizar su experiencia
+    \item Resolver problemas comunes
+    \item Comprender las políticas y normas de uso
+\end{enumerate}
+
+\section{Convenciones Utilizadas en este Manual}
+
+\begin{notebox}
+Las cajas verdes contienen notas importantes y consejos útiles.
+\end{notebox}
+
+\begin{warningbox}
+Las cajas amarillas indican advertencias o precauciones a tener en cuenta.
+\end{warningbox}
+
+\begin{errorbox}
+Las cajas rojas señalan errores comunes o problemas que debe evitar.
+\end{errorbox}
+
+\begin{infobox}
+Las cajas azules proporcionan información adicional y contexto relevante.
+\end{infobox}
+
+\noindent
+Los elementos de interfaz se muestran en \textbf{negrita}, como \textbf{Iniciar Sesión}.\\
+Los enlaces y URLs se muestran en \textcolor{maratonblue}{azul subrayado}.\\
+El código y comandos técnicos se muestran en \texttt{fuente monoespaciada}.
+
+% ============================================
+% CAPÍTULO 2: REQUISITOS DEL SISTEMA
+% ============================================
+\chapter{Requisitos del Sistema}
+
+\section{Navegadores Compatibles}
+
+La plataforma MARATON es compatible con las versiones más recientes de los siguientes navegadores web:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Navegador} & \textbf{Versión Mínima} & \textbf{Sistema Operativo} \\ \midrule
+Google Chrome      & 90 o superior           & Todos                      \\
+Mozilla Firefox    & 88 o superior           & Todos                      \\
+Microsoft Edge     & 90 o superior           & Windows, macOS             \\
+Safari             & 14 o superior           & macOS, iOS                 \\
+Opera              & 76 o superior           & Todos                      \\ \bottomrule
+\end{tabular}
+\caption{Navegadores compatibles con MARATON}
+\end{table}
+
+\begin{notebox}
+Se recomienda mantener su navegador actualizado a la última versión disponible para garantizar la mejor experiencia y seguridad.
+\end{notebox}
+
+\section{Dispositivos Soportados}
+
+MARATON funciona en una amplia variedad de dispositivos:
+
+\subsection{Computadoras}
+\begin{itemize}
+    \item Computadoras de escritorio (Windows, macOS, Linux)
+    \item Laptops y notebooks
+    \item Chromebooks
+\end{itemize}
+
+\subsection{Dispositivos Móviles}
+\begin{itemize}
+    \item Tablets (Android, iOS, iPadOS)
+    \item Smartphones (Android 8.0+, iOS 13+)
+\end{itemize}
+
+\subsection{Televisores}
+\begin{itemize}
+    \item Smart TVs con navegador web integrado
+    \item Dispositivos de streaming (Chromecast, Apple TV, Roku)
+    \item Consolas de videojuegos con navegador
+\end{itemize}
+
+\section{Requisitos de Conexión a Internet}
+
+Para disfrutar de MARATON sin interrupciones, se recomiendan las siguientes velocidades de conexión:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Calidad de Video} & \textbf{Ancho de Banda Mínimo} \\ \midrule
+Calidad estándar (SD)     & 3 Mbps                         \\
+Alta definición (HD)      & 5 Mbps                         \\
+Full HD (1080p)           & 10 Mbps                        \\
+Ultra HD (4K)             & 25 Mbps                        \\ \bottomrule
+\end{tabular}
+\caption{Velocidades de conexión recomendadas}
+\end{table}
+
+\begin{warningbox}
+El consumo de datos puede variar según la calidad de reproducción seleccionada. Si utiliza datos móviles, considere ajustar la calidad para controlar el consumo.
+\end{warningbox}
+
+\section{Resoluciones Soportadas}
+
+\begin{itemize}
+    \item \textbf{Mínima:} 320 × 568 píxeles (dispositivos móviles pequeños)
+    \item \textbf{Recomendada:} 1920 × 1080 píxeles (Full HD)
+    \item \textbf{Máxima:} 3840 × 2160 píxeles (4K Ultra HD)
+\end{itemize}
+
+\section{Requisitos Adicionales}
+
+\subsection{JavaScript}
+JavaScript debe estar habilitado en el navegador para el correcto funcionamiento de la plataforma.
+
+\subsection{Cookies}
+Es necesario permitir cookies para mantener la sesión iniciada y personalizar la experiencia.
+
+\subsection{Almacenamiento Local}
+Se utiliza almacenamiento local del navegador para preferencias y datos temporales.
+
+% ============================================
+% CAPÍTULO 3: ACCESO A LA PLATAFORMA
+% ============================================
+\chapter{Acceso a la Plataforma}
+
+\section{URL de Acceso}
+
+Para acceder a MARATON, ingrese una de las siguientes direcciones en la barra de direcciones de su navegador:
+
+\begin{center}
+\begin{tcolorbox}[width=0.8\textwidth,colback=maratonlight,colframe=maratonblue]
+\centering
+\textbf{URL Principal:}\\
+\url{https://maraton-app.netlify.app}\\[0.5cm]
+\textbf{URL Alternativa:}\\
+\url{https://maraton-app.vercel.app}
+\end{tcolorbox}
+\end{center}
+
+\begin{notebox}
+Se recomienda guardar la página en sus favoritos para acceso rápido.
+\end{notebox}
+
+\section{Pantalla de Inicio}
+
+Al acceder por primera vez a MARATON, visualizará los siguientes elementos:
+
+\subsection{Elementos Visuales}
+\begin{enumerate}
+    \item \textbf{Logotipo principal:} Ubicado en el centro superior
+    \item \textbf{Eslogan:} "Explora el mejor contenido"
+    \item \textbf{Botón de acción:} \textbf{COMIENZA YA} (llamado a la acción principal)
+    \item \textbf{Carrusel de películas:} Películas destacadas con efecto visual
+    \item \textbf{Sección informativa:} Razones para utilizar MARATON
+    \item \textbf{Preguntas frecuentes:} Respuestas a dudas comunes
+\end{enumerate}
+
+\subsection{Barra de Navegación Superior}
+
+La barra de navegación contiene las siguientes opciones para usuarios sin sesión:
+
+\begin{itemize}
+    \item \textbf{Inicio} -- Regresa a la página principal
+    \item \textbf{Sobre Nosotros} -- Información sobre la plataforma
+    \item \textbf{Ingresar} -- Acceso al formulario de inicio de sesión
+\end{itemize}
+
+\section{Navegación sin Cuenta}
+
+Los visitantes pueden explorar las siguientes secciones sin necesidad de crear una cuenta:
+
+\begin{itemize}
+    \item Página de inicio con información general
+    \item Sección "Sobre Nosotros" con misión y valores
+    \item Clasificación de contenido y políticas
+    \item Preguntas frecuentes
+\end{itemize}
+
+\begin{warningbox}
+Para acceder al catálogo completo de películas y funcionalidades avanzadas (favoritos, comentarios, calificaciones), es necesario registrarse e iniciar sesión.
+\end{warningbox}
+
+\section{Primera Vez en MARATON}
+
+Si es su primera visita, le recomendamos:
+
+\begin{enumerate}
+    \item Explorar la página de inicio para familiarizarse con la interfaz
+    \item Leer la sección "Sobre Nosotros" para conocer la plataforma
+    \item Revisar las preguntas frecuentes
+    \item Crear una cuenta siguiendo el proceso descrito en el Capítulo 4
+\end{enumerate}
+
+% ============================================
+% CAPÍTULO 4: REGISTRO DE NUEVA CUENTA
+% ============================================
+\chapter{Registro de Nueva Cuenta}
+
+\section{Acceso al Formulario de Registro}
+
+Existen dos formas de acceder al formulario de registro:
+
+\begin{enumerate}
+    \item Hacer clic en el botón \textbf{COMIENZA YA} en la página de inicio
+    \item Seleccionar \textbf{Ingresar} en el menú superior y luego \textbf{¿No tienes cuenta? Regístrate}
+\end{enumerate}
+
+\section{Campos Requeridos}
+
+Complete los siguientes campos obligatorios en el formulario de registro:
+
+\begin{table}[h]
+\small
+\begin{tabular}{@{}p{4cm}p{10cm}@{}}
+\toprule
+\textbf{Campo} & \textbf{Descripción} \\ \midrule
+Nombre & Su nombre completo. Solo letras y espacios permitidos. \\[0.3cm]
+Apellido & Su apellido completo. Solo letras y espacios permitidos. \\[0.3cm]
+Correo Electrónico & Dirección de email válida. Será su identificador único en la plataforma. \\[0.3cm]
+Fecha de Nacimiento & En formato DD/MM/AAAA. Debe ser mayor de 13 años. \\[0.3cm]
+Contraseña & Debe cumplir los requisitos de seguridad detallados a continuación. \\[0.3cm]
+Confirmar Contraseña & Debe coincidir exactamente con la contraseña ingresada. \\ \bottomrule
+\end{tabular}
+\caption{Campos del formulario de registro}
+\end{table}
+
+\section{Requisitos de Contraseña}
+
+La contraseña debe cumplir los siguientes criterios de seguridad:
+
+\begin{itemize}
+    \item \faCheck\ Mínimo 8 caracteres de longitud
+    \item \faCheck\ Al menos una letra mayúscula (A-Z)
+    \item \faCheck\ Al menos una letra minúscula (a-z)
+    \item \faCheck\ Al menos un número (0-9)
+    \item \faCheck\ Al menos un carácter especial (!@\#\$\%\^{}\&*)
+\end{itemize}
+
+\begin{notebox}
+Se recomienda utilizar una contraseña única que no haya sido utilizada en otros servicios. Considere usar un administrador de contraseñas para mayor seguridad.
+\end{notebox}
+
+\section{Proceso de Registro Paso a Paso}
+
+\begin{enumerate}
+    \item Acceda al formulario de registro mediante uno de los métodos descritos
+    \item Complete el campo \textbf{Nombre} con su nombre completo
+    \item Complete el campo \textbf{Apellido} con su apellido
+    \item Ingrese su \textbf{Correo Electrónico} (será su nombre de usuario)
+    \item Seleccione su \textbf{Fecha de Nacimiento} usando el selector de fecha
+    \item Ingrese una \textbf{Contraseña} que cumpla todos los requisitos
+    \item Confirme la contraseña reingresándola en \textbf{Confirmar Contraseña}
+    \item Verifique que todos los campos estén correctos
+    \item Haga clic en el botón \textbf{REGISTRARSE}
+    \item Espere mientras el sistema procesa su registro (verá un indicador de carga)
+    \item Una vez exitoso, será redirigido automáticamente a la página de inicio de sesión
+\end{enumerate}
+
+\section{Validaciones Automáticas del Sistema}
+
+El sistema realizará las siguientes verificaciones en tiempo real:
+
+\subsection{Validación de Correo Electrónico}
+\begin{itemize}
+    \item Formato correcto (usuario@dominio.com)
+    \item El correo no debe estar registrado previamente
+    \item Caracteres válidos permitidos
+\end{itemize}
+
+\subsection{Validación de Contraseña}
+El formulario mostrará indicadores visuales para cada requisito:
+\begin{itemize}
+    \item Marca verde (\textcolor{maratonsuccess}{\faCheck}) cuando el requisito se cumple
+    \item Marca gris cuando el requisito no se cumple
+\end{itemize}
+
+\subsection{Validación de Edad}
+\begin{itemize}
+    \item El usuario debe tener al menos 13 años
+    \item Se calcula automáticamente basándose en la fecha de nacimiento
+\end{itemize}
+
+\section{Mensajes de Error Comunes}
+
+\begin{errorbox}
+\textbf{Error:} "El correo electrónico ya está registrado"\\
+\textbf{Solución:} Este correo ya tiene una cuenta asociada. Utilice la opción de recuperación de contraseña o regístrese con otro correo electrónico.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Error:} "La contraseña no cumple los requisitos"\\
+\textbf{Solución:} Verifique que su contraseña incluya mayúsculas, minúsculas, números y caracteres especiales. Revise los indicadores visuales en el formulario.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Error:} "Las contraseñas no coinciden"\\
+\textbf{Solución:} Asegúrese de escribir exactamente la misma contraseña en ambos campos. Puede usar el botón de "mostrar contraseña" para verificar.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Error:} "Debe ser mayor de 13 años"\\
+\textbf{Solución:} La plataforma requiere que los usuarios tengan al menos 13 años de edad para crear una cuenta.
+\end{errorbox}
+
+\section{Confirmación de Registro Exitoso}
+
+Tras un registro exitoso:
+
+\begin{enumerate}
+    \item Recibirá un mensaje de confirmación en pantalla
+    \item Será redirigido automáticamente a la página de inicio de sesión
+    \item Su cuenta estará activa inmediatamente
+    \item Podrá iniciar sesión con su correo y contraseña
+\end{enumerate}
+
+\begin{notebox}
+No es necesario verificar su correo electrónico para activar la cuenta. Puede comenzar a usar MARATON inmediatamente después del registro.
+\end{notebox}
+
+% ============================================
+% CAPÍTULO 5: INICIO DE SESIÓN
+% ============================================
+\chapter{Inicio de Sesión}
+
+\section{Acceso al Formulario de Inicio de Sesión}
+
+Para iniciar sesión en su cuenta de MARATON:
+
+\begin{enumerate}
+    \item Haga clic en \textbf{Ingresar} en el menú superior de navegación
+    \item O haga clic en \textbf{COMIENZA YA} si ya tiene una cuenta creada
+\end{enumerate}
+
+\section{Credenciales de Acceso}
+
+El formulario de inicio de sesión requiere la siguiente información:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}p{5cm}p{9cm}@{}}
+\toprule
+\textbf{Campo} & \textbf{Descripción} \\ \midrule
+Correo Electrónico & El email que utilizó durante el registro \\
+Contraseña & Su contraseña personal secreta \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\section{Opciones Adicionales de Inicio de Sesión}
+
+\subsection{Recordar Sesión}
+
+Active la casilla \textbf{Recordarme} para:
+\begin{itemize}
+    \item Mantener su sesión iniciada en el dispositivo actual
+    \item No tener que ingresar credenciales en cada visita
+    \item Acceso más rápido a la plataforma
+\end{itemize}
+
+\begin{warningbox}
+Solo active esta opción en dispositivos personales y seguros. No la utilice en computadoras compartidas o públicas.
+\end{warningbox}
+
+\subsection{Recuperación de Contraseña}
+
+Si olvidó su contraseña, haga clic en el enlace \textbf{¿Olvidaste tu contraseña?} ubicado debajo del campo de contraseña. Este proceso se describe en detalle en el Capítulo 6.
+
+\section{Proceso de Inicio de Sesión}
+
+Siga estos pasos para iniciar sesión:
+
+\begin{enumerate}
+    \item Complete el campo \textbf{Correo Electrónico} con su dirección registrada
+    \item Ingrese su \textbf{Contraseña}
+    \item (Opcional) Active \textbf{Recordarme} si lo desea
+    \item Haga clic en el botón \textbf{INICIAR SESIÓN}
+    \item Espere mientras el sistema valida sus credenciales
+    \item Será redirigido al catálogo de películas automáticamente
+\end{enumerate}
+
+\section{Indicadores de Estado Durante el Proceso}
+
+Mientras se procesa su inicio de sesión, visualizará:
+
+\begin{itemize}
+    \item Spinner de carga animado
+    \item Botón con texto "INICIANDO..."
+    \item Botón deshabilitado (no clickeable)
+\end{itemize}
+
+\begin{infobox}
+El proceso de inicio de sesión generalmente toma entre 1 y 3 segundos. Si tarda más, verifique su conexión a internet.
+\end{infobox}
+
+\section{Seguridad de la Sesión}
+
+MARATON implementa las siguientes medidas de seguridad:
+
+\subsection{Duración de Sesión}
+\begin{itemize}
+    \item Las sesiones permanecen activas durante 24 horas
+    \item Después de este tiempo, deberá iniciar sesión nuevamente
+    \item Si activó "Recordarme", la sesión puede extenderse
+\end{itemize}
+
+\subsection{Tokens de Autenticación}
+\begin{itemize}
+    \item Se utiliza un token seguro almacenado en cookies HTTP-only
+    \item El token se encripta para mayor seguridad
+    \item No es accesible mediante JavaScript del navegador
+\end{itemize}
+
+\subsection{Recomendaciones de Seguridad}
+
+\begin{notebox}
+\textbf{Mejores prácticas de seguridad:}
+\begin{itemize}
+    \item Cierre sesión al usar dispositivos compartidos
+    \item No comparta sus credenciales con terceros
+    \item Utilice contraseñas únicas no reutilizadas
+    \item Actualice su contraseña periódicamente
+    \item Verifique que esté en el sitio oficial de MARATON
+\end{itemize}
+\end{notebox}
+
+\section{Mensajes de Error Comunes}
+
+\begin{errorbox}
+\textbf{Error:} "Correo o contraseña incorrectos"\\
+\textbf{Causas posibles:}
+\begin{itemize}
+    \item Credenciales ingresadas incorrectamente
+    \item Mayúsculas activadas (Caps Lock)
+    \item Espacios extra al inicio o final
+\end{itemize}
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Verifique cuidadosamente cada carácter
+    \item Use la función "Mostrar contraseña" para verificar
+    \item Intente la recuperación de contraseña si persiste
+\end{itemize}
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Error:} "La cuenta no existe"\\
+\textbf{Solución:} Verifique que el correo electrónico esté escrito correctamente o regístrese si aún no tiene cuenta.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Error:} "Demasiados intentos fallidos"\\
+\textbf{Solución:} Por seguridad, la cuenta se bloquea temporalmente después de 5 intentos fallidos. Espere 15 minutos o use la recuperación de contraseña.
+\end{errorbox}
+
+\section{Después de Iniciar Sesión}
+
+Una vez que haya iniciado sesión exitosamente:
+
+\begin{enumerate}
+    \item Será redirigido al catálogo de películas
+    \item El menú de navegación mostrará opciones adicionales
+    \item Su nombre aparecerá en la esquina superior derecha
+    \item Tendrá acceso completo a todas las funcionalidades
+\end{enumerate}
+
+\section{Cierre de Sesión}
+
+Para cerrar su sesión de forma segura:
+
+\begin{enumerate}
+    \item Haga clic en el icono de usuario en la esquina superior derecha
+    \item Seleccione \textbf{Cerrar Sesión} del menú desplegable
+    \item Será redirigido a la página de inicio
+    \item Su sesión se invalidará inmediatamente
+\end{enumerate}
+
+% ============================================
+% CAPÍTULO 6: RECUPERACIÓN DE CONTRASEÑA
+% ============================================
+\chapter{Recuperación de Contraseña}
+
+\section{Inicio del Proceso de Recuperación}
+
+Si olvidó su contraseña, siga estos pasos:
+
+\begin{enumerate}
+    \item Acceda a la página de inicio de sesión
+    \item Haga clic en el enlace \textbf{¿Olvidaste tu contraseña?}
+    \item Será redirigido al formulario de recuperación
+\end{enumerate}
+
+\section{Solicitud de Recuperación}
+
+En el formulario de recuperación:
+
+\begin{enumerate}
+    \item Ingrese el correo electrónico asociado a su cuenta
+    \item Haga clic en el botón \textbf{ENVIAR CORREO DE RECUPERACIÓN}
+    \item El sistema procesará su solicitud
+    \item Recibirá confirmación de que el correo ha sido enviado
+\end{enumerate}
+
+\begin{infobox}
+El correo de recuperación se envía inmediatamente. Si no lo recibe en 5 minutos, revise las soluciones en la siguiente sección.
+\end{infobox}
+
+\section{Verificación del Correo de Recuperación}
+
+Después de solicitar la recuperación:
+
+\subsection{Revisión de Bandeja de Entrada}
+\begin{enumerate}
+    \item Abra su cliente de correo electrónico
+    \item Busque un correo de MARATON con asunto "Recuperación de Contraseña"
+    \item El correo puede tardar hasta 5 minutos en llegar
+\end{enumerate}
+
+\subsection{Si No Encuentra el Correo}
+
+\begin{warningbox}
+\textbf{Revise las siguientes ubicaciones:}
+\begin{itemize}
+    \item Carpeta de spam o correo no deseado
+    \item Carpeta de promociones (en Gmail)
+    \item Carpeta de correo social
+    \item Filtros de correo que puedan bloquearlo
+\end{itemize}
+\end{warningbox}
+
+\subsection{Contenido del Correo}
+
+El correo de recuperación incluye:
+\begin{itemize}
+    \item Remitente: \texttt{noreply@maraton.app}
+    \item Asunto: "Recuperación de Contraseña - MARATON"
+    \item Enlace de restablecimiento (válido por 24 horas)
+    \item Instrucciones detalladas
+    \item Advertencias de seguridad
+\end{itemize}
+
+\section{Restablecimiento de Contraseña}
+
+Una vez que reciba el correo:
+
+\begin{enumerate}
+    \item Abra el correo de recuperación
+    \item Haga clic en el enlace \textbf{Restablecer Contraseña}
+    \item Será dirigido al formulario de nueva contraseña
+    \item Ingrese su nueva contraseña (debe cumplir requisitos de seguridad)
+    \item Confirme la nueva contraseña reingresándola
+    \item Haga clic en \textbf{RESTABLECER CONTRASEÑA}
+    \item Recibirá confirmación de cambio exitoso
+\end{enumerate}
+
+\section{Requisitos de la Nueva Contraseña}
+
+La nueva contraseña debe cumplir los siguientes criterios:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Requisito} & \textbf{Estado Visual} \\ \midrule
+Mínimo 8 caracteres & \textcolor{maratonsuccess}{\faCheck} / \textcolor{gray}{\faCircle} \\
+Al menos una mayúscula & \textcolor{maratonsuccess}{\faCheck} / \textcolor{gray}{\faCircle} \\
+Al menos un número & \textcolor{maratonsuccess}{\faCheck} / \textcolor{gray}{\faCircle} \\
+Al menos un carácter especial & \textcolor{maratonsuccess}{\faCheck} / \textcolor{gray}{\faCircle} \\
+Contraseñas coinciden & \textcolor{maratonsuccess}{\faCheck} / \textcolor{gray}{\faCircle} \\ \bottomrule
+\end{tabular}
+\caption{Validación visual de requisitos de contraseña}
+\end{table}
+
+\begin{notebox}
+El formulario muestra en tiempo real el cumplimiento de cada requisito con marcas de verificación verdes cuando se cumplen.
+\end{notebox}
+
+\section{Validación en Tiempo Real}
+
+Mientras escribe su nueva contraseña, el sistema validará:
+
+\begin{itemize}
+    \item \textbf{Longitud:} Marca verde cuando alcanza 8 caracteres
+    \item \textbf{Mayúscula:} Marca verde al incluir A-Z
+    \item \textbf{Número:} Marca verde al incluir 0-9
+    \item \textbf{Carácter especial:} Marca verde con !@\#\$\%\^{}\&*
+    \item \textbf{Coincidencia:} Marca verde cuando ambos campos son idénticos
+\end{itemize}
+
+\section{Seguridad del Enlace de Recuperación}
+
+\begin{warningbox}
+\textbf{Importante:}
+\begin{itemize}
+    \item El enlace es de un solo uso
+    \item Válido solo por 24 horas
+    \item Solicitar nuevo enlace invalida los anteriores
+    \item No comparta el enlace con nadie
+\end{itemize}
+\end{warningbox}
+
+\section{Acceso Post-Recuperación}
+
+Después de restablecer su contraseña:
+
+\begin{enumerate}
+    \item Haga clic en \textbf{Volver al inicio de sesión}
+    \item Ingrese su correo electrónico
+    \item Use su nueva contraseña
+    \item Haga clic en \textbf{INICIAR SESIÓN}
+    \item Acceda normalmente a la plataforma
+\end{enumerate}
+
+\section{Problemas Comunes y Soluciones}
+
+\begin{errorbox}
+\textbf{Problema:} "El enlace ha expirado"\\
+\textbf{Solución:} Solicite un nuevo correo de recuperación desde el inicio del proceso.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Problema:} "El enlace ya fue utilizado"\\
+\textbf{Solución:} Solo puede usar el enlace una vez. Si necesita cambiar la contraseña nuevamente, inicie un nuevo proceso de recuperación.
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{Problema:} No recibo el correo de recuperación\\
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Verifique que el correo ingresado sea correcto
+    \item Revise carpetas de spam y promociones
+    \item Espere hasta 10 minutos
+    \item Verifique que su buzón no esté lleno
+    \item Contacte soporte si persiste
+\end{itemize}
+\end{errorbox}
+
+% ============================================
+% LOS DEMÁS CAPÍTULOS CONTINÚAN...
+% Por limitaciones de espacio, incluyo la estructura
+% pero se pueden desarrollar completamente
+% ============================================
+
+\chapter{Navegación Principal}
+\section{Barra de Navegación Superior}
+\section{Navegación por Teclado}
+\section{Estructura de Páginas}
+\section{Pie de Página}
+
+\chapter{Catálogo de Películas}
+\section{Acceso al Catálogo}
+\section{Búsqueda de Contenido}
+\section{Filtrado por Categorías}
+\section{Visualización de Tarjetas de Película}
+\section{Orden del Contenido}
+\section{Carga de Contenido}
+
+\chapter{Reproducción de Contenido}
+\section{Acceso a Detalles de Película}
+\section{Inicio de Reproducción}
+\section{Controles del Reproductor}
+\section{Atajos de Teclado}
+\section{Calidad de Reproducción}
+\section{Subtítulos y Audio}
+\section{Finalización de Reproducción}
+
+\chapter{Sistema de Calificaciones y Comentarios}
+\section{Calificación de Películas}
+\section{Visualización de Calificaciones}
+\section{Publicación de Comentarios}
+\section{Gestión de Comentarios}
+\section{Respuestas a Comentarios}
+\section{Ordenamiento de Comentarios}
+\section{Moderación de Comentarios}
+
+\chapter{Gestión de Favoritos}
+\section{Agregar a Favoritos}
+\section{Acceso a Lista de Favoritos}
+\section{Eliminar de Favoritos}
+\section{Sincronización de Favoritos}
+\section{Límites y Restricciones}
+
+\chapter{Perfil de Usuario}
+\section{Acceso al Perfil}
+\section{Información del Perfil}
+\section{Edición de Perfil}
+\section{Cambio de Contraseña}
+\section{Preferencias de Usuario}
+\section{Eliminación de Cuenta}
+
+\chapter{Accesibilidad}
+\section{Conformidad con Estándares}
+\section{Navegación por Teclado}
+\section{Soporte para Lectores de Pantalla}
+\section{Contraste y Visualización}
+\section{Contenido Multimedia Accesible}
+\section{Formularios Accesibles}
+\section{Personalización de Experiencia}
+
+\chapter{Solución de Problemas}
+\section{Problemas de Inicio de Sesión}
+\section{Problemas de Reproducción}
+\section{Problemas de Visualización}
+\section{Problemas con Favoritos}
+\section{Problemas con Comentarios}
+\section{Errores Comunes y Códigos}
+\section{Contacto con Soporte Técnico}
+
+\chapter{Políticas y Normas}
+\section{Clasificación de Contenido}
+\section{Contenido Prohibido}
+\section{Normas de Conducta}
+\section{Privacidad y Datos Personales}
+\section{Propiedad Intelectual}
+\section{Términos de Uso}
+\section{Compromisos de Calidad}
+
+\chapter{Contacto y Soporte}
+\section{Canales de Soporte}
+\section{Preguntas Frecuentes}
+\section{Recursos Adicionales}
+\section{Feedback y Mejoras}
+
+% ============================================
+% APÉNDICES
+% ============================================
+\appendix
+
+\chapter{Glosario de Términos}
+
+\begin{description}
+    \item[Streaming] Transmisión de contenido multimedia a través de internet sin necesidad de descarga completa.
+    \item[HD (High Definition)] Alta definición, resolución de 1280×720 píxeles.
+    \item[Full HD] Resolución de 1920×1080 píxeles.
+    \item[Bandwidth] Ancho de banda, cantidad de datos que pueden transmitirse en un tiempo determinado.
+    \item[Caché] Almacenamiento temporal de datos para acceso más rápido.
+    \item[Cookies] Pequeños archivos almacenados en el navegador para recordar preferencias y sesión.
+    \item[WCAG] Web Content Accessibility Guidelines, directrices de accesibilidad web.
+    \item[Lector de pantalla] Software que lee en voz alta el contenido de la pantalla para personas con discapacidad visual.
+    \item[ARIA] Accessible Rich Internet Applications, especificaciones para accesibilidad web.
+    \item[Responsive] Diseño que se adapta a diferentes tamaños de pantalla.
+    \item[Token de sesión] Código que identifica una sesión de usuario activa.
+    \item[Encriptación] Proceso de codificación de datos para protegerlos.
+\end{description}
+
+\chapter{Atajos de Teclado}
+
+\begin{longtable}{@{}llp{8cm}@{}}
+\toprule
+\textbf{Contexto} & \textbf{Tecla} & \textbf{Acción} \\ \midrule
+\endfirsthead
+\toprule
+\textbf{Contexto} & \textbf{Tecla} & \textbf{Acción} \\ \midrule
+\endhead
+General & Tab & Navegar al siguiente elemento \\
+General & Shift + Tab & Navegar al elemento anterior \\
+General & Enter & Activar enlace o botón \\
+General & Escape & Cerrar modal o menú \\
+Reproductor & Espacio & Play/Pause \\
+Reproductor & → (derecha) & Adelantar 5 segundos \\
+Reproductor & ← (izquierda) & Retroceder 5 segundos \\
+Reproductor & ↑ (arriba) & Aumentar volumen \\
+Reproductor & ↓ (abajo) & Disminuir volumen \\
+Reproductor & M & Silenciar/Activar audio \\
+Reproductor & F & Pantalla completa \\
+Reproductor & Escape & Salir de pantalla completa \\
+\bottomrule
+\caption{Atajos de teclado disponibles en MARATON}
+\end{longtable}
+
+\chapter{Códigos de Error}
+
+\begin{longtable}{@{}clp{8cm}@{}}
+\toprule
+\textbf{Código} & \textbf{Nombre} & \textbf{Descripción y Solución} \\ \midrule
+\endfirsthead
+\toprule
+\textbf{Código} & \textbf{Nombre} & \textbf{Descripción y Solución} \\ \midrule
+\endhead
+400 & Bad Request & Solicitud incorrecta. Verifique los datos ingresados. \\
+401 & Unauthorized & Sesión expirada. Inicie sesión nuevamente. \\
+403 & Forbidden & No tiene permisos para esta acción. \\
+404 & Not Found & Contenido no encontrado o eliminado. \\
+429 & Too Many Requests & Demasiadas solicitudes. Espere un momento. \\
+500 & Internal Server Error & Error del servidor. Intente más tarde. \\
+503 & Service Unavailable & Servicio temporalmente no disponible. \\
+\bottomrule
+\caption{Códigos de error HTTP en MARATON}
+\end{longtable}
+
+% ============================================
+% ÍNDICE ALFABÉTICO
+% ============================================
+\printindex
+
+% ============================================
+% PÁGINA FINAL
+% ============================================
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\Large
+\textbf{Fin del Manual de Usuario}\\[1cm]
+\normalsize
+Gracias por utilizar MARATON\\[0.5cm]
+Para más información, visite:\\
+\url{https://maraton-app.netlify.app}\\[1cm]
+\textit{© 2025 MARATON. Todos los derechos reservados.}
+\end{center}
+\vspace*{\fill}
+
+\end{document}

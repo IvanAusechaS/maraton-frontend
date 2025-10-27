@@ -5,12 +5,14 @@ Este archivo contiene el Manual de Usuario de MARATON en formato LaTeX profesion
 ## Características del Documento
 
 ### Diseño Profesional
+
 - **Clase de documento:** `book` con formato a dos caras
 - **Tamaño de página:** A4 (210 × 297 mm)
 - **Fuente principal:** Times New Roman (11pt)
 - **Márgenes:** Optimizados para impresión (interior 3cm, exterior 2cm)
 
 ### Elementos Visuales
+
 - **Colores corporativos:** Paleta completa de MARATON
   - Azul principal: RGB(0, 123, 255)
   - Gris oscuro: RGB(26, 26, 26)
@@ -24,6 +26,7 @@ Este archivo contiene el Manual de Usuario de MARATON en formato LaTeX profesion
 - **Encabezados y pies:** Con nombre de sección y número de página
 
 ### Estructura del Documento
+
 1. Portada con logo y versión
 2. Página de derechos de autor
 3. Tabla de contenidos
@@ -35,23 +38,28 @@ Este archivo contiene el Manual de Usuario de MARATON en formato LaTeX profesion
 ## Compilación en Overleaf
 
 ### Paso 1: Crear Proyecto
+
 1. Inicie sesión en [Overleaf](https://www.overleaf.com)
 2. Clic en "New Project" → "Blank Project"
 3. Nombre el proyecto: "Manual Usuario MARATON"
 
 ### Paso 2: Cargar Archivo
+
 1. Elimine el `main.tex` predeterminado
 2. Clic en "Upload" → Seleccione `manual-de-usuario.tex`
 3. Renombre a `main.tex` si es necesario
 
 ### Paso 3: Agregar Logo
+
 El documento requiere un logo en la portada:
+
 - **Nombre esperado:** `logo-maraton.png`
 - **Ubicación:** Raíz del proyecto Overleaf
 - **Formato:** PNG con fondo transparente
 - **Dimensiones recomendadas:** 800 × 300 px
 
 **Alternativa si no tiene logo:**
+
 ```latex
 % Reemplace la línea:
 \includegraphics[width=0.4\textwidth]{logo-maraton.png}
@@ -61,11 +69,29 @@ El documento requiere un logo en la portada:
 ```
 
 ### Paso 4: Configurar Compilador
-1. Menú → Configuración del proyecto
-2. **Compiler:** XeLaTeX (requerido para fontspec)
-3. **Main document:** main.tex
+
+**IMPORTANTE:** El documento funciona con ambos compiladores:
+
+#### ✅ Opción Recomendada: pdfLaTeX (Más Fácil)
+
+1. No requiere cambios en el código
+2. Ya está configurado por defecto en Overleaf
+3. Menú → Settings → Compiler: **pdfLaTeX**
+4. Compile normalmente
+
+#### Opción Alternativa: XeLaTeX (Fuentes Personalizadas)
+
+Solo si desea usar fuentes específicas (Times New Roman, Arial):
+
+1. Edite `main.tex` línea 35
+2. Descomente las 4 líneas del paquete fontspec
+3. Menú → Settings → Compiler: **XeLaTeX**
+4. Recompile
+
+**Nota:** Use pdfLaTeX para comenzar. El documento funciona perfectamente sin cambios.
 
 ### Paso 5: Compilar
+
 - Clic en "Recompile" o Ctrl+S
 - Espere 10-20 segundos (documento completo)
 - Revise el PDF generado
@@ -75,6 +101,7 @@ El documento requiere un logo en la portada:
 Todos estos paquetes están disponibles en Overleaf por defecto:
 
 ### Esenciales
+
 - `inputenc`, `babel`, `fontenc` - Soporte de idioma español
 - `geometry` - Control de márgenes
 - `xcolor` - Colores personalizados
@@ -82,20 +109,24 @@ Todos estos paquetes están disponibles en Overleaf por defecto:
 - `tcolorbox` - Cajas destacadas
 
 ### Tipografía
+
 - `fontspec` - Fuentes personalizadas (requiere XeLaTeX)
 - `lmodern` - Fuentes Latin Modern
 - `microtype` - Mejoras tipográficas
 
 ### Navegación
+
 - `hyperref` - Hipervínculos y marcadores PDF
 - `fancyhdr` - Encabezados y pies personalizados
 - `titlesec` - Formato de títulos
 
 ### Tablas y Listas
+
 - `booktabs`, `longtable`, `array`, `multirow` - Tablas avanzadas
 - `enumitem` - Listas personalizadas
 
 ### Extras
+
 - `fontawesome5` - Iconos en el documento
 - `listings` - Código fuente (si se añade)
 - `makeidx` - Índice alfabético
@@ -138,8 +169,10 @@ En la sección `fancyhdr`:
 ## Problemas Comunes y Soluciones
 
 ### Error: "Font not found"
+
 **Causa:** Fuentes especificadas no disponibles  
 **Solución:** Use fuentes predeterminadas:
+
 ```latex
 % Comente o elimine:
 % \setmainfont{Times New Roman}
@@ -148,37 +181,45 @@ En la sección `fancyhdr`:
 ```
 
 ### Error: "File logo-maraton.png not found"
+
 **Causa:** Logo no cargado  
 **Solución:** Suba el logo o use texto alternativo (ver Paso 3)
 
 ### Error: "XeLaTeX required"
+
 **Causa:** Compilador incorrecto  
 **Solución:** Cambie a XeLaTeX en configuración del proyecto
 
 ### Advertencia: "Overfull \hbox"
+
 **Causa:** Texto que excede margen  
 **Solución:** Normal en documentos extensos, puede ignorarse o ajustar manualmente
 
 ### PDF no se actualiza
+
 **Causa:** Caché de Overleaf  
-**Solución:** 
+**Solución:**
+
 1. Menú → "Clear cached files"
 2. Recompilar
 
 ## Exportación del PDF
 
 ### Desde Overleaf
+
 1. Clic en el ícono de descarga junto a "Recompile"
 2. Seleccione "PDF"
 3. Guarde como: `Manual-Usuario-MARATON-v1.0.pdf`
 
 ### Opciones de Calidad
+
 - **Normal:** Para visualización en pantalla
 - **Alta:** Para impresión profesional (aumentar DPI de imágenes)
 
 ## Impresión Recomendada
 
 ### Configuración
+
 - **Papel:** A4 (210 × 297 mm)
 - **Orientación:** Vertical
 - **Impresión:** Doble cara (twoside)
@@ -186,6 +227,7 @@ En la sección `fancyhdr`:
 - **Color:** Sí (para cajas y destacados)
 
 ### Estimado de Páginas
+
 - **Total aproximado:** 80-100 páginas (depende de contenido completo)
 - **Portada + preliminares:** 5 páginas
 - **Capítulos principales:** 70-85 páginas
@@ -194,6 +236,7 @@ En la sección `fancyhdr`:
 ## Mantenimiento y Actualizaciones
 
 ### Actualizar Versión
+
 Modifique en la sección de información:
 
 ```latex
@@ -226,32 +269,38 @@ Más contenido...
 ## Recursos Adicionales
 
 ### Documentación LaTeX
+
 - [Overleaf Documentation](https://www.overleaf.com/learn)
 - [LaTeX Wikibook](https://en.wikibooks.org/wiki/LaTeX)
 - [CTAN (Comprehensive TeX Archive Network)](https://www.ctan.org/)
 
 ### Paquetes Específicos
+
 - [tcolorbox manual](https://ctan.org/pkg/tcolorbox)
 - [fontawesome5 icons](https://ctan.org/pkg/fontawesome5)
 - [hyperref options](https://ctan.org/pkg/hyperref)
 
 ### Plantillas Similares
+
 - [Overleaf Gallery](https://www.overleaf.com/gallery)
 - Buscar: "book template", "manual template"
 
 ## Conversión a Otros Formatos
 
 ### HTML
+
 ```bash
 htlatex main.tex "xhtml,charset=utf-8" " -cunihtf -utf8"
 ```
 
 ### Word (vía Pandoc)
+
 ```bash
 pandoc main.tex -o manual.docx
 ```
 
 ### EPUB
+
 ```bash
 tex4ebook main.tex
 ```
@@ -259,6 +308,7 @@ tex4ebook main.tex
 ## Contacto
 
 Para consultas sobre este documento LaTeX:
+
 - **Email:** docs@maraton.app
 - **Repositorio:** GitHub (maraton-frontend/docs/)
 

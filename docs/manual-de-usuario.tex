@@ -32,11 +32,12 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins,breakable}
 
-% Fuentes y tipografía
-\usepackage{fontspec}
-\setmainfont{Times New Roman}
-\setsansfont{Arial}
-\setmonofont{Courier New}
+% Fuentes y tipografía - Compatible con pdfLaTeX
+% Si usa XeLaTeX, descomente las siguientes líneas:
+% \usepackage{fontspec}
+% \setmainfont{Times New Roman}
+% \setsansfont{Arial}
+% \setmonofont{Courier New}
 
 % Hipervínculos
 \usepackage[
@@ -941,90 +942,681 @@ Después de restablecer su contraseña:
 \end{errorbox}
 
 % ============================================
-% LOS DEMÁS CAPÍTULOS CONTINÚAN...
-% Por limitaciones de espacio, incluyo la estructura
-% pero se pueden desarrollar completamente
+% CAPÍTULO 7: NAVEGACIÓN PRINCIPAL
 % ============================================
-
 \chapter{Navegación Principal}
+
 \section{Barra de Navegación Superior}
+
+La barra de navegación se adapta según el estado de autenticación:
+
+\subsection{Usuario Sin Sesión}
+\begin{itemize}
+    \item \textbf{Inicio} -- Página principal
+    \item \textbf{Sobre Nosotros} -- Información corporativa
+    \item \textbf{Ingresar} -- Acceso a formulario de login
+\end{itemize}
+
+\subsection{Usuario Con Sesión Activa}
+\begin{itemize}
+    \item \textbf{Inicio} -- Regreso a página principal
+    \item \textbf{Películas} -- Catálogo completo
+    \item \textbf{Favoritos} -- Listado de favoritos
+    \item \textbf{Sobre Nosotros} -- Información de la plataforma
+    \item \textbf{Icono de Usuario} -- Menú desplegable con:
+    \begin{itemize}
+        \item Ver Perfil
+        \item Cerrar Sesión
+    \end{itemize}
+\end{itemize}
+
 \section{Navegación por Teclado}
+
+MARATON soporta navegación completa por teclado cumpliendo WCAG 2.1 AA:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Tecla} & \textbf{Función} \\ \midrule
+Tab & Avanzar al siguiente elemento \\
+Shift + Tab & Retroceder al elemento anterior \\
+Enter & Activar enlaces y botones \\
+Espacio & Activar botones y checkboxes \\
+Escape & Cerrar modales y menús \\
+Flechas & Navegación en componentes específicos \\ \bottomrule
+\end{tabular}
+\caption{Atajos de navegación general}
+\end{table}
+
 \section{Estructura de Páginas}
+
+Todas las páginas mantienen una estructura consistente:
+
+\begin{enumerate}
+    \item \textbf{Encabezado:} Logo y navegación principal
+    \item \textbf{Contenido principal:} Área específica de cada página
+    \item \textbf{Pie de página:} Enlaces, información legal y contacto
+\end{enumerate}
+
 \section{Pie de Página}
 
+El pie de página incluye:
+\begin{itemize}
+    \item Enlaces a secciones principales
+    \item Información de contacto
+    \item Políticas de privacidad y términos
+    \item Derechos de autor
+\end{itemize}
+
+% ============================================
+% CAPÍTULO 8: CATÁLOGO DE PELÍCULAS
+% ============================================
 \chapter{Catálogo de Películas}
+
 \section{Acceso al Catálogo}
+
+Para acceder al catálogo completo:
+\begin{enumerate}
+    \item Inicie sesión en su cuenta
+    \item Haga clic en \textbf{Películas} en el menú superior
+    \item O haga clic en \textbf{EXPLORAR CATÁLOGO} desde inicio
+\end{enumerate}
+
 \section{Búsqueda de Contenido}
+
+El sistema de búsqueda permite encontrar películas rápidamente:
+
+\begin{enumerate}
+    \item Localice el campo de búsqueda en la parte superior
+    \item Ingrese el título o palabras clave
+    \item Presione Enter o haga clic en el icono de búsqueda
+    \item Los resultados se filtrarán en tiempo real
+\end{enumerate}
+
+\begin{infobox}
+La búsqueda incluye títulos, descripciones y categorías.
+\end{infobox}
+
 \section{Filtrado por Categorías}
+
+Categorías disponibles:
+
+\begin{description}
+    \item[Todas] Catálogo completo sin filtros
+    \item[Familiar] Contenido apto para todo público (ATP)
+    \item[Terror] Películas de suspenso y horror
+    \item[Acción] Contenido de aventura y acción
+    \item[Romance] Películas románticas
+\end{description}
+
+Para filtrar, haga clic en la categoría deseada. La activa se resalta visualmente.
+
 \section{Visualización de Tarjetas de Película}
-\section{Orden del Contenido}
-\section{Carga de Contenido}
 
+Cada tarjeta muestra:
+\begin{itemize}
+    \item Imagen de portada
+    \item Título de la película
+    \item Duración (minutos)
+    \item Calificación promedio (\faStarO)
+    \item Estado de disponibilidad
+\end{itemize}
+
+Haga clic en cualquier tarjeta para ver detalles completos.
+
+\section{Orden y Carga del Contenido}
+
+El catálogo se organiza por:
+\begin{enumerate}
+    \item Películas destacadas
+    \item Orden alfabético
+    \item Fecha de adición reciente
+\end{enumerate}
+
+El contenido se carga dinámicamente con scroll infinito.
+
+% ============================================
+% CAPÍTULO 9: REPRODUCCIÓN DE CONTENIDO
+% ============================================
 \chapter{Reproducción de Contenido}
+
 \section{Acceso a Detalles de Película}
+
+La página de detalles presenta:
+\begin{itemize}
+    \item Título y año de producción
+    \item Duración y clasificación
+    \item Calificación promedio con badge
+    \item Sinopsis completa
+    \item Categorías/Géneros
+    \item Sección de comentarios y calificaciones
+\end{itemize}
+
 \section{Inicio de Reproducción}
+
+Dos métodos disponibles:
+
+\subsection{Método 1: Desde Detalles}
+\begin{enumerate}
+    \item Abra la página de detalles
+    \item Haga clic en \textbf{VER AHORA}
+    \item Reproducción automática
+\end{enumerate}
+
+\subsection{Método 2: Acceso Directo}
+Haga clic en el icono de play desde el catálogo.
+
 \section{Controles del Reproductor}
-\section{Atajos de Teclado}
+
+El reproductor incluye controles estándar:
+
+\begin{itemize}
+    \item \textbf{Play/Pause:} Reproducir o pausar
+    \item \textbf{Volumen:} Control deslizante de audio
+    \item \textbf{Silenciar:} Activar/desactivar sonido
+    \item \textbf{Avance/Retroceso:} ±10 segundos
+    \item \textbf{Barra de progreso:} Navegación temporal
+    \item \textbf{Pantalla completa:} Expansión total
+    \item \textbf{Configuración:} Calidad y subtítulos
+\end{itemize}
+
 \section{Calidad de Reproducción}
+
+Ajuste automático según conexión. Opciones manuales:
+\begin{itemize}
+    \item Auto (recomendado)
+    \item 480p (SD)
+    \item 720p (HD)
+    \item 1080p (Full HD)
+\end{itemize}
+
 \section{Subtítulos y Audio}
-\section{Finalización de Reproducción}
 
+Configure desde el menú de configuración del reproductor:
+\begin{enumerate}
+    \item Haga clic en el icono de configuración
+    \item Seleccione \textbf{Subtítulos} o \textbf{Audio}
+    \item Elija idioma o desactive
+\end{enumerate}
+
+% ============================================
+% CAPÍTULO 10: CALIFICACIONES Y COMENTARIOS
+% ============================================
 \chapter{Sistema de Calificaciones y Comentarios}
+
 \section{Calificación de Películas}
+
+Para calificar una película:
+
+\begin{enumerate}
+    \item Acceda a la página de detalles
+    \item Localice "Califica esta película"
+    \item Seleccione de 1 a 5 estrellas:
+    \begin{itemize}
+        \item \faStarO\ -- Muy mala
+        \item \faStarO\faStarO\ -- Mala
+        \item \faStarO\faStarO\faStarO\ -- Regular
+        \item \faStarO\faStarO\faStarO\faStarO\ -- Buena
+        \item \faStarO\faStarO\faStarO\faStarO\faStarO\ -- Excelente
+    \end{itemize}
+    \item La calificación se guarda automáticamente
+\end{enumerate}
+
+\begin{notebox}
+Puede modificar su calificación en cualquier momento.
+\end{notebox}
+
 \section{Visualización de Calificaciones}
+
+Las calificaciones aparecen:
+\begin{itemize}
+    \item En tarjetas de catálogo (promedio + estrella)
+    \item En metadata de película (badge con promedio)
+    \item En sección de estadísticas (distribución)
+\end{itemize}
+
 \section{Publicación de Comentarios}
+
+Para agregar un comentario:
+
+\begin{enumerate}
+    \item Desplácese a la sección "Comentarios"
+    \item Escriba su opinión (mínimo 10 caracteres)
+    \item Haga clic en \textbf{PUBLICAR COMENTARIO}
+    \item Aparecerá inmediatamente con su nombre y fecha
+\end{enumerate}
+
 \section{Gestión de Comentarios}
+
+\subsection{Editar Comentario}
+\begin{enumerate}
+    \item Haga clic en el icono de edición
+    \item Modifique el texto
+    \item Haga clic en \textbf{GUARDAR CAMBIOS}
+\end{enumerate}
+
+\subsection{Eliminar Comentario}
+\begin{enumerate}
+    \item Haga clic en el icono de eliminación
+    \item Confirme en el modal
+    \item El comentario se elimina permanentemente
+\end{enumerate}
+
+\begin{warningbox}
+Solo puede editar o eliminar sus propios comentarios.
+\end{warningbox}
+
 \section{Respuestas a Comentarios}
-\section{Ordenamiento de Comentarios}
-\section{Moderación de Comentarios}
 
+Para responder:
+\begin{enumerate}
+    \item Haga clic en \textbf{Responder} bajo el comentario
+    \item Escriba su respuesta
+    \item Haga clic en \textbf{PUBLICAR RESPUESTA}
+    \item La respuesta se anida bajo el comentario original
+\end{enumerate}
+
+Máximo 2 niveles de anidación permitidos.
+
+% ============================================
+% CAPÍTULO 11: GESTIÓN DE FAVORITOS
+% ============================================
 \chapter{Gestión de Favoritos}
-\section{Agregar a Favoritos}
-\section{Acceso a Lista de Favoritos}
-\section{Eliminar de Favoritos}
-\section{Sincronización de Favoritos}
-\section{Límites y Restricciones}
 
+\section{Agregar a Favoritos}
+
+\subsection{Desde el Catálogo}
+\begin{enumerate}
+    \item Localice el icono de corazón en la tarjeta
+    \item Haga clic en el icono
+    \item El corazón se rellena indicando que fue agregada
+\end{enumerate}
+
+\subsection{Desde Detalles}
+Haga clic en \textbf{AGREGAR A FAVORITOS}.
+
+\section{Acceso a Lista de Favoritos}
+
+\begin{enumerate}
+    \item Haga clic en \textbf{Favoritos} en el menú
+    \item Visualice todas las películas marcadas
+    \item Organizadas por fecha de adición
+\end{enumerate}
+
+\section{Eliminar de Favoritos}
+
+Haga clic nuevamente en el icono de corazón relleno. Se quitará de la lista.
+
+\section{Sincronización}
+
+Los favoritos:
+\begin{itemize}
+    \item Se sincronizan automáticamente con el servidor
+    \item Son accesibles desde cualquier dispositivo
+    \item Persisten entre sesiones
+\end{itemize}
+
+\begin{infobox}
+No hay límite de películas en favoritos.
+\end{infobox}
+
+% ============================================
+% CAPÍTULO 12: PERFIL DE USUARIO
+% ============================================
 \chapter{Perfil de Usuario}
+
 \section{Acceso al Perfil}
+
+\begin{enumerate}
+    \item Haga clic en el icono de usuario
+    \item Seleccione \textbf{Ver Perfil}
+\end{enumerate}
+
 \section{Información del Perfil}
+
+El perfil muestra:
+\begin{itemize}
+    \item Avatar o inicial del nombre
+    \item Nombre completo
+    \item Correo electrónico
+    \item Fecha de nacimiento
+    \item Fecha de registro
+    \item Estadísticas de actividad
+\end{itemize}
+
 \section{Edición de Perfil}
+
+\begin{enumerate}
+    \item Haga clic en \textbf{EDITAR PERFIL}
+    \item Modifique campos deseados:
+    \begin{itemize}
+        \item Nombre
+        \item Apellido
+        \item Fecha de nacimiento
+        \item Correo electrónico
+    \end{itemize}
+    \item Haga clic en \textbf{GUARDAR CAMBIOS}
+\end{enumerate}
+
+Para cancelar, haga clic en \textbf{CANCELAR}.
+
 \section{Cambio de Contraseña}
-\section{Preferencias de Usuario}
+
+\begin{enumerate}
+    \item Desde el perfil, clic en \textbf{Cambiar Contraseña}
+    \item Ingrese contraseña actual
+    \item Ingrese nueva contraseña (cumpliendo requisitos)
+    \item Confirme nueva contraseña
+    \item Haga clic en \textbf{ACTUALIZAR CONTRASEÑA}
+\end{enumerate}
+
 \section{Eliminación de Cuenta}
 
+\begin{warningbox}
+La eliminación es irreversible y permanente.
+\end{warningbox}
+
+Proceso:
+\begin{enumerate}
+    \item Configuración de perfil
+    \item \textbf{Eliminar mi cuenta}
+    \item Lea consecuencias (pérdida de datos)
+    \item Ingrese contraseña para confirmar
+    \item Haga clic en \textbf{ELIMINAR CUENTA PERMANENTEMENTE}
+\end{enumerate}
+
+% ============================================
+% CAPÍTULO 13: ACCESIBILIDAD
+% ============================================
 \chapter{Accesibilidad}
+
 \section{Conformidad con Estándares}
+
+MARATON cumple con \textbf{WCAG 2.1 Level AA}, garantizando:
+\begin{itemize}
+    \item Acceso para personas con discapacidades
+    \item Navegación por teclado completa
+    \item Soporte de tecnologías asistivas
+    \item Contraste adecuado de colores
+\end{itemize}
+
 \section{Navegación por Teclado}
+
+Todas las funcionalidades son accesibles mediante teclado:
+\begin{itemize}
+    \item Focus visible en elementos interactivos
+    \item Orden lógico de tabulación
+    \item Sin trampas de teclado
+\end{itemize}
+
 \section{Soporte para Lectores de Pantalla}
+
+Tecnologías compatibles:
+\begin{itemize}
+    \item NVDA (Windows)
+    \item JAWS (Windows)
+    \item VoiceOver (macOS/iOS)
+    \item TalkBack (Android)
+\end{itemize}
+
+Características:
+\begin{itemize}
+    \item Textos alternativos descriptivos
+    \item Etiquetas ARIA en elementos
+    \item Anuncios de cambios dinámicos
+    \item Estructura jerárquica clara
+\end{itemize}
+
 \section{Contraste y Visualización}
-\section{Contenido Multimedia Accesible}
-\section{Formularios Accesibles}
-\section{Personalización de Experiencia}
 
+\begin{itemize}
+    \item Texto normal: Ratio 4.5:1 mínimo
+    \item Texto grande: Ratio 3:1 mínimo
+    \item Zoom hasta 200\% sin pérdida
+    \item Diseño responsive adaptable
+\end{itemize}
+
+\section{Personalización}
+
+Opciones disponibles:
+\begin{itemize}
+    \item Tamaño de fuente ajustable
+    \item Preferencias de notificaciones
+    \item Calidad de reproducción
+\end{itemize}
+
+% ============================================
+% CAPÍTULO 14: SOLUCIÓN DE PROBLEMAS
+% ============================================
 \chapter{Solución de Problemas}
-\section{Problemas de Inicio de Sesión}
-\section{Problemas de Reproducción}
-\section{Problemas de Visualización}
-\section{Problemas con Favoritos}
-\section{Problemas con Comentarios}
-\section{Errores Comunes y Códigos}
-\section{Contacto con Soporte Técnico}
 
+\section{Problemas de Inicio de Sesión}
+
+\begin{errorbox}
+\textbf{No puedo iniciar sesión}\\
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Verifique correo y contraseña
+    \item Desactive Caps Lock
+    \item Use recuperación de contraseña
+    \item Limpie caché del navegador
+    \item Pruebe otro navegador
+\end{itemize}
+\end{errorbox}
+
+\section{Problemas de Reproducción}
+
+\begin{errorbox}
+\textbf{El video no se reproduce}\\
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Verifique conexión a internet
+    \item Cierre otras aplicaciones
+    \item Reduzca calidad de reproducción
+    \item Actualice navegador
+    \item Limpie caché
+\end{itemize}
+\end{errorbox}
+
+\begin{errorbox}
+\textbf{No hay audio}\\
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Verifique volumen del sistema
+    \item Compruebe que no esté silenciado
+    \item Pruebe otros dispositivos de audio
+    \item Reinicie navegador
+\end{itemize}
+\end{errorbox}
+
+\section{Problemas de Visualización}
+
+\begin{errorbox}
+\textbf{Página no se ve correctamente}\\
+\textbf{Soluciones:}
+\begin{itemize}
+    \item Actualice la página (Ctrl+F5)
+    \item Limpie caché del navegador
+    \item Desactive extensiones
+    \item Pruebe modo incógnito
+\end{itemize}
+\end{errorbox}
+
+\section{Errores Comunes}
+
+\begin{table}[h]
+\small
+\centering
+\begin{tabular}{@{}clp{6cm}@{}}
+\toprule
+\textbf{Código} & \textbf{Error} & \textbf{Solución} \\ \midrule
+401 & No autorizado & Inicie sesión nuevamente \\
+403 & Acceso denegado & Verifique permisos \\
+404 & No encontrado & Contenido eliminado \\
+500 & Error del servidor & Intente más tarde \\
+503 & No disponible & Mantenimiento temporal \\ \bottomrule
+\end{tabular}
+\caption{Códigos de error frecuentes}
+\end{table}
+
+\section{Contacto con Soporte}
+
+Si los problemas persisten:
+
+\begin{enumerate}
+    \item Prepare información del problema
+    \item Incluya capturas de pantalla
+    \item Indique navegador y versión
+    \item Contacte: \href{mailto:soporte@maraton.app}{soporte@maraton.app}
+    \item Tiempo de respuesta: 24-48 horas
+\end{enumerate}
+
+% ============================================
+% CAPÍTULO 15: POLÍTICAS Y NORMAS
+% ============================================
 \chapter{Políticas y Normas}
+
 \section{Clasificación de Contenido}
+
+\begin{description}
+    \item[ATP] Apto para todo público. Sin violencia ni lenguaje explícito.
+    \item[+13] Mayores de 13 años. Violencia moderada, lenguaje ocasional.
+    \item[18+] Solo adultos. Contenido maduro, violencia gráfica.
+    \item[STEM] Contenido científico y educativo.
+\end{description}
+
 \section{Contenido Prohibido}
+
+MARATON no permite:
+\begin{itemize}
+    \item Violencia extrema o gratuita
+    \item Contenido que promueva odio
+    \item Material ilegal
+    \item Contenido de explotación
+    \item Pornografía
+\end{itemize}
+
 \section{Normas de Conducta}
-\section{Privacidad y Datos Personales}
-\section{Propiedad Intelectual}
+
+En comentarios y reseñas:
+\begin{itemize}
+    \item Respetar a otros usuarios
+    \item No publicar información personal
+    \item Evitar lenguaje ofensivo
+    \item No hacer spam
+    \item No suplantar identidades
+\end{itemize}
+
+\subsection{Consecuencias}
+\begin{enumerate}
+    \item Primera infracción: Advertencia
+    \item Segunda: Suspensión 7 días
+    \item Tercera: Suspensión 30 días
+    \item Infracciones graves: Eliminación permanente
+\end{enumerate}
+
+\section{Privacidad y Datos}
+
+\subsection{Datos Recopilados}
+\begin{itemize}
+    \item Información de registro
+    \item Actividad de visualización
+    \item Preferencias de usuario
+    \item Comentarios y calificaciones
+\end{itemize}
+
+\subsection{Uso de Datos}
+\begin{itemize}
+    \item Personalización de experiencia
+    \item Mejora de recomendaciones
+    \item Análisis estadísticos
+    \item Comunicaciones relevantes
+\end{itemize}
+
+\subsection{Derechos del Usuario}
+\begin{itemize}
+    \item Acceso a datos personales
+    \item Corrección de información
+    \item Eliminación de cuenta
+    \item Portabilidad de datos
+\end{itemize}
+
 \section{Términos de Uso}
+
+\begin{itemize}
+    \item Edad mínima: 13 años
+    \item Menores de 18: Supervisión parental
+    \item Servicio gratuito sin garantía de disponibilidad 24/7
+    \item Términos sujetos a actualizaciones
+\end{itemize}
+
 \section{Compromisos de Calidad}
 
+MARATON garantiza:
+\begin{itemize}
+    \item Verificación de contenido
+    \item Calidad mínima 1080p HD
+    \item Subtítulos cuando disponibles
+    \item Actualizaciones semanales
+    \item Soporte técnico responsivo
+\end{itemize}
+
+% ============================================
+% CAPÍTULO 16: CONTACTO Y SOPORTE
+% ============================================
 \chapter{Contacto y Soporte}
+
 \section{Canales de Soporte}
+
+\subsection{Correo Electrónico}
+\begin{itemize}
+    \item Soporte técnico: \href{mailto:soporte@maraton.app}{soporte@maraton.app}
+    \item Consultas generales: \href{mailto:info@maraton.app}{info@maraton.app}
+    \item Asuntos legales: \href{mailto:legal@maraton.app}{legal@maraton.app}
+\end{itemize}
+
+\subsection{Horario de Atención}
+\begin{itemize}
+    \item Lunes a Viernes: 9:00 - 18:00
+    \item Sábados: 10:00 - 14:00
+    \item Domingos y festivos: Sin atención
+\end{itemize}
+
+\subsection{Tiempo de Respuesta}
+\begin{itemize}
+    \item Consultas generales: 24-48 horas
+    \item Problemas críticos: 4-8 horas
+    \item Contenido inapropiado: 2-4 horas
+\end{itemize}
+
 \section{Preguntas Frecuentes}
+
+\begin{description}
+    \item[¿Es realmente gratis?] Sí, completamente gratuito sin cargos ocultos.
+    \item[¿Por qué registrarse?] Para personalizar experiencia y acceder a todas las funciones.
+    \item[¿Varios dispositivos?] Sí, una cuenta en cualquier dispositivo.
+    \item[¿Descargar películas?] No permitido actualmente.
+    \item[¿Sugerir contenido?] Envíe sugerencias a info@maraton.app
+\end{description}
+
 \section{Recursos Adicionales}
+
+\begin{itemize}
+    \item Centro de ayuda en "Sobre Nosotros"
+    \item Manual de usuario (este documento)
+    \item Políticas de privacidad
+    \item Términos y condiciones
+\end{itemize}
+
 \section{Feedback y Mejoras}
+
+Envíe comentarios a:
+\begin{itemize}
+    \item Feedback general: \href{mailto:feedback@maraton.app}{feedback@maraton.app}
+    \item Reporte de errores: \href{mailto:bugs@maraton.app}{bugs@maraton.app}
+    \item Sugerencias: \href{mailto:suggestions@maraton.app}{suggestions@maraton.app}
+\end{itemize}
 
 % ============================================
 % APÉNDICES

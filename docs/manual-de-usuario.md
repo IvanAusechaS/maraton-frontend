@@ -142,7 +142,7 @@ Complete los siguientes campos obligatorios:
   - Mínimo 8 caracteres
   - Al menos una letra mayúscula
   - Al menos un número
-  - Al menos un carácter especial (!@#$%^&*)
+  - Al menos un carácter especial (!@#$%^&\*)
 
 ### 4.3 Proceso de Registro
 
@@ -272,12 +272,14 @@ Una vez restablecida la contraseña:
 La barra de navegación permanece visible en todas las páginas y contiene:
 
 **Sin sesión iniciada:**
+
 - Logotipo MARATON (enlace a inicio)
 - Inicio
 - Sobre Nosotros
 - Ingresar
 
 **Con sesión iniciada:**
+
 - Logotipo MARATON (enlace a inicio)
 - Inicio
 - Películas
@@ -299,23 +301,27 @@ La plataforma soporta navegación completa por teclado:
 ### 7.3 Estructura de Páginas
 
 **Página de Inicio:**
+
 - Sección hero con llamado a la acción
 - Carrusel de películas destacadas
 - Razones para ingresar
 - Preguntas frecuentes
 
 **Página de Películas:**
+
 - Buscador de contenido
 - Filtros por categoría
 - Cuadrícula de películas
 - Detalles al hacer clic
 
 **Página de Favoritos:**
+
 - Lista de películas marcadas como favoritas
 - Opción de eliminar de favoritos
 - Acceso rápido a reproducción
 
 **Página Sobre Nosotros:**
+
 - Misión de la plataforma
 - Valores corporativos
 - Clasificación de contenido
@@ -344,6 +350,7 @@ El pie de página incluye:
 ### 8.2 Búsqueda de Contenido
 
 **Buscador Principal:**
+
 1. Localice el campo de búsqueda en la parte superior
 2. Ingrese el título de la película o palabras clave
 3. Presione Enter o haga clic en el icono de búsqueda
@@ -360,6 +367,7 @@ Las categorías disponibles son:
 - **Romance**: Películas románticas
 
 **Para filtrar:**
+
 1. Haga clic en la categoría deseada
 2. El catálogo se actualizará automáticamente
 3. La categoría activa se resaltará visualmente
@@ -375,6 +383,7 @@ Cada película se muestra en una tarjeta que incluye:
 - Estado de disponibilidad
 
 **Interacciones:**
+
 - Pase el cursor sobre la tarjeta para ver efecto hover
 - Haga clic en la tarjeta para ver detalles completos
 
@@ -412,10 +421,12 @@ El catálogo se organiza por:
 ### 9.2 Inicio de Reproducción
 
 **Método 1:**
+
 1. En la página de detalles, haga clic en "VER AHORA"
 2. La película comenzará a reproducirse en pantalla completa
 
 **Método 2:**
+
 1. Desde el catálogo, haga clic en el icono de reproducción
 2. Acceso directo al reproductor
 
@@ -452,6 +463,7 @@ El sistema ajusta automáticamente la calidad según:
 - Carga del servidor
 
 Opciones manuales disponibles:
+
 - Auto (recomendado)
 - 480p (calidad estándar)
 - 720p (HD)
@@ -460,11 +472,13 @@ Opciones manuales disponibles:
 ### 9.6 Subtítulos y Audio
 
 **Configuración de subtítulos:**
+
 1. Haga clic en el icono de configuración
 2. Seleccione "Subtítulos"
 3. Elija el idioma deseado o "Desactivado"
 
 **Configuración de audio:**
+
 1. Acceda al menú de configuración
 2. Seleccione "Audio"
 3. Elija el idioma disponible
@@ -482,6 +496,7 @@ Opciones manuales disponibles:
 ### 10.1 Calificación de Películas
 
 **Proceso de calificación:**
+
 1. Acceda a la página de detalles de una película
 2. Localice la sección "Califica esta película"
 3. Seleccione entre 1 y 5 estrellas según su valoración:
@@ -496,10 +511,12 @@ Opciones manuales disponibles:
 ### 10.2 Visualización de Calificaciones
 
 **En la tarjeta de película:**
+
 - Icono de estrella dorada
 - Promedio numérico (ej: 4.5)
 
 **En detalles de película:**
+
 - Calificación promedio total
 - Número de usuarios que han calificado
 - Distribución de calificaciones (gráfico de barras)
@@ -507,6 +524,7 @@ Opciones manuales disponibles:
 ### 10.3 Publicación de Comentarios
 
 **Agregar un comentario:**
+
 1. Desplácese a la sección "Comentarios"
 2. Localice el formulario de nuevo comentario
 3. Escriba su opinión (mínimo 10 caracteres)
@@ -514,6 +532,7 @@ Opciones manuales disponibles:
 5. Su comentario aparecerá inmediatamente
 
 **Características del comentario:**
+
 - Muestra su nombre de usuario
 - Fecha y hora de publicación
 - Texto del comentario
@@ -522,12 +541,14 @@ Opciones manuales disponibles:
 ### 10.4 Gestión de Comentarios
 
 **Editar comentario:**
+
 1. Haga clic en el icono de edición en su comentario
 2. Modifique el texto según necesite
 3. Haga clic en "GUARDAR CAMBIOS"
 4. Se actualizará con indicación de "editado"
 
 **Eliminar comentario:**
+
 1. Haga clic en el icono de eliminación
 2. Confirme la acción en el modal de confirmación
 3. El comentario se eliminará permanentemente
@@ -535,12 +556,14 @@ Opciones manuales disponibles:
 ### 10.5 Respuestas a Comentarios
 
 **Responder un comentario:**
+
 1. Haga clic en "Responder" bajo cualquier comentario
 2. Escriba su respuesta
 3. Haga clic en "PUBLICAR RESPUESTA"
 4. La respuesta se mostrará anidada bajo el comentario original
 
 **Características:**
+
 - Las respuestas se indentan visualmente
 - Máximo 2 niveles de anidación
 - Se muestra el nombre del comentario al que responde
@@ -569,11 +592,13 @@ El sistema implementa:
 ### 11.1 Agregar a Favoritos
 
 **Desde el catálogo:**
+
 1. Localice el icono de corazón en la tarjeta de película
 2. Haga clic en el icono
 3. El corazón se rellenará indicando que fue agregada a favoritos
 
 **Desde detalles de película:**
+
 1. Haga clic en el botón "AGREGAR A FAVORITOS"
 2. Recibirá confirmación visual del cambio
 
@@ -586,10 +611,12 @@ El sistema implementa:
 ### 11.3 Eliminar de Favoritos
 
 **Desde favoritos:**
+
 1. Haga clic en el icono de corazón relleno
 2. El elemento se eliminará de la lista
 
 **Desde catálogo o detalles:**
+
 1. Haga clic nuevamente en el icono de favorito
 2. Se quitará de la lista de favoritos
 
@@ -631,28 +658,33 @@ El perfil muestra:
 ### 12.3 Edición de Perfil
 
 **Acceder a edición:**
+
 1. Desde el perfil, haga clic en "EDITAR PERFIL"
 2. Se abrirá el formulario de edición
 
 **Campos editables:**
+
 - Nombre
 - Apellido
 - Fecha de nacimiento
 - Correo electrónico (requiere verificación)
 
 **Proceso de edición:**
+
 1. Modifique los campos deseados
 2. Haga clic en "GUARDAR CAMBIOS"
 3. Confirme las modificaciones
 4. Recibirá notificación de actualización exitosa
 
 **Cancelar edición:**
+
 1. Haga clic en "CANCELAR"
 2. Será redirigido al perfil sin guardar cambios
 
 ### 12.4 Cambio de Contraseña
 
 **Desde el perfil:**
+
 1. Haga clic en "Cambiar Contraseña"
 2. Ingrese su contraseña actual
 3. Ingrese la nueva contraseña (cumpliendo requisitos)
@@ -660,6 +692,7 @@ El perfil muestra:
 5. Haga clic en "ACTUALIZAR CONTRASEÑA"
 
 **Validaciones:**
+
 - Contraseña actual debe ser correcta
 - Nueva contraseña debe ser diferente a la actual
 - Debe cumplir requisitos de seguridad
@@ -676,6 +709,7 @@ Configure opciones personalizadas:
 ### 12.6 Eliminación de Cuenta
 
 **Proceso de eliminación:**
+
 1. Acceda a configuración de perfil
 2. Seleccione "Eliminar mi cuenta"
 3. Lea el aviso sobre consecuencias:
@@ -687,6 +721,7 @@ Configure opciones personalizadas:
 6. Recibirá confirmación por correo
 
 **Importante:**
+
 - La eliminación es irreversible
 - Se recomienda descargar datos personales antes de eliminar
 - Los comentarios públicos pueden permanecer anonimizados
@@ -702,24 +737,28 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 13.2 Navegación por Teclado
 
 **Todas las funcionalidades accesibles mediante:**
+
 - Tab/Shift+Tab: Navegación entre elementos
 - Enter/Espacio: Activación de controles
 - Escape: Cerrar modales y menús
 - Flechas: Navegación en componentes específicos
 
 **Indicadores visuales:**
+
 - Borde azul alrededor del elemento enfocado
 - Outline visible en todos los controles interactivos
 
 ### 13.3 Soporte para Lectores de Pantalla
 
 **Tecnologías compatibles:**
+
 - NVDA (Windows)
 - JAWS (Windows)
 - VoiceOver (macOS/iOS)
 - TalkBack (Android)
 
 **Características implementadas:**
+
 - Textos alternativos descriptivos en imágenes
 - Etiquetas ARIA en elementos interactivos
 - Anuncios de cambios dinámicos
@@ -729,11 +768,13 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 13.4 Contraste y Visualización
 
 **Ratios de contraste:**
+
 - Texto normal: Mínimo 4.5:1
 - Texto grande: Mínimo 3:1
 - Componentes UI: Mínimo 3:1
 
 **Opciones de visualización:**
+
 - Zoom hasta 200% sin pérdida de funcionalidad
 - Diseño responsive que se adapta al tamaño de pantalla
 - Texto real (no imágenes de texto)
@@ -741,6 +782,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 13.5 Contenido Multimedia Accesible
 
 **Reproductores de video:**
+
 - Controles accesibles por teclado
 - Soporte de subtítulos
 - Descripciones de audio (cuando estén disponibles)
@@ -749,6 +791,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 13.6 Formularios Accesibles
 
 **Todas las páginas de autenticación incluyen:**
+
 - Etiquetas asociadas a campos de entrada
 - Mensajes de error descriptivos
 - Validación en tiempo real con feedback
@@ -758,6 +801,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 13.7 Personalización de Experiencia
 
 **Configuraciones disponibles:**
+
 - Tamaño de fuente ajustable
 - Reducción de animaciones (prefers-reduced-motion)
 - Modo de alto contraste (en desarrollo)
@@ -772,6 +816,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** No puedo iniciar sesión con mis credenciales
 
 **Soluciones:**
+
 1. Verifique que el correo esté escrito correctamente
 2. Revise que Caps Lock no esté activado
 3. Intente la recuperación de contraseña
@@ -782,6 +827,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Mensaje "Correo o contraseña incorrectos"
 
 **Soluciones:**
+
 1. Verifique las credenciales cuidadosamente
 2. Use la función "Mostrar contraseña" para confirmar
 3. Intente recuperar la contraseña
@@ -792,6 +838,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** El video no se reproduce o se detiene constantemente
 
 **Soluciones:**
+
 1. Verifique su conexión a internet
 2. Cierre otras aplicaciones que consuman ancho de banda
 3. Reduzca la calidad de reproducción manualmente
@@ -803,6 +850,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** No hay audio en el video
 
 **Soluciones:**
+
 1. Verifique el volumen del sistema operativo
 2. Compruebe que el reproductor no esté silenciado
 3. Verifique configuración de audio del navegador
@@ -812,6 +860,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Los subtítulos no aparecen
 
 **Soluciones:**
+
 1. Verifique que los subtítulos estén activados en configuración
 2. Seleccione el idioma correcto de subtítulos
 3. Actualice la página y vuelva a reproducir
@@ -822,6 +871,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** La página no se ve correctamente
 
 **Soluciones:**
+
 1. Actualice la página (Ctrl+F5 o Cmd+Shift+R)
 2. Limpie caché del navegador
 3. Desactive extensiones de bloqueadores de anuncios
@@ -832,6 +882,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Las imágenes no cargan
 
 **Soluciones:**
+
 1. Verifique conexión a internet
 2. Desactive VPN temporalmente
 3. Permita cookies de terceros en configuración del navegador
@@ -842,6 +893,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Los favoritos no se guardan
 
 **Soluciones:**
+
 1. Confirme que la sesión esté iniciada
 2. Verifique que las cookies estén habilitadas
 3. Intente cerrar y volver a iniciar sesión
@@ -850,6 +902,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Los favoritos desaparecieron
 
 **Soluciones:**
+
 1. Verifique que esté usando la misma cuenta
 2. Confirme que no se hayan eliminado accidentalmente
 3. Contacte soporte para verificación de cuenta
@@ -859,6 +912,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** No puedo publicar comentarios
 
 **Soluciones:**
+
 1. Verifique que el comentario tenga al menos 10 caracteres
 2. Espere 1 minuto entre comentarios consecutivos
 3. Revise que no contenga lenguaje prohibido
@@ -868,6 +922,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 **Síntoma:** Mi comentario desapareció
 
 **Soluciones:**
+
 1. Verifique que no haya sido eliminado por usted
 2. Puede haber sido removido por moderación automática
 3. Contacte soporte para revisión
@@ -875,19 +930,24 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 ### 14.6 Errores Comunes y Códigos
 
 **Error 401 - No autorizado:**
+
 - Sesión expirada, inicie sesión nuevamente
 
 **Error 403 - Acceso denegado:**
+
 - No tiene permisos para esta acción, verifique su cuenta
 
 **Error 404 - No encontrado:**
+
 - El contenido solicitado no existe o fue eliminado
 
 **Error 500 - Error del servidor:**
+
 - Problema temporal del servidor, intente más tarde
 - Si persiste, contacte soporte
 
 **Error 503 - Servicio no disponible:**
+
 - Mantenimiento programado o alta demanda
 - Intente en unos minutos
 
@@ -896,6 +956,7 @@ MARATON cumple con las directrices WCAG 2.1 Level AA, garantizando accesibilidad
 Si los problemas persisten después de intentar las soluciones anteriores:
 
 1. Prepare la siguiente información:
+
    - Descripción detallada del problema
    - Navegador y versión utilizada
    - Sistema operativo
@@ -916,21 +977,25 @@ Si los problemas persisten después de intentar las soluciones anteriores:
 MARATON implementa un sistema de clasificación para garantizar experiencias apropiadas:
 
 **ATP (Apto para Todo Público):**
+
 - Contenido sin violencia, lenguaje explícito o temas adultos
 - Apropiado para todas las edades
 - Incluye contenido familiar y educativo
 
 **+13 (Mayores de 13 años):**
+
 - Puede contener violencia moderada
 - Lenguaje ocasionalmente fuerte
 - Temas maduros presentados apropiadamente
 
 **18+ (Solo Adultos):**
+
 - Contenido exclusivo para mayores de edad
 - Puede incluir violencia gráfica, lenguaje explícito
 - Temas adultos y situaciones maduras
 
 **STEM (Contenido Científico):**
+
 - Documentales y contenido educativo
 - Enfoque en ciencia, tecnología, ingeniería y matemáticas
 - Apto para todas las edades con interés educativo
@@ -949,6 +1014,7 @@ MARATON no permite ni distribuye:
 ### 15.3 Normas de Conducta para Usuarios
 
 **En comentarios y reseñas:**
+
 - Respetar a otros usuarios y sus opiniones
 - No publicar información personal propia o de terceros
 - Evitar lenguaje ofensivo, discriminatorio o violento
@@ -956,6 +1022,7 @@ MARATON no permite ni distribuye:
 - No suplantar identidades
 
 **Consecuencias por incumplimiento:**
+
 1. Primera infracción: Advertencia
 2. Segunda infracción: Suspensión temporal (7 días)
 3. Tercera infracción: Suspensión temporal (30 días)
@@ -964,18 +1031,21 @@ MARATON no permite ni distribuye:
 ### 15.4 Privacidad y Datos Personales
 
 **Recopilación de datos:**
+
 - Información de registro (nombre, correo, fecha de nacimiento)
 - Actividad de visualización (para recomendaciones)
 - Preferencias de usuario
 - Datos de interacción (comentarios, calificaciones)
 
 **Uso de datos:**
+
 - Personalización de experiencia
 - Mejora de recomendaciones
 - Comunicaciones relevantes (con consentimiento)
 - Análisis estadísticos agregados
 
 **Derechos del usuario:**
+
 - Acceso a datos personales
 - Corrección de información incorrecta
 - Eliminación de cuenta y datos asociados
@@ -983,6 +1053,7 @@ MARATON no permite ni distribuye:
 - Oposición al procesamiento
 
 **Seguridad:**
+
 - Encriptación de contraseñas
 - Comunicación segura (HTTPS)
 - Tokens de sesión seguros
@@ -991,27 +1062,32 @@ MARATON no permite ni distribuye:
 ### 15.5 Propiedad Intelectual
 
 **Derechos de autor:**
+
 - Todo el contenido es propiedad de sus respectivos titulares
 - MARATON opera bajo licencias legales
 - No se permite descarga o redistribución no autorizada
 
 **Marcas registradas:**
+
 - Logotipo y nombre MARATON son marcas registradas
 - Uso no autorizado está prohibido
 
 ### 15.6 Términos de Uso
 
 **Aceptación:**
+
 - Al registrarse, acepta los términos y condiciones
 - Debe tener al menos 13 años para crear cuenta
 - Los menores de 18 requieren supervisión parental
 
 **Disponibilidad del servicio:**
+
 - MARATON se esfuerza por mantener disponibilidad 24/7
 - Puede haber interrupciones por mantenimiento
 - No garantiza disponibilidad ininterrumpida
 
 **Modificaciones:**
+
 - Los términos pueden actualizarse periódicamente
 - Usuarios serán notificados de cambios significativos
 - Continuar usando el servicio implica aceptación
@@ -1033,16 +1109,19 @@ MARATON garantiza:
 ### 16.1 Canales de Soporte
 
 **Correo Electrónico:**
+
 - Soporte técnico: soporte@maraton.app
 - Consultas generales: info@maraton.app
 - Asuntos legales: legal@maraton.app
 
 **Horario de atención:**
+
 - Lunes a Viernes: 9:00 - 18:00 (horario local)
 - Sábados: 10:00 - 14:00
 - Domingos y festivos: Sin atención (respuesta al siguiente día hábil)
 
 **Tiempo de respuesta:**
+
 - Consultas generales: 24-48 horas
 - Problemas técnicos críticos: 4-8 horas
 - Reporte de contenido inapropiado: 2-4 horas
@@ -1076,16 +1155,19 @@ Sí, envíe sus sugerencias a info@maraton.app con el título y año de la pelí
 ### 16.3 Recursos Adicionales
 
 **Centro de Ayuda:**
+
 - Accesible desde "Sobre Nosotros"
 - Tutoriales en video (en desarrollo)
 - Guías paso a paso
 
 **Comunidad:**
+
 - Foro de usuarios (próximamente)
 - Redes sociales oficiales
 - Blog con novedades
 
 **Documentación:**
+
 - Manual de usuario (este documento)
 - Políticas de privacidad
 - Términos y condiciones
@@ -1096,17 +1178,20 @@ Sí, envíe sus sugerencias a info@maraton.app con el título y año de la pelí
 MARATON valora la opinión de sus usuarios:
 
 **Enviar comentarios:**
+
 - Formulario de feedback en configuración de perfil
 - Correo: feedback@maraton.app
 - Encuestas periódicas de satisfacción
 
 **Reporte de errores:**
+
 - Describa el problema con el mayor detalle posible
 - Incluya capturas de pantalla si es posible
 - Indique pasos para reproducir el error
 - Envíe a: bugs@maraton.app
 
 **Sugerencias de funcionalidades:**
+
 - Ideas para nuevas características
 - Mejoras en funcionalidades existentes
 - Optimizaciones de experiencia de usuario

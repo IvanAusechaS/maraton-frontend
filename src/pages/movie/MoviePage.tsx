@@ -243,7 +243,7 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
   useEffect(() => {
     const loadRatings = async () => {
       const ratings: { [key: number]: number } = {};
-      
+
       for (const movie of movies) {
         try {
           const ratingData = await getMovieRatings(movie.id);
@@ -254,7 +254,7 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
           console.error(`Error loading rating for movie ${movie.id}:`, error);
         }
       }
-      
+
       setMovieRatings(ratings);
     };
 

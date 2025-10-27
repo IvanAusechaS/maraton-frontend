@@ -465,7 +465,9 @@ const MovieDetailPage: React.FC = () => {
                   </span>
                   <span
                     className="movie-detail__rating-badge"
-                    aria-label={`Calificación ${ratingStats.average.toFixed(1)} de 5`}
+                    aria-label={`Calificación ${ratingStats.average.toFixed(
+                      1
+                    )} de 5`}
                   >
                     ⭐ {ratingStats.average.toFixed(1)}
                   </span>

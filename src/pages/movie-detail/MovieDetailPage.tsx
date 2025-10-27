@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./MovieDetailPage.scss";
 import {
@@ -9,6 +9,17 @@ import {
   checkIfFavorite,
 } from "../../services/movieService";
 import { authService } from "../../services/authService";
+import {
+  getCommentsByMovieId,
+  createComment,
+  updateComment,
+  deleteComment,
+  rateMovie,
+  getMovieRatings,
+  type Comment,
+  type RatingStatistics,
+} from "../../services/commentService";
+import CommentItem from "../../components/comment/CommentItem";
 
 /**
  * Movie detail page component.
@@ -45,12 +56,36 @@ const MovieDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"info" | "comments">("info");
   const [hoverRating, setHoverRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  // Comments state
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  // Ratings state
+  const [ratingStats, setRatingStats] = useState<RatingStatistics>({
+    ratings: [],
+    total: 0,
+    average: 0,
+  });
+  const [loadingRatings, setLoadingRatings] = useState(false);
+  const [userHasRated, setUserHasRated] = useState(false);
 
   // Check authentication status
   useEffect(() => {
     const checkAuth = () => {
       const authenticated = authService.isAuthenticated();
       setIsAuthenticated(authenticated);
+
+      // Get user ID if authenticated
+      if (authenticated) {
+        const user = authService.getCurrentUser();
+        if (user?.id) {
+          setCurrentUserId(user.id);
+        }
+      }
     };
     checkAuth();
   }, []);
@@ -100,6 +135,136 @@ const MovieDetailPage: React.FC = () => {
     checkFavoriteStatus();
   }, [isAuthenticated, id]);
 
+  // Load comments function
+  const loadComments = useCallback(async () => {
+    if (!id) return;
+
+    setLoadingComments(true);
+    try {
+      const commentsData = await getCommentsByMovieId(parseInt(id));
+      setComments(commentsData);
+    } catch (error) {
+      console.error("Error loading comments:", error);
+    } finally {
+      setLoadingComments(false);
+    }
+  }, [id]);
+
+  // Load ratings function
+  const loadRatings = useCallback(async () => {
+    if (!id) return;
+
+    setLoadingRatings(true);
+    try {
+      const ratingsData = await getMovieRatings(parseInt(id));
+      setRatingStats(ratingsData);
+    } catch (error) {
+      console.error("Error loading ratings:", error);
+    } finally {
+      setLoadingRatings(false);
+    }
+  }, [id]);
+
+  // Load comments when tab changes to comments
+  useEffect(() => {
+    if (activeTab === "comments" && id) {
+      loadComments();
+    }
+  }, [activeTab, id, loadComments]);
+
+  // Load ratings when movie is loaded
+  useEffect(() => {
+    if (id) {
+      loadRatings();
+    }
+  }, [id, loadRatings]);
+
+  // Handle submit rating and comment
+  const handleSubmitComment = async () => {
+    if (!isAuthenticated) {
+      alert("Debes iniciar sesión para comentar");
+      return;
+    }
+
+    if (!id) return;
+
+    // Validar que hay calificación Y comentario
+    if (selectedRating === 0) {
+      alert("Por favor, califica la película antes de comentar");
+      return;
+    }
+
+    if (!newComment.trim()) {
+      alert("Por favor, escribe un comentario");
+      return;
+    }
+
+    setSubmittingComment(true);
+    try {
+      // First, submit the rating
+      if (!userHasRated) {
+        await rateMovie(parseInt(id), selectedRating);
+        setUserHasRated(true);
+        await loadRatings(); // Reload ratings to show updated stats
+      }
+
+      // Then, submit the comment
+      await createComment(parseInt(id), newComment.trim());
+
+      // Clear form
+      setNewComment("");
+
+      // Reload comments
+      await loadComments();
+
+      alert("¡Comentario publicado exitosamente!");
+    } catch (error: unknown) {
+      console.error("Error submitting comment:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "No se pudo publicar el comentario. Intenta nuevamente.";
+      alert(errorMessage);
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  // Handle edit comment
+  const handleEditComment = async (commentId: number, newMessage: string) => {
+    try {
+      await updateComment(commentId, newMessage);
+      await loadComments();
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      throw error;
+    }
+  };
+
+  // Handle delete comment
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      await loadComments();
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      throw error;
+    }
+  };
+
+  // Handle reply to comment
+  const handleReplyComment = async (parentId: number, message: string) => {
+    if (!id) return;
+
+    try {
+      await createComment(parseInt(id), message, parentId);
+      await loadComments();
+    } catch (error) {
+      console.error("Error replying to comment:", error);
+      throw error;
+    }
+  };
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -126,7 +291,7 @@ const MovieDetailPage: React.FC = () => {
         await addToFavorites(movie.id);
         setIsFavorite(true);
       }
-      
+
       // Dispatch custom event to notify favorites changed
       window.dispatchEvent(new Event("favoritesChanged"));
     } catch (error) {
@@ -513,90 +678,176 @@ const MovieDetailPage: React.FC = () => {
         {/* Contenido de la pestaña de comentarios */}
         {activeTab === "comments" && (
           <div className="movie-detail__tab-content">
+            {/* Mostrar estadísticas de valoración */}
+            {ratingStats.total > 0 && (
+              <div className="movie-detail__rating-stats">
+                <div className="movie-detail__rating-summary">
+                  <div className="movie-detail__rating-average">
+                    <span className="movie-detail__rating-number">
+                      {ratingStats.average.toFixed(1)}
+                    </span>
+                    <div className="movie-detail__rating-stars-display">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg
+                          key={star}
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill={
+                            star <= Math.round(ratingStats.average)
+                              ? "currentColor"
+                              : "none"
+                          }
+                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="movie-detail__rating-star-icon"
+                        >
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="movie-detail__rating-count">
+                    {ratingStats.total}{" "}
+                    {ratingStats.total === 1 ? "valoración" : "valoraciones"}
+                  </p>
+                </div>
+              </div>
+            )}
+
             <section
               className="movie-detail__comments-section"
               aria-labelledby="comments-title"
             >
               <h2 id="comments-title" className="movie-detail__section-title">
-                Deja tu comentario
+                {isAuthenticated
+                  ? "Deja tu comentario y valoración"
+                  : "Comentarios"}
               </h2>
 
-              {/* Formulario de nuevo comentario */}
-              <div className="movie-detail__comment-form">
-                <div className="movie-detail__rating-container">
-                  <label className="movie-detail__rating-label">
-                    Califica esta película:
-                  </label>
-                  <div
-                    className="movie-detail__stars"
-                    onMouseLeave={handleRatingLeave}
-                    role="radiogroup"
-                    aria-label="Calificación de 1 a 5 estrellas"
-                  >
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        className={`movie-detail__star ${
-                          star <= (hoverRating || selectedRating)
-                            ? "movie-detail__star--filled"
-                            : ""
-                        }`}
-                        onClick={() => handleRatingClick(star)}
-                        onMouseEnter={() => handleRatingHover(star)}
-                        aria-label={`${star} ${
-                          star === 1 ? "estrella" : "estrellas"
-                        }`}
-                        role="radio"
-                        aria-checked={selectedRating === star}
-                        type="button"
-                      >
-                        <svg
-                          width="32"
-                          height="32"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          xmlns="http://www.w3.org/2000/svg"
+              {/* Formulario de nuevo comentario - solo si está autenticado */}
+              {isAuthenticated && (
+                <div className="movie-detail__comment-form">
+                  <div className="movie-detail__rating-container">
+                    <label className="movie-detail__rating-label">
+                      Califica esta película:{" "}
+                      <span style={{ color: "var(--color-primary)" }}>*</span>
+                    </label>
+                    <div
+                      className="movie-detail__stars"
+                      onMouseLeave={handleRatingLeave}
+                      role="radiogroup"
+                      aria-label="Calificación de 1 a 5 estrellas"
+                    >
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          className={`movie-detail__star ${
+                            star <= (hoverRating || selectedRating)
+                              ? "movie-detail__star--filled"
+                              : ""
+                          }`}
+                          onClick={() => handleRatingClick(star)}
+                          onMouseEnter={() => handleRatingHover(star)}
+                          aria-label={`${star} ${
+                            star === 1 ? "estrella" : "estrellas"
+                          }`}
+                          role="radio"
+                          aria-checked={selectedRating === star}
+                          type="button"
                         >
-                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                        </svg>
-                      </button>
+                          <svg
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                    {selectedRating > 0 && (
+                      <span className="movie-detail__rating-text">
+                        {selectedRating} de 5 estrellas
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="movie-detail__textarea-container">
+                    <label
+                      htmlFor="comment-textarea"
+                      className="movie-detail__textarea-label"
+                    >
+                      Tu comentario:{" "}
+                      <span style={{ color: "var(--color-primary)" }}>*</span>
+                    </label>
+                    <textarea
+                      id="comment-textarea"
+                      className="movie-detail__textarea"
+                      placeholder="Escribe tu opinión sobre esta película..."
+                      rows={5}
+                      aria-label="Escribe tu comentario sobre la película"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                    />
+                  </div>
+
+                  <button
+                    className="movie-detail__submit-button"
+                    type="button"
+                    aria-label="Enviar comentario"
+                    onClick={handleSubmitComment}
+                    disabled={submittingComment}
+                  >
+                    {submittingComment
+                      ? "Publicando..."
+                      : "Publicar Comentario"}
+                  </button>
+                </div>
+              )}
+
+              {/* Mensaje para usuarios no autenticados */}
+              {!isAuthenticated && (
+                <div className="movie-detail__auth-message">
+                  <p>
+                    Debes iniciar sesión para comentar y calificar esta
+                    película.
+                  </p>
+                </div>
+              )}
+
+              {/* Lista de comentarios */}
+              <div className="movie-detail__comments-list">
+                <h3 className="movie-detail__comments-list-title">
+                  Comentarios ({comments.length})
+                </h3>
+
+                {loadingComments ? (
+                  <div className="movie-detail__loading-comments">
+                    <p>Cargando comentarios...</p>
+                  </div>
+                ) : comments.length === 0 ? (
+                  <div className="movie-detail__no-comments">
+                    <p>
+                      No hay comentarios todavía. ¡Sé el primero en comentar!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="movie-detail__comments-container">
+                    {comments.map((comment) => (
+                      <CommentItem
+                        key={comment.id}
+                        comment={comment}
+                        currentUserId={currentUserId}
+                        onEdit={handleEditComment}
+                        onDelete={handleDeleteComment}
+                        onReply={handleReplyComment}
+                      />
                     ))}
                   </div>
-                  {selectedRating > 0 && (
-                    <span className="movie-detail__rating-text">
-                      {selectedRating} de 5 estrellas
-                    </span>
-                  )}
-                </div>
-
-                <div className="movie-detail__textarea-container">
-                  <label
-                    htmlFor="comment-textarea"
-                    className="movie-detail__textarea-label"
-                  >
-                    Tu comentario:
-                  </label>
-                  <textarea
-                    id="comment-textarea"
-                    className="movie-detail__textarea"
-                    placeholder="Escribe tu opinión sobre esta película..."
-                    rows={5}
-                    aria-label="Escribe tu comentario sobre la película"
-                  />
-                </div>
-
-                <button
-                  className="movie-detail__submit-button"
-                  type="button"
-                  aria-label="Enviar comentario"
-                >
-                  Publicar Comentario
-                </button>
-              </div>
-
-              {/* Mensaje de que no hay comentarios aún */}
-              <div className="movie-detail__no-comments">
-                <p>No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+                )}
               </div>
             </section>
           </div>

@@ -32,11 +32,59 @@ interface Movie {
   videoUrl: string;
 }
 
+/**
+ * Checks if a URL is a YouTube video link
+ */
+const isYouTubeUrl = (url: string): boolean => {
+  return (
+    url.includes("youtube.com") ||
+    url.includes("youtu.be") ||
+    url.includes("youtube-nocookie.com")
+  );
+};
+
+/**
+ * Extracts YouTube video ID from various YouTube URL formats
+ */
+const getYouTubeVideoId = (url: string): string | null => {
+  // Handle youtu.be format
+  if (url.includes("youtu.be/")) {
+    const match = url.match(/youtu\.be\/([^?&]+)/);
+    return match ? match[1] : null;
+  }
+
+  // Handle youtube.com format
+  if (url.includes("youtube.com")) {
+    // Try to get from v parameter
+    const urlObj = new URL(url);
+    const videoId = urlObj.searchParams.get("v");
+    if (videoId) return videoId;
+
+    // Try to get from embed URL
+    const embedMatch = url.match(/youtube\.com\/embed\/([^?&]+)/);
+    return embedMatch ? embedMatch[1] : null;
+  }
+
+  return null;
+};
+
+/**
+ * Converts a YouTube URL to an embeddable format with parameters for API control
+ */
+const getYouTubeEmbedUrl = (url: string): string | null => {
+  const videoId = getYouTubeVideoId(url);
+  if (!videoId) return null;
+  // Enable JS API, hide controls, allow autoplay
+  return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&fs=1&playsinline=1`;
+};
+
 const MoviePlayerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
+  const youtubePlayerRef = useRef<any>(null); // YouTube Player instance
+  const youtubeContainerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<number | null>(null);
 
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -51,7 +99,8 @@ const MoviePlayerPage: React.FC = () => {
   const [showControls, setShowControls] = useState(true);
   const [showSubtitlesMenu, setShowSubtitlesMenu] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  // const [buffered, setBuffered] = useState(0); // Commented out - not used without progress bar
+  const [isYouTube, setIsYouTube] = useState(false);
+  const [youtubeEmbedUrl, setYoutubeEmbedUrl] = useState<string | null>(null);
 
   // Fetch movie data from backend
   useEffect(() => {
@@ -67,10 +116,28 @@ const MoviePlayerPage: React.FC = () => {
         setError(null);
         const movieData = await getMovieById(parseInt(id));
 
+        const videoUrl = movieData.largometraje;
+
+        // Check if it's a YouTube video
+        if (isYouTubeUrl(videoUrl)) {
+          const embedUrl = getYouTubeEmbedUrl(videoUrl);
+          if (embedUrl) {
+            setIsYouTube(true);
+            setYoutubeEmbedUrl(embedUrl);
+          } else {
+            setError("Invalid YouTube URL");
+            setIsLoading(false);
+            return;
+          }
+        } else {
+          setIsYouTube(false);
+          setYoutubeEmbedUrl(null);
+        }
+
         setMovie({
           id: movieData.id,
           titulo: movieData.titulo,
-          videoUrl: movieData.largometraje,
+          videoUrl: videoUrl,
         });
       } catch (err) {
         console.error("Error loading movie:", err);
@@ -83,9 +150,198 @@ const MoviePlayerPage: React.FC = () => {
     fetchMovie();
   }, [id]);
 
-  // Play/Pause toggle
+  // Time update for YouTube
+  const timeUpdateInterval = useRef<number | null>(null);
+
+  const startTimeUpdate = useCallback(() => {
+    if (timeUpdateInterval.current) return;
+
+    timeUpdateInterval.current = window.setInterval(() => {
+      if (youtubePlayerRef.current && youtubePlayerRef.current.getCurrentTime) {
+        try {
+          const current = youtubePlayerRef.current.getCurrentTime();
+          setCurrentTime(current);
+        } catch (error) {
+          console.error("Error getting current time:", error);
+        }
+      }
+    }, 100);
+  }, []);
+
+  const stopTimeUpdate = useCallback(() => {
+    if (timeUpdateInterval.current) {
+      clearInterval(timeUpdateInterval.current);
+      timeUpdateInterval.current = null;
+    }
+  }, []);
+
+  // ✅ Función para ocultar overlays de YouTube usando CSS agresivo
+  const hideYouTubeOverlays = useCallback(() => {
+    // Inyectar CSS para ocultar todos los overlays de YouTube
+    const styleId = "youtube-overlay-hider";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.innerHTML = `
+        /* Ocultar TODOS los overlays de YouTube */
+        .ytp-pause-overlay,
+        .ytp-scroll-min,
+        .ytp-chrome-top,
+        .ytp-show-cards-title,
+        .ytp-gradient-top,
+        .ytp-gradient-bottom,
+        .ytp-ce-element,
+        .ytp-cards-teaser,
+        .ytp-suggested-action,
+        .ytp-endscreen-content,
+        .ytp-watermark,
+        .ytp-paid-content-overlay,
+        .iv-branding,
+        .ytp-title-text,
+        .ytp-share-button-visible,
+        .ytp-watch-later-button,
+        .ytp-share-button {
+          display: none !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+        }
+        
+        /* Asegurar que el iframe ocupe todo el espacio */
+        #youtube-player {
+          width: 100% !important;
+          height: 100% !important;
+          pointer-events: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  // Initialize YouTube Player
+  const initializeYouTubePlayer = useCallback(
+    (videoId: string) => {
+      if (!youtubeContainerRef.current) return;
+
+      try {
+        youtubePlayerRef.current = new (window as any).YT.Player(
+          "youtube-player",
+          {
+            videoId: videoId,
+            playerVars: {
+              autoplay: 0, // No auto-reproducir
+              controls: 0, // ✅ Ocultar TODOS los controles de YouTube
+              modestbranding: 1, // ✅ Ocultar logo grande de YouTube
+              showinfo: 0, // ✅ Ocultar título y canal
+              rel: 0, // ✅ No mostrar videos relacionados al final
+              disablekb: 1, // ✅ Desactivar atajos de teclado de YouTube
+              autohide: 1, // ✅ Auto-ocultar controles (navegadores antiguos)
+              fs: 0, // ❌ Desactivar fullscreen nativo de YouTube
+              playsinline: 1, // Reproducir inline en móviles
+              enablejsapi: 1, // Habilitar API de JavaScript
+              iv_load_policy: 3, // Ocultar anotaciones
+              cc_load_policy: 0, // ✅ Desactivar subtítulos por defecto
+              origin: window.location.origin, // ✅ Mejor seguridad y rendimiento
+            },
+            events: {
+              onReady: (event: any) => {
+                console.log("✅ YouTube player ready");
+                // Set initial volume
+                event.target.setVolume(volume * 100);
+                setDuration(event.target.getDuration());
+
+                // ✅ Forzar ocultamiento de overlays al estar listo
+                hideYouTubeOverlays();
+              },
+              onStateChange: (event: any) => {
+                const playerState = event.data;
+                // YT.PlayerState: UNSTARTED = -1, ENDED = 0, PLAYING = 1, PAUSED = 2, BUFFERING = 3, CUED = 5
+                if (playerState === 1) {
+                  setIsPlaying(true);
+                  startTimeUpdate();
+                  hideYouTubeOverlays(); // ✅ Ocultar overlays al reproducir
+                } else if (playerState === 2 || playerState === 0) {
+                  setIsPlaying(false);
+                  stopTimeUpdate();
+                  hideYouTubeOverlays(); // ✅ Ocultar overlays al pausar
+                }
+              },
+              onError: (event: any) => {
+                console.error("❌ YouTube player error:", event.data);
+                setError("Error al cargar el video de YouTube");
+              },
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error initializing YouTube player:", error);
+        setError("Error al inicializar el reproductor de YouTube");
+      }
+    },
+    [volume, startTimeUpdate, stopTimeUpdate, hideYouTubeOverlays]
+  );
+
+  // ✅ Aplicar CSS para ocultar overlays al montar el componente
+  useEffect(() => {
+    if (isYouTube) {
+      hideYouTubeOverlays();
+    }
+  }, [isYouTube, hideYouTubeOverlays]);
+
+  // Load YouTube API and initialize player when needed
+  useEffect(() => {
+    if (!isYouTube || !youtubeEmbedUrl || !movie) return;
+
+    const videoId = getYouTubeVideoId(movie.videoUrl);
+    if (!videoId) return;
+
+    // Check if API is already loaded
+    if ((window as any).YT && (window as any).YT.Player) {
+      initializeYouTubePlayer(videoId);
+      return;
+    }
+
+    // Load YouTube IFrame API
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+    // Initialize player when API is ready
+    (window as any).onYouTubeIframeAPIReady = () => {
+      initializeYouTubePlayer(videoId);
+    };
+
+    return () => {
+      // Cleanup YouTube player
+      if (youtubePlayerRef.current) {
+        try {
+          youtubePlayerRef.current.destroy();
+        } catch (error) {
+          console.error("Error destroying YouTube player:", error);
+        }
+        youtubePlayerRef.current = null;
+      }
+    };
+  }, [isYouTube, youtubeEmbedUrl, movie, initializeYouTubePlayer]);
+
+  // Play/Pause toggle - Modified to work with both video types
   const togglePlay = useCallback(() => {
-    if (videoRef.current) {
+    if (isYouTube && youtubePlayerRef.current) {
+      try {
+        const playerState = youtubePlayerRef.current.getPlayerState();
+        // YT.PlayerState: PLAYING = 1, PAUSED = 2
+        if (playerState === 1) {
+          youtubePlayerRef.current.pauseVideo();
+          setIsPlaying(false);
+        } else {
+          youtubePlayerRef.current.playVideo();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.error("Error toggling YouTube playback:", error);
+      }
+    } else if (videoRef.current) {
       if (videoRef.current.paused || videoRef.current.ended) {
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
@@ -103,20 +359,21 @@ const MoviePlayerPage: React.FC = () => {
         setIsPlaying(false);
       }
     }
-  }, []);
-
-  // Seek video - Commented out - not used without progress bar
-  // const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const time = parseFloat(e.target.value);
-  //   if (videoRef.current) {
-  //     videoRef.current.currentTime = time;
-  //   }
-  // };
+  }, [isYouTube]);
 
   // Volume control
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const vol = parseFloat(e.target.value);
-    if (videoRef.current) {
+
+    if (isYouTube && youtubePlayerRef.current) {
+      try {
+        youtubePlayerRef.current.setVolume(vol * 100);
+        setVolume(vol);
+        setIsMuted(vol === 0);
+      } catch (error) {
+        console.error("Error setting YouTube volume:", error);
+      }
+    } else if (videoRef.current) {
       videoRef.current.volume = vol;
       setVolume(vol);
       setIsMuted(vol === 0);
@@ -125,27 +382,58 @@ const MoviePlayerPage: React.FC = () => {
 
   // Toggle mute
   const toggleMute = useCallback(() => {
-    if (videoRef.current) {
+    if (isYouTube && youtubePlayerRef.current) {
+      try {
+        if (isMuted) {
+          youtubePlayerRef.current.unMute();
+          if (volume === 0) {
+            youtubePlayerRef.current.setVolume(50);
+            setVolume(0.5);
+          }
+          setIsMuted(false);
+        } else {
+          youtubePlayerRef.current.mute();
+          setIsMuted(true);
+        }
+      } catch (error) {
+        console.error("Error toggling YouTube mute:", error);
+      }
+    } else if (videoRef.current) {
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
-  }, [isMuted]);
+  }, [isMuted, isYouTube, volume]);
 
   // Toggle volume slider visibility
   const toggleVolumeSlider = () => {
     setShowVolumeSlider(!showVolumeSlider);
   };
 
-  // Skip forward/backward
-  const skip = useCallback((seconds: number) => {
-    if (videoRef.current && videoRef.current.duration) {
-      const newTime = videoRef.current.currentTime + seconds;
-      videoRef.current.currentTime = Math.max(
-        0,
-        Math.min(newTime, videoRef.current.duration)
-      );
-    }
-  }, []);
+  // Skip forward/backward - Modified to work with both video types
+  const skip = useCallback(
+    (seconds: number) => {
+      if (isYouTube && youtubePlayerRef.current) {
+        try {
+          const currentTime = youtubePlayerRef.current.getCurrentTime();
+          const duration = youtubePlayerRef.current.getDuration();
+          const newTime = Math.max(
+            0,
+            Math.min(currentTime + seconds, duration)
+          );
+          youtubePlayerRef.current.seekTo(newTime, true);
+        } catch (error) {
+          console.error("Error seeking YouTube video:", error);
+        }
+      } else if (videoRef.current && videoRef.current.duration) {
+        const newTime = videoRef.current.currentTime + seconds;
+        videoRef.current.currentTime = Math.max(
+          0,
+          Math.min(newTime, videoRef.current.duration)
+        );
+      }
+    },
+    [isYouTube]
+  );
 
   // Toggle fullscreen
   const toggleFullscreen = () => {
@@ -219,14 +507,6 @@ const MoviePlayerPage: React.FC = () => {
       console.log("Video metadata loaded, duration:", video.duration);
       setDuration(video.duration);
     };
-    // Commented out - not used without progress bar
-    // const handleProgress = () => {
-    //   if (video.buffered.length > 0) {
-    //     const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-    //     const percentage = (bufferedEnd / video.duration) * 100;
-    //     setBuffered(percentage);
-    //   }
-    // };
     const handleEnded = () => {
       setIsPlaying(false);
       setShowControls(true);
@@ -238,7 +518,6 @@ const MoviePlayerPage: React.FC = () => {
     video.addEventListener("waiting", handleWaiting);
     video.addEventListener("timeupdate", handleTimeUpdate);
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
-    // video.addEventListener("progress", handleProgress); // Commented out - not used without progress bar
     video.addEventListener("ended", handleEnded);
 
     return () => {
@@ -248,7 +527,6 @@ const MoviePlayerPage: React.FC = () => {
       video.removeEventListener("waiting", handleWaiting);
       video.removeEventListener("timeupdate", handleTimeUpdate);
       video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      // video.removeEventListener("progress", handleProgress); // Commented out - not used without progress bar
       video.removeEventListener("ended", handleEnded);
     };
   }, []);
@@ -354,68 +632,25 @@ const MoviePlayerPage: React.FC = () => {
       onMouseMove={showControlsTemporarily}
       onClick={showControlsTemporarily}
     >
-      {/* Video Element */}
-      <video
-        ref={videoRef}
-        className="movie-player__video"
-        src={movie.videoUrl}
-        onClick={togglePlay}
-      />
-
-      {/* Center Play Button (when paused) */}
-      {!isPlaying && (
-        <button
-          className="movie-player__center-play"
+      {/* Video Element - YouTube iframe or HTML5 video */}
+      {isYouTube && youtubeEmbedUrl ? (
+        <div
+          ref={youtubeContainerRef}
+          id="youtube-player"
+          className="movie-player__video"
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          className="movie-player__video"
+          src={movie.videoUrl}
           onClick={togglePlay}
-          aria-label="Reproducir"
-        >
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </button>
+        />
       )}
-
-      {/* Center Skip Controls */}
-      <div className="movie-player__center-controls">
-        <button
-          className="movie-player__skip-button movie-player__skip-button--backward"
-          onClick={() => skip(-5)}
-          aria-label="Retroceder 5 segundos"
-        >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
-          </svg>
-          <span className="movie-player__skip-label">5</span>
-        </button>
-
-        {/* Center Play Button */}
-        <button
-          className="movie-player__center-play-button"
-          onClick={togglePlay}
-          aria-label={isPlaying ? "Pausar" : "Reproducir"}
-        >
-          {isPlaying ? (
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-            </svg>
-          ) : (
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </button>
-
-        <button
-          className="movie-player__skip-button movie-player__skip-button--forward"
-          onClick={() => skip(5)}
-          aria-label="Adelantar 5 segundos"
-        >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z" />
-          </svg>
-          <span className="movie-player__skip-label">5</span>
-        </button>
-      </div>
 
       {/* Controls Overlay */}
       <div
@@ -444,45 +679,60 @@ const MoviePlayerPage: React.FC = () => {
           <h1 className="movie-player__title">{movie.titulo}</h1>
         </div>
 
-        {/* Center Play Button (when paused) */}
-        {!isPlaying && (
+        {/* Center Skip Controls - Dentro del contenedor de controles */}
+        <div className="movie-player__center-controls">
           <button
-            className="movie-player__center-play"
-            onClick={togglePlay}
-            aria-label="Reproducir"
+            className="movie-player__skip-button movie-player__skip-button--backward"
+            onClick={() => skip(-5)}
+            aria-label="Retroceder 5 segundos"
           >
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
             </svg>
+            <span className="movie-player__skip-label">5</span>
           </button>
-        )}
+
+          {/* Center Play Button */}
+          <button
+            className="movie-player__center-play-button"
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pausar" : "Reproducir"}
+          >
+            {isPlaying ? (
+              <svg
+                width="50"
+                height="50"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            ) : (
+              <svg
+                width="50"
+                height="50"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+
+          <button
+            className="movie-player__skip-button movie-player__skip-button--forward"
+            onClick={() => skip(5)}
+            aria-label="Adelantar 5 segundos"
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z" />
+            </svg>
+            <span className="movie-player__skip-label">5</span>
+          </button>
+        </div>
 
         {/* Bottom Controls */}
         <div className="movie-player__bottom-controls">
-          {/* Progress Bar - COMMENTED OUT: Not working correctly */}
-          {/* <div className="movie-player__progress-container">
-            <div
-              className="movie-player__progress-buffered"
-              style={{ width: `${buffered}%` }}
-            />
-            <input
-              type="range"
-              className="movie-player__progress"
-              min="0"
-              max={duration || 0}
-              value={currentTime}
-              onChange={handleSeek}
-              aria-label="Barra de progreso del video"
-              style={{
-                background: `linear-gradient(to right, var(--color-secondary) 0%, var(--color-secondary) ${
-                  (currentTime / duration) * 100
-                }%, rgba(255, 255, 255, 0.3) ${
-                  (currentTime / duration) * 100
-                }%, rgba(255, 255, 255, 0.3) 100%)`,
-              }}
-            />
-          </div> */}
-
           {/* Controls Row */}
           <div className="movie-player__controls-row">
             {/* Time Display */}

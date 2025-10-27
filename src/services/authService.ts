@@ -45,11 +45,11 @@ export interface LoginData {
 
 /**
  * Login response
+ * Note: Token is now sent in HTTP-only cookie, not in response body
  */
 export interface LoginResponse {
   message: string;
   usuario: User;
-  token: string;
 }
 
 /**

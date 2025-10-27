@@ -663,9 +663,10 @@
   }
 
   &__volume-slider {
-    -webkit-appearance: slider-vertical;
-    appearance: slider-vertical;
-    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: none;
+    appearance: none;
+    writing-mode: vertical-lr;
+    direction: rtl;
     width: 6px;
     height: 120px;
     background: rgba(255, 255, 255, 0.3);
@@ -674,9 +675,8 @@
     outline: none;
 
     @media (max-width: 768px) {
-      -webkit-appearance: none;
-      appearance: none;
       writing-mode: horizontal-tb;
+      direction: ltr;
       width: 100px;
       height: 6px;
     }
@@ -900,5 +900,55 @@
     &__subtitle-option {
       border-width: 2px;
     }
+  }
+}
+
+// ✅ YouTube Overlay Blocker - Ocultar TODOS los overlays nativos de YouTube
+// Esto previene que aparezcan los botones de compartir, ver más tarde, logo, etc.
+:global {
+  // Ocultar overlays de pausa de YouTube
+  .ytp-pause-overlay,
+  .ytp-scroll-min,
+  .ytp-chrome-top,
+  .ytp-show-cards-title,
+  .ytp-gradient-top,
+  .ytp-gradient-bottom,
+  .ytp-ce-element,
+  .ytp-cards-teaser,
+  .ytp-suggested-action,
+  .ytp-endscreen-content,
+  .ytp-endscreen-previous,
+  .ytp-watermark,
+  .ytp-paid-content-overlay,
+  .ytp-title-link,
+  .ytp-title-text,
+  .ytp-share-button-visible,
+  .ytp-watch-later-button,
+  .ytp-share-button,
+  .ytp-cards-button,
+  .ytp-chrome-controls,
+  .ytp-chrome-bottom,
+  .ytp-player-content,
+  .ytp-iv-video-content,
+  .iv-branding,
+  .branding-img {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  // Bloquear cualquier interacción con el iframe de YouTube
+  #youtube-player,
+  #youtube-player iframe {
+    pointer-events: none !important;
+  }
+
+  // Asegurar que el contenedor de YouTube ocupe todo el espacio sin mostrar controles
+  .movie-player__video {
+    pointer-events: all !important;
+    cursor: pointer !important;
   }
 }

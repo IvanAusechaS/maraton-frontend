@@ -18,10 +18,16 @@ export interface Movie {
 
 /**
  * Get movies by genre from backend
+ * Returns an empty array if there's an error to prevent crashes
  */
 export const getMoviesByGenre = async (genre: string): Promise<Movie[]> => {
-  const movies = await api.get<Movie[]>(`/peliculas/genero/${genre}`);
-  return movies;
+  try {
+    const movies = await api.get<Movie[]>(`/peliculas/genero/${genre}`);
+    return Array.isArray(movies) ? movies : [];
+  } catch (error) {
+    console.error(`Error fetching movies for genre ${genre}:`, error);
+    return [];
+  }
 };
 
 /**
@@ -42,10 +48,16 @@ export const getFavoriteMovies = async (): Promise<Movie[]> => {
 
 /**
  * Get user's watch later movies (requires authentication)
+ * Returns an empty array if there's an error to prevent crashes
  */
 export const getWatchLaterMovies = async (): Promise<Movie[]> => {
-  const movies = await api.get<Movie[]>("/usuarios/watch-later");
-  return movies;
+  try {
+    const movies = await api.get<Movie[]>("/usuarios/watch-later");
+    return Array.isArray(movies) ? movies : [];
+  } catch (error) {
+    console.error("Error fetching watch later movies:", error);
+    return [];
+  }
 };
 
 /**

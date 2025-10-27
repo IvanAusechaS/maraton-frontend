@@ -22,6 +22,7 @@ Movie streaming platform built with React, TypeScript, and Vite.
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 
@@ -92,12 +93,14 @@ maraton-frontend/
 ## 🌐 Environment Variables
 
 ### Development (`.env`)
+
 ```bash
 VITE_API_URL=http://localhost:3000/api
 VITE_APP_ENV=development
 ```
 
 ### Production (`.env.production`)
+
 ```bash
 VITE_API_URL=https://maraton-backend.onrender.com/api
 VITE_APP_ENV=production
@@ -122,11 +125,13 @@ npm run lint
 ## 🐳 Docker Support
 
 ### Development
+
 ```bash
 docker-compose up
 ```
 
 ### Production Build
+
 ```bash
 docker build -t maraton-frontend .
 docker run -p 80:80 maraton-frontend
@@ -137,6 +142,7 @@ See [DOCKER.md](./DOCKER.md) for detailed Docker instructions.
 ## 🚀 Deployment
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment guide including:
+
 - Vercel deployment
 - Netlify deployment
 - Render static site
@@ -147,6 +153,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment guide includin
 ### Quick Deploy
 
 **Vercel** (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -156,6 +163,7 @@ vercel --prod
 ```
 
 **Netlify**
+
 ```bash
 # Install Netlify CLI
 npm i -g netlify-cli
@@ -169,6 +177,7 @@ netlify deploy --prod
 Backend: `https://maraton-backend.onrender.com`
 
 ### Authentication Endpoints
+
 - `POST /api/auth/signup` - User registration
 - `POST /api/auth/login` - User login
 - `POST /api/auth/logout` - User logout
@@ -176,6 +185,7 @@ Backend: `https://maraton-backend.onrender.com`
 - `POST /api/auth/reset-password` - Reset password
 
 ### Movie Endpoints
+
 - `GET /api/movies` - Get all movies
 - `GET /api/movies/:id` - Get movie by ID
 - `GET /api/movies/filter/:category` - Filter by category
@@ -200,6 +210,7 @@ npm run build  # Includes tsc -b
 ## 🤝 Contributing
 
 1. Create a feature branch from `develop`
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -207,12 +218,14 @@ npm run build  # Includes tsc -b
    ```
 
 2. Make your changes and commit
+
    ```bash
    git add .
    git commit -m "feat: your feature description"
    ```
 
 3. Push to remote
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -220,6 +233,7 @@ npm run build  # Includes tsc -b
 4. Create a Pull Request to `develop`
 
 ### Commit Convention
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation changes
@@ -250,27 +264,27 @@ You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-re
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from "eslint-plugin-react-x";
+import reactDom from "eslint-plugin-react-dom";
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(["dist"]),
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{ts,tsx}"],
     extends: [
       // Other configs...
       // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
+      reactX.configs["recommended-typescript"],
       // Enable lint rules for React DOM
       reactDom.configs.recommended,
     ],
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
         tsconfigRootDir: import.meta.dirname,
       },
       // other options...
     },
   },
-])
+]);
 ```

@@ -1,114 +1,270 @@
 import { type FC, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MoviePage.scss";
 import {
-  searchVideos,
-  getPopularVideos,
-  type PexelsVideo,
+  getMoviesByGenre,
+  getWatchLaterMovies,
+  type Movie,
 } from "../../services/movieService";
+import { authService } from "../../services/authService";
+import { getMovieRatings } from "../../services/commentService";
 
-interface VideoCategory {
+interface MovieCategory {
   title: string;
-  videos: PexelsVideo[];
+  movies: Movie[];
   loading: boolean;
+  visible: boolean; // Para controlar visibilidad de Favoritos y Ver más tarde
 }
 
 const MoviePage: FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [categories, setCategories] = useState<{
-    [key: string]: VideoCategory;
+    [key: string]: MovieCategory;
   }>({
-    trending: { title: "Tendencias", videos: [], loading: true },
-    horror: { title: "Horror", videos: [], loading: true },
-    superheroes: { title: "Superhéroes", videos: [], loading: true },
-    romance: { title: "Romance", videos: [], loading: true },
-    family: { title: "Familiar", videos: [], loading: true },
+    watchLater: {
+      title: "Ver más tarde",
+      movies: [],
+      loading: true,
+      visible: false,
+    },
+    terror: { title: "Terror", movies: [], loading: true, visible: true },
+    aventura: { title: "Aventura", movies: [], loading: true, visible: true },
+    accion: { title: "Acción", movies: [], loading: true, visible: true },
+    romance: { title: "Romance", movies: [], loading: true, visible: true },
   });
 
   useEffect(() => {
-    const fetchVideos = async () => {
+    // Check authentication status
+    const checkAuth = () => {
+      const authenticated = authService.isAuthenticated();
+      setIsAuthenticated(authenticated);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener("authChanged", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChanged", handleAuthChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
       try {
-        // Tendencias
-        const trendingData = await getPopularVideos(1, 15);
-        setCategories((prev) => ({
-          ...prev,
-          trending: {
-            ...prev.trending,
-            videos: trendingData.videos,
-            loading: false,
-          },
-        }));
+        // Si el usuario está autenticado, cargar ver más tarde
+        if (isAuthenticated) {
+          // Ver más tarde - SIEMPRE VISIBLE cuando está autenticado
+          try {
+            const watchLaterData = await getWatchLaterMovies();
+            setCategories((prev) => ({
+              ...prev,
+              watchLater: {
+                ...prev.watchLater,
+                movies: watchLaterData,
+                loading: false,
+                visible: true, // Siempre visible si está autenticado
+              },
+            }));
+          } catch {
+            // Si falla, mostrar vacío pero MANTENER VISIBLE
+            setCategories((prev) => ({
+              ...prev,
+              watchLater: {
+                ...prev.watchLater,
+                movies: [],
+                loading: false,
+                visible: true, // MANTENER VISIBLE aunque haya error
+              },
+            }));
+          }
+        } else {
+          // Si no está autenticado, ocultar esta categoría inmediatamente
+          setCategories((prev) => ({
+            ...prev,
+            watchLater: {
+              ...prev.watchLater,
+              movies: [],
+              loading: false,
+              visible: false,
+            },
+          }));
+        }
 
-        // Horror
-        const horrorData = await searchVideos("horror", 1, 15);
-        setCategories((prev) => ({
-          ...prev,
-          horror: { ...prev.horror, videos: horrorData.videos, loading: false },
-        }));
+        // Terror
+        try {
+          const terrorData = await getMoviesByGenre("Terror");
+          setCategories((prev) => ({
+            ...prev,
+            terror: {
+              ...prev.terror,
+              movies: terrorData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        } catch {
+          // Mantener visible pero sin películas
+          setCategories((prev) => ({
+            ...prev,
+            terror: {
+              ...prev.terror,
+              movies: [],
+              loading: false,
+              visible: true,
+            },
+          }));
+        }
 
-        // Superhéroes
-        const superheroesData = await searchVideos("superheroes", 1, 15);
-        setCategories((prev) => ({
-          ...prev,
-          superheroes: {
-            ...prev.superheroes,
-            videos: superheroesData.videos,
-            loading: false,
-          },
-        }));
+        // Aventura
+        try {
+          const aventuraData = await getMoviesByGenre("Aventura");
+          setCategories((prev) => ({
+            ...prev,
+            aventura: {
+              ...prev.aventura,
+              movies: aventuraData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        } catch {
+          // Mantener visible pero sin películas
+          setCategories((prev) => ({
+            ...prev,
+            aventura: {
+              ...prev.aventura,
+              movies: [],
+              loading: false,
+              visible: true,
+            },
+          }));
+        }
+
+        // Acción
+        try {
+          const accionData = await getMoviesByGenre("Acción");
+          setCategories((prev) => ({
+            ...prev,
+            accion: {
+              ...prev.accion,
+              movies: accionData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        } catch {
+          // Mantener visible pero sin películas
+          setCategories((prev) => ({
+            ...prev,
+            accion: {
+              ...prev.accion,
+              movies: [],
+              loading: false,
+              visible: true,
+            },
+          }));
+        }
 
         // Romance
-        const romanceData = await searchVideos("romance", 1, 15);
-        setCategories((prev) => ({
-          ...prev,
-          romance: {
-            ...prev.romance,
-            videos: romanceData.videos,
-            loading: false,
-          },
-        }));
-
-        // Familiar
-        const familyData = await searchVideos("family", 1, 15);
-        setCategories((prev) => ({
-          ...prev,
-          family: { ...prev.family, videos: familyData.videos, loading: false },
-        }));
-      } catch (error) {
-        console.error("Error loading videos:", error);
+        try {
+          const romanceData = await getMoviesByGenre("Romance");
+          setCategories((prev) => ({
+            ...prev,
+            romance: {
+              ...prev.romance,
+              movies: romanceData,
+              loading: false,
+              visible: true,
+            },
+          }));
+        } catch {
+          // Mantener visible pero sin películas
+          setCategories((prev) => ({
+            ...prev,
+            romance: {
+              ...prev.romance,
+              movies: [],
+              loading: false,
+              visible: true,
+            },
+          }));
+        }
+      } catch {
+        // Error general al cargar películas - silenciar
       }
     };
 
-    fetchVideos();
-  }, []);
+    fetchMovies();
+  }, [isAuthenticated]);
 
   return (
     <div className="movie-page">
       <div className="movie-page__container">
-        {Object.entries(categories).map(([key, category]) => (
-          <VideoRow
-            key={key}
-            title={category.title}
-            videos={category.videos}
-            loading={category.loading}
-          />
-        ))}
+        {Object.entries(categories).map(([key, category]) => {
+          // Solo renderizar categorías visibles
+          if (!category.visible) return null;
+
+          return (
+            <MovieRow
+              key={key}
+              title={category.title}
+              movies={category.movies}
+              loading={category.loading}
+            />
+          );
+        })}
       </div>
     </div>
   );
 };
 
-interface VideoRowProps {
+interface MovieRowProps {
   title: string;
-  videos: PexelsVideo[];
+  movies: Movie[];
   loading: boolean;
 }
 
-const VideoRow: FC<VideoRowProps> = ({ title, videos, loading }) => {
+const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
+  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [movieRatings, setMovieRatings] = useState<{
+    [key: number]: number;
+  }>({});
+
+  // Load ratings for all movies in this row
+  useEffect(() => {
+    const loadRatings = async () => {
+      const ratings: { [key: number]: number } = {};
+
+      for (const movie of movies) {
+        try {
+          const ratingData = await getMovieRatings(movie.id);
+          if (ratingData.total > 0) {
+            ratings[movie.id] = ratingData.average;
+          }
+        } catch (error) {
+          console.error(`Error loading rating for movie ${movie.id}:`, error);
+        }
+      }
+
+      setMovieRatings(ratings);
+    };
+
+    if (movies.length > 0) {
+      loadRatings();
+    }
+  }, [movies]);
 
   const handleScroll = (direction: "left" | "right") => {
-    const container = document.getElementById(`video-row-${title}`);
+    const container = document.getElementById(`movie-row-${title}`);
     if (!container) return;
 
     const scrollAmount = direction === "left" ? -250 : 250;
@@ -132,17 +288,31 @@ const VideoRow: FC<VideoRowProps> = ({ title, videos, loading }) => {
   };
 
   useEffect(() => {
-    const container = document.getElementById(`video-row-${title}`);
+    const container = document.getElementById(`movie-row-${title}`);
     if (container) {
       setCanScrollRight(container.scrollWidth > container.clientWidth);
     }
-  }, [videos, title]);
+  }, [movies, title]);
 
   if (loading) {
     return (
       <div className="video-row">
         <h2 className="video-row__title">{title}</h2>
-        <div className="video-row__loading">Cargando videos...</div>
+        <div className="video-row__loading">Cargando películas...</div>
+      </div>
+    );
+  }
+
+  // Si no hay películas, mostrar mensaje apropiado
+  if (movies.length === 0) {
+    return (
+      <div className="video-row">
+        <h2 className="video-row__title">{title}</h2>
+        <div className="video-row__empty">
+          {title === "Favoritos" || title === "Ver más tarde"
+            ? `No tienes películas en ${title.toLowerCase()}`
+            : "Temporalmente no disponible. Intenta más tarde."}
+        </div>
       </div>
     );
   }
@@ -160,23 +330,61 @@ const VideoRow: FC<VideoRowProps> = ({ title, videos, loading }) => {
           </button>
         )}
 
-        <div className="video-row__container" id={`video-row-${title}`}>
-          {videos.map((video) => (
-            <div key={video.id} className="video-card">
-              <div className="video-card__image">
-                <img src={video.image} alt={`Video ${video.id}`} />
-                <div className="video-card__overlay">
-                  <button className="video-card__play">▶</button>
+        <div className="video-row__container" id={`movie-row-${title}`}>
+          {movies.map((movie) => {
+            return (
+              <div
+                key={movie.id}
+                className="video-card"
+                onClick={() => navigate(`/pelicula/${movie.id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(`/pelicula/${movie.id}`);
+                  }
+                }}
+                aria-label={`Ver detalles de ${movie.titulo}`}
+              >
+                <div className="video-card__image">
+                  <img
+                    src={movie.portada}
+                    alt={movie.titulo}
+                    onError={(e) => {
+                      // Fallback image if portada fails to load
+                      (e.target as HTMLImageElement).src =
+                        "/placeholder-movie.jpg";
+                    }}
+                  />
+                  <div className="video-card__overlay">
+                    <button
+                      className="video-card__play"
+                      aria-label={`Reproducir ${movie.titulo}`}
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+                <div className="video-card__info">
+                  <h3 className="video-card__title">{movie.titulo}</h3>
+                  <div className="video-card__meta">
+                    <span className="video-card__duration">
+                      {movie.duracion} min
+                    </span>
+                    {movieRatings[movie.id] && (
+                      <>
+                        <span className="video-card__separator">•</span>
+                        <span className="video-card__rating">
+                          ⭐ {movieRatings[movie.id].toFixed(1)}
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="video-card__info">
-                <span className="video-card__duration">
-                  {Math.floor(video.duration / 60)}:
-                  {String(Math.floor(video.duration % 60)).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {canScrollRight && (

@@ -139,9 +139,24 @@
     opacity: 1;
     transform: scale(1.3) !important;
     z-index: 2;
+    cursor: pointer;
 
     img {
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    &:hover {
+      transform: scale(1.35) !important;
+      transition: transform 0.3s ease;
+
+      img {
+        box-shadow: 0 12px 24px rgba(16, 204, 255, 0.4);
+      }
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-secondary);
+      outline-offset: 4px;
     }
   }
 

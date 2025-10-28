@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Carousel.scss";
 
 interface MovieSlide {
@@ -61,6 +62,7 @@ const movies: MovieSlide[] = [
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const navigate = useNavigate();
 
   const handlePrevious = () => {
     if (!isTransitioning) {
@@ -144,6 +146,21 @@ const Carousel = () => {
                   display: "block", // Mostramos todos los slides para el efecto circular
                   visibility: distance <= 2 ? "visible" : "hidden", // Optimización de rendimiento
                 }}
+                onClick={() =>
+                  index === currentIndex && navigate(`/pelicula/${movie.id}`)
+                }
+                role="button"
+                tabIndex={index === currentIndex ? 0 : -1}
+                onKeyDown={(e) => {
+                  if (
+                    index === currentIndex &&
+                    (e.key === "Enter" || e.key === " ")
+                  ) {
+                    e.preventDefault();
+                    navigate(`/pelicula/${movie.id}`);
+                  }
+                }}
+                aria-label={`Ver detalles de ${movie.title}`}
               >
                 <img src={movie.imageUrl} alt={movie.title} />
                 {index === currentIndex && (

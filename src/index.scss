@@ -1,14 +1,14 @@
 :root {
   /* Fonts */
-  --font-heading: 'Days One', sans-serif;
-  --font-body: 'Rubik', sans-serif;
-  
+  --font-heading: "Days One", sans-serif;
+  --font-body: "Rubik", sans-serif;
+
   /* Colors */
   --color-background: #161616;
-  --color-text: #FFFFFF;
+  --color-text: #ffffff;
   --color-text-oposite: #000000;
-  --color-primary: #FFFFFF;
-  --color-secondary: #10CCFF;
+  --color-primary: #ffffff;
+  --color-secondary: #10ccff;
 
   color: var(--color-text);
   background-color: var(--color-background);

@@ -1,6 +1,8 @@
-import { type FC, useState } from "react";
+import { type FC, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./Footer.scss";
 import Modal from "../modal/Modal";
+import { authService } from "../../services/authService";
 
 const testSpeed = "https://fast.com/es";
 const instagramLink = "https://www.instagram.com/maraton_app/";
@@ -18,6 +20,23 @@ type ModalType =
 
 const Footer: FC = () => {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(authService.isAuthenticated());
+
+    const handleAuthChange = () => {
+      setIsAuthenticated(authService.isAuthenticated());
+    };
+
+    window.addEventListener("authChanged", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChanged", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
 
   const modalContents = {
     cookies: {
@@ -174,77 +193,172 @@ const Footer: FC = () => {
   return (
     <footer className="footer">
       <div className="footer__container">
-        <div className="footer__logo">
-          <img src="/logo.svg" alt="Maraton Logo" />
-        </div>
+        {/* Sitemap Section */}
+        <nav className="footer__sitemap" aria-label="Mapa del sitio">
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Navegación</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <Link to="/">Inicio</Link>
+              </li>
+              <li>
+                <Link to="/peliculas">Películas</Link>
+              </li>
+              <li>
+                <Link to="/sobre-nosotros">Sobre Nosotros</Link>
+              </li>
+            </ul>
+          </div>
 
-        <nav className="footer__links">
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("cookies")}
-          >
-            Preferencias de cookies
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => {
-              window.location.href = "/#faq";
-            }}
-          >
-            FAQ
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("privacy")}
-          >
-            Privacidad
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("terms")}
-          >
-            Términos de uso
-          </button>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("accessibility")}
-          >
-            Accesibilidad
-          </button>
-          <a
-            href={testSpeed}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer__link"
-          >
-            Test de velocidad
-          </a>
-          <button
-            className="footer__link"
-            onClick={() => setActiveModal("contact")}
-          >
-            Contáctanos
-          </button>
+          {!isAuthenticated ? (
+            <div className="footer__sitemap-section">
+              <h3 className="footer__sitemap-title">Cuenta</h3>
+              <ul className="footer__sitemap-list">
+                <li>
+                  <Link to="/login">Iniciar Sesión</Link>
+                </li>
+                <li>
+                  <Link to="/registro">Registrarse</Link>
+                </li>
+                <li>
+                  <Link to="/recuperar">Recuperar Contraseña</Link>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div className="footer__sitemap-section">
+              <h3 className="footer__sitemap-title">Mi Cuenta</h3>
+              <ul className="footer__sitemap-list">
+                <li>
+                  <Link to="/perfil">Ver Perfil</Link>
+                </li>
+                <li>
+                  <Link to="/profile/edit">Editar Perfil</Link>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Ayuda</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <button
+                  onClick={() => setActiveModal("contact")}
+                  className="footer__sitemap-link"
+                >
+                  Contáctanos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    window.location.href = "/#faq";
+                  }}
+                  className="footer__sitemap-link"
+                >
+                  Preguntas Frecuentes
+                </button>
+              </li>
+              <li>
+                <a 
+                  href="/docs/Manual_de_usuario.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="footer__sitemap-link"
+                >
+                  Manual de Usuario
+                </a>
+              </li>
+              <li>
+                <a href={testSpeed} target="_blank" rel="noopener noreferrer">
+                  Test de Velocidad
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer__sitemap-section">
+            <h3 className="footer__sitemap-title">Legal</h3>
+            <ul className="footer__sitemap-list">
+              <li>
+                <button
+                  onClick={() => setActiveModal("privacy")}
+                  className="footer__sitemap-link"
+                >
+                  Privacidad
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("terms")}
+                  className="footer__sitemap-link"
+                >
+                  Términos de Uso
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("cookies")}
+                  className="footer__sitemap-link"
+                >
+                  Cookies
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveModal("accessibility")}
+                  className="footer__sitemap-link"
+                >
+                  Accesibilidad
+                </button>
+              </li>
+            </ul>
+          </div>
         </nav>
+
+        <div className="footer__logo">
+          <img src="/logo.svg" alt="Maraton" />
+        </div>
 
         <div className="footer__copyright">
           <p>
-            @2025 Maraton Company, LLC. Todos los derechos reservados. Maraton
+            © 2025 Maraton Company, LLC. Todos los derechos reservados. Maraton
             es de uso libre
           </p>
         </div>
 
         <div className="footer__social">
-          <a href={youtubeLink} target="_blank" rel="noopener noreferrer">
+          <a
+            href={youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+          >
             <img src="/youtube-icon.svg" alt="YouTube" />
           </a>
-          <a href={tiktokLink} target="_blank" rel="noopener noreferrer">
+          <a
+            href={tiktokLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+          >
             <img src="/tiktok-icon.svg" alt="TikTok" />
           </a>
-          <a href={facebookLink} target="_blank" rel="noopener noreferrer">
+          <a
+            href={facebookLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          >
             <img src="/facebook-icon.svg" alt="Facebook" />
           </a>
-          <a href={instagramLink} target="_blank" rel="noopener noreferrer">
+          <a
+            href={instagramLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
             <img src="/instagram-icon.svg" alt="Instagram" />
           </a>
         </div>

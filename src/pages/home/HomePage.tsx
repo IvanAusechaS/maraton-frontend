@@ -1,8 +1,8 @@
 import React from "react";
 import "./HomePage.scss";
 
-import Carousel from "./components/carousel/Carousel";
-import HeroSection from "./components/hero-section/HeroSection";
+import Carousel from "../../components/carousel/Carousel";
+import HeroSection from "../../components/hero-section/HeroSection";
 /**
  * Home (landing) page of the application.
  *

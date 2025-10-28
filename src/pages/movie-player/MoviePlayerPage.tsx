@@ -1,7 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./MoviePlayer.scss";
-import { getMovieById } from "../../services/movieService";
+import {
+  getMovieById,
+  getMovieSubtitles,
+  getParsedSubtitles,
+  type Subtitulo,
+  type ParsedSubtitle,
+} from "../../services/movieService";
 
 /**
  * Movie Player Page component.
@@ -83,6 +89,7 @@ const MoviePlayerPage: React.FC = () => {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const youtubePlayerRef = useRef<any>(null); // YouTube Player instance
   const youtubeContainerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<number | null>(null);
@@ -101,6 +108,12 @@ const MoviePlayerPage: React.FC = () => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isYouTube, setIsYouTube] = useState(false);
   const [youtubeEmbedUrl, setYoutubeEmbedUrl] = useState<string | null>(null);
+  // Subtitles state
+  const [subtitles, setSubtitles] = useState<Subtitulo[]>([]);
+  const [parsedSubtitles, setParsedSubtitles] = useState<ParsedSubtitle[]>([]);
+  const [activeFileSubtitle, setActiveFileSubtitle] = useState<string | null>(null); // idioma.version e.g. 'es-ES'
+  const [selectedSubtitleLang, setSelectedSubtitleLang] = useState<string | null>(null); // for parsed overlays (e.g. 'es')
+  const [overlayText, setOverlayText] = useState<string>("");
 
   // Fetch movie data from backend
   useEffect(() => {
@@ -148,6 +161,29 @@ const MoviePlayerPage: React.FC = () => {
     };
 
     fetchMovie();
+    
+    // Fetch subtitles separately (non-blocking)
+    if (id) {
+      const movieId = parseInt(id);
+      
+      getMovieSubtitles(movieId)
+        .then(fileSubs => {
+          setSubtitles(fileSubs);
+          console.log("✅ Subtítulos de archivo cargados:", fileSubs);
+        })
+        .catch(err => {
+          console.warn("⚠️ No se pudieron cargar subtítulos de archivo:", err);
+        });
+
+      getParsedSubtitles(movieId)
+        .then(parsed => {
+          setParsedSubtitles(parsed || []);
+          console.log("✅ Subtítulos parseados cargados:", parsed);
+        })
+        .catch(err => {
+          console.warn("⚠️ No se pudieron cargar subtítulos parseados:", err);
+        });
+    }
   }, [id]);
 
   // Time update for YouTube
@@ -224,6 +260,7 @@ const MoviePlayerPage: React.FC = () => {
       if (!youtubeContainerRef.current) return;
 
       try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         youtubePlayerRef.current = new (window as any).YT.Player(
           "youtube-player",
           {
@@ -244,6 +281,7 @@ const MoviePlayerPage: React.FC = () => {
               origin: window.location.origin, // ✅ Mejor seguridad y rendimiento
             },
             events: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onReady: (event: any) => {
                 console.log("✅ YouTube player ready");
                 // Set initial volume
@@ -253,6 +291,7 @@ const MoviePlayerPage: React.FC = () => {
                 // ✅ Forzar ocultamiento de overlays al estar listo
                 hideYouTubeOverlays();
               },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onStateChange: (event: any) => {
                 const playerState = event.data;
                 // YT.PlayerState: UNSTARTED = -1, ENDED = 0, PLAYING = 1, PAUSED = 2, BUFFERING = 3, CUED = 5
@@ -266,6 +305,7 @@ const MoviePlayerPage: React.FC = () => {
                   hideYouTubeOverlays(); // ✅ Ocultar overlays al pausar
                 }
               },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onError: (event: any) => {
                 console.error("❌ YouTube player error:", event.data);
                 setError("Error al cargar el video de YouTube");
@@ -296,6 +336,7 @@ const MoviePlayerPage: React.FC = () => {
     if (!videoId) return;
 
     // Check if API is already loaded
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((window as any).YT && (window as any).YT.Player) {
       initializeYouTubePlayer(videoId);
       return;
@@ -308,6 +349,7 @@ const MoviePlayerPage: React.FC = () => {
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     // Initialize player when API is ready
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).onYouTubeIframeAPIReady = () => {
       initializeYouTubePlayer(videoId);
     };
@@ -444,6 +486,94 @@ const MoviePlayerPage: React.FC = () => {
       document.exitFullscreen();
       setIsFullscreen(false);
     }
+  };
+
+  // Subtitle controls
+  const disableAllFileTracks = () => {
+    if (!videoRef.current) return;
+    const tracks = videoRef.current.textTracks;
+    for (let i = 0; i < tracks.length; i++) {
+      tracks[i].mode = "disabled";
+    }
+  };
+
+  const handleSubtitleFileChange = (langVersion: string | null) => {
+    // langVersion is expected to match the track.language/srcLang (e.g. 'es-ES')
+    if (!videoRef.current) return;
+    disableAllFileTracks();
+    setSelectedSubtitleLang(null);
+    setOverlayText("");
+
+    if (!langVersion) {
+      setActiveFileSubtitle(null);
+      return;
+    }
+
+    const tracks = videoRef.current.textTracks;
+    for (let i = 0; i < tracks.length; i++) {
+      const t = tracks[i];
+      // Some browsers present language as 'es' while srcLang may be 'es-ES'
+      if (
+        t.language === langVersion ||
+        (langVersion && t.language && t.language.startsWith(langVersion.split("-")[0]))
+      ) {
+        t.mode = "showing";
+      } else {
+        t.mode = "disabled";
+      }
+    }
+
+    setActiveFileSubtitle(langVersion);
+  };
+
+  const handleSubtitleParsedChange = (lang: string | null) => {
+    // Use parsed overlay subtitles (works also for YouTube)
+    setActiveFileSubtitle(null);
+    disableAllFileTracks();
+    if (!lang) {
+      setSelectedSubtitleLang(null);
+      setOverlayText("");
+      return;
+    }
+
+    setSelectedSubtitleLang(lang);
+  };
+
+  // Update overlayText based on currentTime and parsedSubtitles
+  useEffect(() => {
+    if (!selectedSubtitleLang) {
+      setOverlayText("");
+      return;
+    }
+
+    const parsed = parsedSubtitles.find(
+      (p) => p.idioma === selectedSubtitleLang || p.idioma?.startsWith(selectedSubtitleLang)
+    );
+
+    if (!parsed || !Array.isArray(parsed.lineas)) {
+      setOverlayText("");
+      return;
+    }
+
+    const line = parsed.lineas.find(
+      (l) => currentTime >= l.start && currentTime < l.start + l.duration
+    );
+
+    setOverlayText(line ? line.text : "");
+  }, [currentTime, selectedSubtitleLang, parsedSubtitles]);
+
+  // Helper function to get readable language names
+  const getLanguageName = (code: string): string => {
+    const languageNames: Record<string, string> = {
+      'es': 'Español',
+      'en': 'English',
+      'pt-BR': 'Português (Brasil)',
+      'pt': 'Português',
+      'fr': 'Français',
+      'de': 'Deutsch',
+      'it': 'Italiano'
+    };
+    return languageNames[code] || code.toUpperCase();
   };
 
   // Format time
@@ -649,7 +779,25 @@ const MoviePlayerPage: React.FC = () => {
           className="movie-player__video"
           src={movie.videoUrl}
           onClick={togglePlay}
-        />
+        >
+          {/* File-based subtitle tracks (.vtt) */}
+          {subtitles.map((s) => (
+            <track
+              key={s.id}
+              kind="subtitles"
+              srcLang={s.idioma?.version || s.idiomaId?.toString()}
+              label={s.idioma?.nombre || s.idiomaId?.toString()}
+              src={s.url}
+            />
+          ))}
+        </video>
+      )}
+
+      {/* Overlay subtitles (used for parsed subtitles and for YouTube) */}
+      {overlayText && (
+        <div className="movie-player__subtitle-overlay" aria-live="polite">
+          {overlayText}
+        </div>
       )}
 
       {/* Controls Overlay */}
@@ -866,21 +1014,70 @@ const MoviePlayerPage: React.FC = () => {
             </button>
           </div>
           <div className="movie-player__subtitles-content">
-            <button className="movie-player__subtitle-option movie-player__subtitle-option--active">
+            <button
+              className={`movie-player__subtitle-option ${
+                !activeFileSubtitle && !selectedSubtitleLang
+                  ? "movie-player__subtitle-option--active"
+                  : ""
+              }`}
+              onClick={() => {
+                handleSubtitleFileChange(null);
+                handleSubtitleParsedChange(null);
+                setShowSubtitlesMenu(false);
+              }}
+            >
               Desactivado
             </button>
-            <button className="movie-player__subtitle-option" disabled>
-              Español
-            </button>
-            <button className="movie-player__subtitle-option" disabled>
-              Inglés
-            </button>
-            <button className="movie-player__subtitle-option" disabled>
-              Francés
-            </button>
-            <p className="movie-player__subtitles-note">
-              Los subtítulos estarán disponibles próximamente
-            </p>
+
+            {/* File-based subtitle files (.vtt) */}
+            {subtitles.length > 0 && (
+              <>
+                {subtitles.map((s) => (
+                  <button
+                    key={`file-${s.id}`}
+                    className={`movie-player__subtitle-option ${
+                      activeFileSubtitle === (s.idioma?.version || "")
+                        ? "movie-player__subtitle-option--active"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      handleSubtitleFileChange(s.idioma?.version || null);
+                      setShowSubtitlesMenu(false);
+                    }}
+                  >
+                    {s.idioma?.nombre || s.idiomaId}
+                  </button>
+                ))}
+              </>
+            )}
+
+            {/* Parsed overlay subtitles (useful for YouTube) */}
+            {parsedSubtitles.length > 0 && (
+              <>
+                {parsedSubtitles.map((p, idx) => (
+                  <button
+                    key={`parsed-${idx}`}
+                    className={`movie-player__subtitle-option ${
+                      selectedSubtitleLang === p.idioma
+                        ? "movie-player__subtitle-option--active"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      handleSubtitleParsedChange(p.idioma || null);
+                      setShowSubtitlesMenu(false);
+                    }}
+                  >
+                    {getLanguageName(p.idioma)}
+                  </button>
+                ))}
+              </>
+            )}
+
+            {subtitles.length === 0 && parsedSubtitles.length === 0 && (
+              <p className="movie-player__subtitles-note">
+                No hay subtítulos disponibles para esta película
+              </p>
+            )}
           </div>
         </div>
       )}

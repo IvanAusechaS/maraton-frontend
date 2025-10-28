@@ -70,6 +70,100 @@ export const getMovieById = async (id: number): Promise<Movie> => {
 };
 
 /**
+ * Subtitulo and related types for file-based subtitle endpoint
+ */
+export interface Idioma {
+  id: number;
+  nombre: string;
+  version: string;
+}
+
+export interface Subtitulo {
+  id: number;
+  estado: boolean;
+  color: string;
+  fuente: string;
+  descriptiva: boolean;
+  url: string;
+  peliculaId: number;
+  idiomaId: number;
+  idioma: Idioma;
+}
+
+export interface SubtitlesResponse {
+  peliculaId: number;
+  titulo: string;
+  subtitulos: Subtitulo[];
+}
+
+/**
+ * Get subtitles for a specific movie (file-based .vtt/.srt links)
+ * Returns an empty array if there's an error or no subtitles available
+ */
+export const getMovieSubtitles = async (
+  movieId: number
+): Promise<Subtitulo[]> => {
+  try {
+    // Intentar endpoint principal: /api/peliculas/:id/subtitulos
+    const response = await api.get<SubtitlesResponse>(
+      `/peliculas/${movieId}/subtitulos`
+    );
+
+    // Convert relative URLs to absolute URLs
+    const backendBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000';
+    const subtitles = (response.subtitulos || []).map((subtitle) => ({
+      ...subtitle,
+      url: subtitle.url && subtitle.url.startsWith('http')
+        ? subtitle.url
+        : `${backendBaseUrl}${subtitle.url}`
+    }));
+
+    console.log(`✅ Subtítulos cargados para película ${movieId}:`, subtitles);
+    return subtitles;
+  } catch {
+    // El backend actualmente usa formato JSON parseado, no archivos VTT
+    console.warn(`⚠️ Endpoint /api/peliculas/${movieId}/subtitulos no disponible (el backend usa /api/subtitles con formato JSON)`);
+    return [];
+  }
+};
+
+/**
+ * Parsed subtitle JSON endpoint (useful for YouTube or overlay rendering)
+ */
+export interface SubtitleLine {
+  text: string;
+  start: number;
+  duration: number;
+}
+
+export interface ParsedSubtitle {
+  idioma: string; // e.g. 'es', 'en'
+  lineas: SubtitleLine[];
+}
+
+export const getParsedSubtitles = async (
+  movieId: number
+): Promise<ParsedSubtitle[]> => {
+  try {
+    // El backend devuelve un array con un objeto que contiene videoId y subtitulos
+    const response = await api.get<{ videoId: string; subtitulos: ParsedSubtitle[] }[]>(
+      `/subtitles/${movieId}`
+    );
+    
+    // Extraer el array de subtítulos del primer elemento
+    if (Array.isArray(response) && response.length > 0 && response[0].subtitulos) {
+      console.log(`✅ Subtítulos parseados cargados para película ${movieId}:`, response[0].subtitulos);
+      return response[0].subtitulos;
+    }
+    
+    return [];
+  } catch {
+    console.warn(`⚠️ No se pudieron cargar subtítulos parseados para película ${movieId}`);
+    return [];
+  }
+};
+
+/**
  * Add movie to favorites
  * Creates or updates the Gusto preference with favoritos: true
  */

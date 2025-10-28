@@ -852,6 +852,48 @@
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-style: italic;
   }
+
+  // Subtitle Overlay (for parsed JSON subtitles / YouTube overlay)
+  &__subtitle-overlay {
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 80%;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-family: "Days One", sans-serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 12;
+    pointer-events: none;
+
+    @media (max-width: 768px) {
+      bottom: 120px;
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem;
+      max-width: 90%;
+    }
+  }
+}
+
+// Accessible subtitle styling (::cue for file-based tracks)
+video::cue {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-family: "Days One", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+video::cue(.descriptive) {
+  color: #ffff00; /* Yellow for descriptive subtitles */
+  font-style: italic;
 }
 
 // Accessibility - Reduced Motion

@@ -205,13 +205,13 @@ const MovieDetailPage: React.FC = () => {
       }
 
       // Then, submit the comment
-      await createComment(parseInt(id), newComment.trim());
+      const createdComment = await createComment(parseInt(id), newComment.trim());
 
       // Clear form
       setNewComment("");
 
-      // Reload comments
-      await loadComments();
+      // Agregar el nuevo comentario al estado local sin recargar
+      setComments((prevComments) => [createdComment, ...prevComments]);
 
       alert("¡Comentario publicado exitosamente!");
     } catch (error: unknown) {
@@ -230,7 +230,25 @@ const MovieDetailPage: React.FC = () => {
   const handleEditComment = async (commentId: number, newMessage: string) => {
     try {
       await updateComment(commentId, newMessage);
-      await loadComments();
+      
+      // Actualizar estado local sin recargar desde el servidor
+      setComments((prevComments) => {
+        const updateCommentRecursive = (comments: Comment[]): Comment[] => {
+          return comments.map((comment) => {
+            if (comment.id === commentId) {
+              return { ...comment, mensaje: newMessage };
+            }
+            if (comment.respuestas && comment.respuestas.length > 0) {
+              return {
+                ...comment,
+                respuestas: updateCommentRecursive(comment.respuestas),
+              };
+            }
+            return comment;
+          });
+        };
+        return updateCommentRecursive(prevComments);
+      });
     } catch (error) {
       console.error("Error editing comment:", error);
       throw error;
@@ -241,7 +259,24 @@ const MovieDetailPage: React.FC = () => {
   const handleDeleteComment = async (commentId: number) => {
     try {
       await deleteComment(commentId);
-      await loadComments();
+      
+      // Actualizar estado local sin recargar desde el servidor
+      setComments((prevComments) => {
+        const deleteCommentRecursive = (comments: Comment[]): Comment[] => {
+          return comments
+            .filter((comment) => comment.id !== commentId)
+            .map((comment) => {
+              if (comment.respuestas && comment.respuestas.length > 0) {
+                return {
+                  ...comment,
+                  respuestas: deleteCommentRecursive(comment.respuestas),
+                };
+              }
+              return comment;
+            });
+        };
+        return deleteCommentRecursive(prevComments);
+      });
     } catch (error) {
       console.error("Error deleting comment:", error);
       throw error;
@@ -253,8 +288,29 @@ const MovieDetailPage: React.FC = () => {
     if (!id) return;
 
     try {
-      await createComment(parseInt(id), message, parentId);
-      await loadComments();
+      const newReply = await createComment(parseInt(id), message, parentId);
+      
+      // Actualizar estado local sin recargar desde el servidor
+      setComments((prevComments) => {
+        const addReplyRecursive = (comments: Comment[]): Comment[] => {
+          return comments.map((comment) => {
+            if (comment.id === parentId) {
+              return {
+                ...comment,
+                respuestas: [...(comment.respuestas || []), newReply],
+              };
+            }
+            if (comment.respuestas && comment.respuestas.length > 0) {
+              return {
+                ...comment,
+                respuestas: addReplyRecursive(comment.respuestas),
+              };
+            }
+            return comment;
+          });
+        };
+        return addReplyRecursive(prevComments);
+      });
     } catch (error) {
       console.error("Error replying to comment:", error);
       throw error;
@@ -806,12 +862,36 @@ const MovieDetailPage: React.FC = () => {
                   </div>
 
                   <button
-                    className="movie-detail__submit-button"
+                    className="movie-detail__action-button movie-detail__action-button--primary"
                     type="button"
                     aria-label="Enviar comentario"
                     onClick={handleSubmitComment}
                     disabled={submittingComment}
                   >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M22 2L11 13"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 2L15 22L11 13L2 9L22 2Z"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                     {submittingComment
                       ? "Publicando..."
                       : "Publicar Comentario"}

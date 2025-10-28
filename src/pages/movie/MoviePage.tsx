@@ -3,30 +3,21 @@ import { useNavigate } from "react-router-dom";
 import "./MoviePage.scss";
 import {
   getMoviesByGenre,
-  getWatchLaterMovies,
   type Movie,
 } from "../../services/movieService";
-import { authService } from "../../services/authService";
 import { getMovieRatings } from "../../services/commentService";
 
 interface MovieCategory {
   title: string;
   movies: Movie[];
   loading: boolean;
-  visible: boolean; // Para controlar visibilidad de Favoritos y Ver más tarde
+  visible: boolean;
 }
 
 const MoviePage: FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [categories, setCategories] = useState<{
     [key: string]: MovieCategory;
   }>({
-    watchLater: {
-      title: "Ver más tarde",
-      movies: [],
-      loading: true,
-      visible: false,
-    },
     terror: { title: "Terror", movies: [], loading: true, visible: true },
     aventura: { title: "Aventura", movies: [], loading: true, visible: true },
     accion: { title: "Acción", movies: [], loading: true, visible: true },
@@ -34,68 +25,8 @@ const MoviePage: FC = () => {
   });
 
   useEffect(() => {
-    // Check authentication status
-    const checkAuth = () => {
-      const authenticated = authService.isAuthenticated();
-      setIsAuthenticated(authenticated);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const handleAuthChange = () => {
-      checkAuth();
-    };
-
-    window.addEventListener("authChanged", handleAuthChange);
-
-    return () => {
-      window.removeEventListener("authChanged", handleAuthChange);
-    };
-  }, []);
-
-  useEffect(() => {
     const fetchMovies = async () => {
       try {
-        // Si el usuario está autenticado, cargar ver más tarde
-        if (isAuthenticated) {
-          // Ver más tarde - SIEMPRE VISIBLE cuando está autenticado
-          try {
-            const watchLaterData = await getWatchLaterMovies();
-            setCategories((prev) => ({
-              ...prev,
-              watchLater: {
-                ...prev.watchLater,
-                movies: watchLaterData,
-                loading: false,
-                visible: true, // Siempre visible si está autenticado
-              },
-            }));
-          } catch {
-            // Si falla, mostrar vacío pero MANTENER VISIBLE
-            setCategories((prev) => ({
-              ...prev,
-              watchLater: {
-                ...prev.watchLater,
-                movies: [],
-                loading: false,
-                visible: true, // MANTENER VISIBLE aunque haya error
-              },
-            }));
-          }
-        } else {
-          // Si no está autenticado, ocultar esta categoría inmediatamente
-          setCategories((prev) => ({
-            ...prev,
-            watchLater: {
-              ...prev.watchLater,
-              movies: [],
-              loading: false,
-              visible: false,
-            },
-          }));
-        }
-
         // Terror
         try {
           const terrorData = await getMoviesByGenre("Terror");
@@ -201,7 +132,7 @@ const MoviePage: FC = () => {
     };
 
     fetchMovies();
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <div className="movie-page">
@@ -309,7 +240,7 @@ const MovieRow: FC<MovieRowProps> = ({ title, movies, loading }) => {
       <div className="video-row">
         <h2 className="video-row__title">{title}</h2>
         <div className="video-row__empty">
-          {title === "Favoritos" || title === "Ver más tarde"
+          {title === "Favoritos"
             ? `No tienes películas en ${title.toLowerCase()}`
             : "Temporalmente no disponible. Intenta más tarde."}
         </div>

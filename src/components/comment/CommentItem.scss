@@ -145,28 +145,44 @@
     margin-top: 0.75rem;
   }
 
-  &__btn {
-    padding: 0.5rem 1.25rem;
-    border-radius: 6px;
+  &__action-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 600;
-    font-family: "Days One", sans-serif;
+    font-family: var(--font-heading);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border: none;
+    min-height: 38px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
 
     &:focus {
-      outline: 2px solid var(--color-primary);
+      outline: 2px solid var(--color-secondary);
       outline-offset: 2px;
     }
 
     &--primary {
-      background: var(--color-primary);
-      color: white;
+      background: linear-gradient(
+        135deg,
+        #00b4db 0%,
+        var(--color-secondary) 100%
+      );
+      color: var(--color-text-oposite);
+      box-shadow: 0 2px 8px rgba(16, 204, 255, 0.3);
 
       &:hover {
-        background: var(--color-primary-dark);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 204, 255, 0.4);
       }
 
       &:active {
@@ -176,10 +192,13 @@
 
     &--secondary {
       background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--color-text-secondary);
 
       &:hover {
         background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
       }
     }
   }

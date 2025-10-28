@@ -21,6 +21,8 @@ const SignupPage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -224,7 +226,7 @@ const SignupPage: React.FC = () => {
 
             <div className="signup-page__form-group">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -240,15 +242,83 @@ const SignupPage: React.FC = () => {
               <label htmlFor="password" className="signup-page__label">
                 Contraseña
               </label>
-              <div id="password-requirements" className="signup-page__hint">
-                Mínimo 8 caracteres, incluye mayúscula, número y carácter
-                especial
-              </div>
+              <button
+                type="button"
+                className="signup-page__toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={
+                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+                tabIndex={0}
+              >
+                {showPassword ? (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 3L21 21"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M10.5 10.5C10.0353 10.9532 9.75 11.5735 9.75 12.25C9.75 13.6307 10.8693 14.75 12.25 14.75C12.9265 14.75 13.5468 14.4647 14 14"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M6.5 6.5C4.5 8 2 12 2 12C2 12 5.63636 19 12 19C13.5 19 14.8 18.5 16 17.5"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M17.5 17.5C19.5 16 22 12 22 12C22 12 18.3636 5 12 5C10.5 5 9.2 5.5 8 6.5"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
 
             <div className="signup-page__form-group">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
@@ -258,11 +328,125 @@ const SignupPage: React.FC = () => {
                 required
                 minLength={8}
                 aria-required="true"
+                aria-describedby="password-requirements"
                 autoComplete="new-password"
               />
               <label htmlFor="confirmPassword" className="signup-page__label">
                 Confirmar contraseña
               </label>
+              <button
+                type="button"
+                className="signup-page__toggle-password"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={
+                  showConfirmPassword
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
+                }
+                tabIndex={0}
+              >
+                {showConfirmPassword ? (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 3L21 21"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M10.5 10.5C10.0353 10.9532 9.75 11.5735 9.75 12.25C9.75 13.6307 10.8693 14.75 12.25 14.75C12.9265 14.75 13.5468 14.4647 14 14"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M6.5 6.5C4.5 8 2 12 2 12C2 12 5.63636 19 12 19C13.5 19 14.8 18.5 16 17.5"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M17.5 17.5C19.5 16 22 12 22 12C22 12 18.3636 5 12 5C10.5 5 9.2 5.5 8 6.5"
+                      stroke="#666"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            <div
+              className="signup-page__requirements"
+              id="password-requirements"
+            >
+              <p>La contraseña debe tener:</p>
+              <ul>
+                <li className={formData.password.length >= 8 ? "valid" : ""}>
+                  ✓ Al menos 8 caracteres
+                </li>
+                <li className={/[A-Z]/.test(formData.password) ? "valid" : ""}>
+                  ✓ Al menos una letra mayúscula
+                </li>
+                <li className={/\d/.test(formData.password) ? "valid" : ""}>
+                  ✓ Al menos un número
+                </li>
+                <li
+                  className={
+                    /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(
+                      formData.password
+                    )
+                      ? "valid"
+                      : ""
+                  }
+                >
+                  ✓ Al menos un carácter especial (!@#$%^&*)
+                </li>
+                <li
+                  className={
+                    formData.password === formData.confirmPassword &&
+                    formData.password.length > 0
+                      ? "valid"
+                      : ""
+                  }
+                >
+                  ✓ Contraseñas coincidentes
+                </li>
+              </ul>
             </div>
 
             <button

@@ -118,13 +118,29 @@ const CommentItem: React.FC<CommentItemProps> = ({
             />
             <div className="comment-item__edit-actions">
               <button
-                className="comment-item__btn comment-item__btn--primary"
+                className="comment-item__action-button comment-item__action-button--primary"
                 onClick={handleEdit}
               >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 13L9 17L19 7"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
                 Guardar
               </button>
               <button
-                className="comment-item__btn comment-item__btn--secondary"
+                className="comment-item__action-button comment-item__action-button--secondary"
                 onClick={handleCancelEdit}
               >
                 Cancelar
@@ -177,13 +193,37 @@ const CommentItem: React.FC<CommentItemProps> = ({
             />
             <div className="comment-item__reply-actions">
               <button
-                className="comment-item__btn comment-item__btn--primary"
+                className="comment-item__action-button comment-item__action-button--primary"
                 onClick={handleReply}
               >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M22 2L11 13"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M22 2L15 22L11 13L2 9L22 2Z"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
                 Responder
               </button>
               <button
-                className="comment-item__btn comment-item__btn--secondary"
+                className="comment-item__action-button comment-item__action-button--secondary"
                 onClick={handleCancelReply}
               >
                 Cancelar

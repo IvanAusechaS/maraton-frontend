@@ -634,51 +634,6 @@
     }
   }
 
-  &__submit-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: linear-gradient(
-      135deg,
-      #00b4db 0%,
-      var(--color-secondary) 100%
-    );
-    color: var(--color-text-oposite);
-    font-family: var(--font-heading);
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 0.875rem 2rem;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 44px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(16, 204, 255, 0.3);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(16, 204, 255, 0.4);
-    }
-
-    &:focus {
-      outline: 2px solid var(--color-secondary);
-      outline-offset: 2px;
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-
-    @media (max-width: 768px) {
-      width: 100%;
-      font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-    }
-  }
-
   &__no-comments {
     text-align: center;
     padding: 3rem 1rem;
@@ -917,40 +872,6 @@
 
   &::placeholder {
     color: var(--color-text-tertiary);
-  }
-}
-
-.movie-detail__submit-button {
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  font-family: "Days One", sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 44px;
-
-  &:hover:not(:disabled) {
-    background: var(--color-primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:focus {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 }
 

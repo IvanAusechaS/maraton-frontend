@@ -3,27 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.scss";
 import authService from "../../services/authService";
 
-type FilterOption = {
-  key: string;
-  label: string;
-};
-
 const Navbar: FC = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState<string>("");
-  const [selectedFilter, setSelectedFilter] = useState<string>("Todas");
-
-  const FILTERS: FilterOption[] = [
-    { key: "todas", label: "Todas" },
-    { key: "familiar", label: "Familiar" },
-    { key: "terror", label: "Terror" },
-    { key: "accion", label: "Acción" },
-    { key: "romance", label: "Romance" },
-  ];
 
   useEffect(() => {
     // Check authentication status on component mount
@@ -58,23 +43,6 @@ const Navbar: FC = () => {
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
-  };
-
-  const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
-  };
-
-  const handleSelectFilter = (filterLabel: string) => {
-    setSelectedFilter(filterLabel);
-    setIsFilterOpen(false);
-    // Notify interested components about filter change
-    try {
-      window.dispatchEvent(
-        new CustomEvent("filterChanged", { detail: { filter: filterLabel } })
-      );
-    } catch {
-      // ignore
-    }
   };
 
   const handleLinkClick = () => {
@@ -114,68 +82,6 @@ const Navbar: FC = () => {
           <Link to="/sobre-nosotros" className="navbar__link">
             Sobre nosotros
           </Link>
-        </div>
-
-        {/* Block 3: Filter + Search */}
-        <div className="navbar__tools desktop-menu">
-          <div className="navbar__filter">
-            <button
-              className={`navbar__filter-button ${
-                isFilterOpen ? "active" : ""
-              }`}
-              onClick={toggleFilter}
-              aria-haspopup="true"
-              aria-expanded={isFilterOpen}
-            >
-              {selectedFilter}
-              <img
-                src="/arrow-color.svg"
-                alt="toggle"
-                className={`navbar__filter-arrow ${
-                  isFilterOpen ? "active" : ""
-                }`}
-              />
-            </button>
-
-            {isFilterOpen && (
-              <div className="navbar__filter-dropdown">
-                {FILTERS.map((f) => (
-                  <button
-                    key={f.key}
-                    className="navbar__filter-item"
-                    onClick={() => handleSelectFilter(f.label)}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button className="navbar__search-button" aria-label="Buscar">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 21L16.65 16.65"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle
-                cx="11"
-                cy="11"
-                r="6"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-            </svg>
-          </button>
         </div>
 
         {/* Block 4: Actions (authentication and menu toggle) */}

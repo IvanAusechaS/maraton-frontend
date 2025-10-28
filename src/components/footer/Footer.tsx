@@ -261,9 +261,9 @@ const Footer: FC = () => {
                 </button>
               </li>
               <li>
-                <a 
-                  href="/docs/Manual_de_usuario.pdf" 
-                  target="_blank" 
+                <a
+                  href="/docs/Manual_de_usuario.pdf"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="footer__sitemap-link"
                 >
